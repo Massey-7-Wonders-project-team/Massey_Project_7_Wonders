@@ -31,3 +31,18 @@ class Card:
     self.givesPaper = 0
     
     # Bonuses <- Future implementation
+
+  def PopulateCards (self):
+    cards = []
+    
+    cards.append(new Card("Lumber Yard", 1, 3, "brown"))
+    cards[0].givesWood = 1
+    
+    cards.append(new Card("Ore Vein", 1, 3, "brown"))
+    cards[1].givesOre = 1
+    
+    cards.append(new Card("Clay Pool", 1, 3, "brown"))
+    cards[2].givesBrick = 1
+    
+    cards.append(new Card("Stone Pit", 1, 3, "brown"))
+    cards[3].givesStone = 1
