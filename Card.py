@@ -8,27 +8,12 @@ class Card:
     self.type = type
     self.picture = "" # Future proofing for later UI purposes
     
-    # Costs
+    # Costs - split into money (decreases money reserves) and materials (no decrease, only check for availability)
     self.costMoney = 0
-    self.costWood = 0
-    self.costBrick = 0
-    self.costOre = 0
-    self.costStone = 0
-    self.costGlass = 0
-    self.costPaper = 0
-    self.costCloth = 0
+    self.costMaterial = [0] * 7 # [Wood, Brick, Ore, Stone, Glass, Paper, Cloth]
     
     # Benefits
-    self.givesPoints = 0
-    self.givesMilitary = 0
-    self.givesMoney = 0
-    self.givesWood = 0
-    self.givesBrick = 0
-    self.givesOre = 0
-    self.givesStone = 0
-    self.givesGlass = 0
-    self.givesCloth = 0
-    self.givesPaper = 0
+    self.benefits = [0] * 10 # [Points, Military, Money, Wood, Brick, Ore, Stone, Glass, Paper, Cloth]
     
     # Bonuses <- Future implementation
 
@@ -36,13 +21,13 @@ class Card:
     cards = []
     
     cards.append(new Card("Lumber Yard", 1, 3, "brown"))
-    cards[0].givesWood = 1
+    cards[0].benefits[3] = 1
     
     cards.append(new Card("Ore Vein", 1, 3, "brown"))
-    cards[1].givesOre = 1
+    cards[1].benefits[5] = 1
     
     cards.append(new Card("Clay Pool", 1, 3, "brown"))
-    cards[2].givesBrick = 1
+    cards[2].benefits[4] = 1
     
     cards.append(new Card("Stone Pit", 1, 3, "brown"))
-    cards[3].givesStone = 1
+    cards[3].benefits[6] = 1
