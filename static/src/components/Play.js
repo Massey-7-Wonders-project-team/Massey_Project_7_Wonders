@@ -14,11 +14,10 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(actionCreators, dispatch);
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
-class Play extends React.Component { // eslint-disable-line react/prefer-stateless-function
+export class Play extends React.Component { // eslint-disable-line react/prefer-stateless-function
     render() {
         return (
-            <div className="col-md-8">
+            <div className="Game col-md-8">
                 <h1>Play</h1>
                 <hr />
             </div>
@@ -26,4 +25,4 @@ class Play extends React.Component { // eslint-disable-line react/prefer-statele
     }
 }
 
-export default Play;
+export default connect(mapStateToProps, mapDispatchToProps)(Play);
