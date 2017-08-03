@@ -1,6 +1,6 @@
 from flask_testing import TestCase
 from application.app import app, db
-from application.models import User
+from application.models.user import User
 import os
 from setup import basedir
 import json
