@@ -1,5 +1,6 @@
 from flask import request, render_template, jsonify, url_for, redirect, g
-from .models import User
+from .models.user import User
+from .models.game import Game
 from index import app, db
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
@@ -64,3 +65,27 @@ def is_token_valid():
         return jsonify(token_is_valid=True)
     else:
         return jsonify(token_is_valid=False), 403
+
+@app.route("/api/game/start", methods=["GET"])
+@requires_auth
+def create_game():
+
+    user = User.query.filter_by(email=g.current_user["email"]).first()
+    print(user.id)
+    game = Game()
+
+    game.player.append(user)
+
+    user.game_id = game.id
+
+    db.session.add(game)
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(message="There was an error"), 501
+
+    return jsonify(
+        game_id=game.id,
+    )
