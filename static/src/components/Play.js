@@ -1,8 +1,8 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as actionCreators from '../actions/auth';
 import { RaisedButton } from 'material-ui';
+import * as actionCreators from '../actions/auth';
 import GameScreen from './GameScreen';
 
 function mapStateToProps(state) {
@@ -24,7 +24,7 @@ class Play extends React.Component { // eslint-disable-line react/prefer-statele
         this.state = {
             game: false,
             error: false,
-        }
+        };
         this.startGame = this.startGame.bind(this);
     }
 
@@ -37,19 +37,18 @@ class Play extends React.Component { // eslint-disable-line react/prefer-statele
             headers: {
                 'Accept': 'application/json', // eslint-disable-line quote-props
                 'Content-Type': 'application/json',
-                'Authorization': token,
+                Authorization: token,
             },
         })
-        .then(response => {
+        .then((response) => {
             // do something
             if (response.status === 200) {
-                console.log('hello')
+                console.log('hello');
                 this.setState({
                     game: true,
                     error: false,
                 });
-            }
-            else {
+            } else {
                 this.setState({
                     game: false,
                     error: true,
@@ -63,12 +62,12 @@ class Play extends React.Component { // eslint-disable-line react/prefer-statele
                 game: false,
                 error: true,
             });
-        })
+        });
     }
     render() {
         const { game, error } = this.state;
         return (
-            <div className="col-md-8">
+            <div className="Game col-md-8">
                 <h1>Play</h1>
                 <hr />
                 {error &&
@@ -88,4 +87,4 @@ class Play extends React.Component { // eslint-disable-line react/prefer-statele
     }
 }
 
-export default Play;
+export default connect(mapStateToProps, mapDispatchToProps)(Play);

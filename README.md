@@ -65,11 +65,14 @@ npm run build:production
 ```
 
 #### Test Front-End
-Note there are currently no tests
 ```sh
 cd static
 npm run test
 ```
+Will run the frontend test suite
+
+If you want to run the test in watch mode run:
+`npm run test:watch`
 
 ## Further Documentation
 Further documentation can be found [here](https://drive.google.com/drive/folders/0BxaJR_flclorQ3RYaUs4UmREamM?usp=sharing)
