@@ -1,6 +1,9 @@
-class Game:
-    def __init__(self):
-        discarded = []
+from index import db
+
+class Game(db.Model):
+    __tablename__ = 'game'
+    id = db.Column(db.Integer(), primary_key=True)
+    player = db.relationship('User', backref='scenario', lazy='dynamic')
 
     def checkMove(self, card, player):
         if player.state['money'] < card.costMoney:
