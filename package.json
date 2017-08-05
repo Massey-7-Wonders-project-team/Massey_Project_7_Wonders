@@ -1,0 +1,24 @@
+{
+  "name": "",
+  "version": "",
+  "description": "",
+  "scripts": {
+    "postinstall": "cd static && npm install",
+    "clean": "cd static && npm run clean",
+    "build": "cd static && npm run build",
+    "build:production": "cd static && npm run build:production",
+    "lint": "cd static && npm run lint",
+    "start": "cd static && npm run start",
+    "test": "cd static && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "",
+  "license": "NIL",
+  "devDependencies": {
+  },
+  "dependencies": {
+  }
+}

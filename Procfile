@@ -1,3 +1,3 @@
 web: gunicorn main:app
-npm install
-npm run build:production
+# Build server asset
+web-assets: npm run build:production
