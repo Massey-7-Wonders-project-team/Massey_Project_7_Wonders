@@ -8,7 +8,7 @@
 * Ensure you have pip installed `pip --version` to check
 * Install the following python modules
 ```
-pip install flask flask_script flask_migrate flask_bcrypt pytest flask_testing
+pip install flask flask_script flask_migrate flask_bcrypt pytest flask_testing psycopg2
 ```
 * Ensure you have node installed at least version 7 `node -v` to check
 * Ensure you have npm installed at least version 4 `npm -v` to check
@@ -73,6 +73,21 @@ Will run the frontend test suite
 
 If you want to run the test in watch mode run:
 `npm run test:watch`
+
+
+### Deployment
+The app is running on a hobby dyno instance on Heroku
+[massey7wonders.herokuapp.com](https://massey7wonders.herokuapp.com)
+
+A new deployment is trigged upon a new merge to the master branch.
+
+This then picks up two Heroku buildpacks, a python build pack, and a nodejs buildpack.
+
+The python buildpack installs the dependencies inside the requirements.txt file
+
+The nodejs buildpack installs the dependencies inside the package.json. Because this has to be at the root level, we direct this to access the package.json inside the static folder.
+
+If the installs are successful it then deploys the code and runs the script inside the Procfile. This runs the app via gunicorn - Not sure if we need gunicorn for our purpose but we will leave it for now.
 
 ## Further Documentation
 Further documentation can be found [here](https://drive.google.com/drive/folders/0BxaJR_flclorQ3RYaUs4UmREamM?usp=sharing)
