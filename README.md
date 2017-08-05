@@ -65,11 +65,16 @@ npm run build:production
 ```
 
 #### Test Front-End
-Note there are currently no tests
 ```sh
 cd static
 npm run test
 ```
+Will run the frontend test suite
+
+If you want to run the test in watch mode run:
+`npm run test:watch`
+
+
 ### Deployment
 The app is running on a hobby dyno instance on Heroku
 [massey7wonders.herokuapp.com](https://massey7wonders.herokuapp.com)
