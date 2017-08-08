@@ -27,7 +27,16 @@ or on Windows:
 $env:DATABASE_URL="postgresql://username:password@localhost:port/7-wonders"
 ```
 * Run this script and it will create the tables in your database
-`python manage.py create_db`
+```
+python manage.py create_db
+```
+
+To update database after adding to the database model, use:
+```
+python manage.py db migrate
+python manage.py db upgrade
+```
+
 
 #### Install Front-End Requirements
 ```sh
