@@ -6,7 +6,7 @@ class Game(db.Model):
     age = db.Column(db.Integer(), default=1)
     started = db.Column(db.Boolean(), default=False)
     complete = db.Column(db.Boolean(), default=False)
-    player = db.relationship('User', backref='scenario', lazy='dynamic')
+    player = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def checkMove(self, card, player):
         if player.state['money'] < card.costMoney:
