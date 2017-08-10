@@ -69,10 +69,22 @@ def is_token_valid():
     else:
         return jsonify(token_is_valid=False), 403
 
+@app.route("/api/game/check", methods=["GET"])
+@requires_auth
+def check_game():
+    """ Check if a user has already joined a game """
+    player = (Player.query.join(User).filter_by(email=g.current_user["email"])
+            .join(Game).filter_by(started=False)).first()
 
-@app.route("/api/game/start", methods=["GET"])
+    print(player)
+    return jsonify(
+        game_id=player.gameId
+    )
+
+@app.route("/api/game/create", methods=["GET"])
 @requires_auth
 def create_game():
+    """ Check if game exists and add user to it else create new game """
     user = User.query.filter_by(email=g.current_user["email"]).first()
     print("user: ", user.id)
     game = Game.query.filter_by(started=False).first()
@@ -91,6 +103,9 @@ def create_game():
     # Creates and commits new player, binds to the current game and user
     player = Player(gameId=game.id, userId=user.id)
     db.session.add(player)
+
+    player_count = len(Player.query.filter_by(gameId=game.id).all())
+
     try:
         db.session.commit()
     except Exception as e:
@@ -99,11 +114,32 @@ def create_game():
 
     return jsonify(
         game_id=game.id,
-        user_id=user.id
+        players=player_count
     )
 
+@app.route("/api/game/status", methods=["GET"])
+@requires_auth
+def game_status():
+    """ Send the status of a game """
 
-@app.route("/game/start/ready", methods=["GET"])
+    # firstly check game has started
+    try:
+        game_id = request.args.get('game_id')
+        game = Game.query.filter_by(gameId = game_id)
+
+        if (game.started == False):
+            return jsonify(status="Waiting")
+        else:
+            # Game has started return full game state
+            return jsonify(
+                status="Started"
+            )
+
+    except Exception as e:
+        print(e)
+        return jsonify(message="There was an error"), 501
+
+@app.route("/api/game/start", methods=["GET"])
 @requires_auth
 def begin_game():
     table = (Player.query.join(User).join(Game).
@@ -148,5 +184,3 @@ def begin_game():
         return jsonify(
             game_id=table.gameId,
         )
-
-

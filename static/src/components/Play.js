@@ -17,21 +17,22 @@ function mapDispatchToProps(dispatch) {
 }
 
 @connect(mapStateToProps, mapDispatchToProps)
-class Play extends React.Component { // eslint-disable-line react/prefer-stateless-function
+class Play extends React.Component {
 
     constructor() {
         super();
         this.state = {
             game: false,
             error: false,
+            gameId: null,
         };
-        this.startGame = this.startGame.bind(this);
+        this.createGame = this.createGame.bind(this);
     }
 
-    startGame() {
-        // send request to start game
+    componentDidMount() {
+        // check if the user is already part of a game
         const token = localStorage.getItem('token');
-        fetch('/api/game/start', {
+        fetch('/api/game/check', {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -40,13 +41,15 @@ class Play extends React.Component { // eslint-disable-line react/prefer-statele
                 Authorization: token,
             },
         })
-        .then((response) => {
+        .then(response => response.json())
+        .then((body) => {
             // do something
-            if (response.status === 200) {
-                console.log('hello');
+            console.log(body);
+            if (body.game_id) {
                 this.setState({
                     game: true,
                     error: false,
+                    gameId: body.game_id,
                 });
             } else {
                 this.setState({
@@ -64,8 +67,39 @@ class Play extends React.Component { // eslint-disable-line react/prefer-statele
             });
         });
     }
+
+    createGame() {
+        // send request to create game
+        const token = localStorage.getItem('token');
+        fetch('/api/game/create', {
+            method: 'get',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json', // eslint-disable-line quote-props
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+        })
+        .then(response => response.json())
+        .then((body) => {
+            // do something
+            console.log(body);
+            this.setState({
+                game: true,
+                error: false,
+            });
+        })
+        .catch((err) => {
+            // catch error
+            console.log(err);
+            this.setState({
+                game: false,
+                error: true,
+            });
+        });
+    }
     render() {
-        const { game, error } = this.state;
+        const { game, error, gameId } = this.state;
         return (
             <div className="Game col-md-8">
                 <h1>Play</h1>
@@ -75,12 +109,12 @@ class Play extends React.Component { // eslint-disable-line react/prefer-statele
                 }
                 {!game &&
                     <RaisedButton
-                        label="Start Game"
-                        onClick={() => this.startGame()}
+                        label="Create Game"
+                        onClick={() => this.createGame()}
                     />
                 }
                 {game &&
-                    <GameScreen />
+                    <GameScreen gameId={gameId} />
                 }
             </div>
         );
