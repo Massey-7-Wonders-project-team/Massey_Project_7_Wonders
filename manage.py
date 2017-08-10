@@ -13,6 +13,7 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def create_db():
     """Creates the db tables."""
+    db.drop_all()
     db.create_all()
 
 
