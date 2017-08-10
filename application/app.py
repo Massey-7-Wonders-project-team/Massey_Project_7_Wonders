@@ -1,6 +1,9 @@
-from flask import request, render_template, jsonify, url_for, redirect, g
+from flask import request, render_template, jsonify, url_for, redirect, g, flash
 from .models.user import User
 from .models.game import Game
+from .models.card import Card
+from .models.player import Player
+from .models.round import Round
 from index import app, db
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
@@ -69,16 +72,15 @@ def is_token_valid():
 @app.route("/api/game/start", methods=["GET"])
 @requires_auth
 def create_game():
-
     user = User.query.filter_by(email=g.current_user["email"]).first()
     print(user.id)
-    game = Game()
 
-    game.player.append(user)
-
-    user.game_id = game.id
-
-    db.session.add(game)
+    game = Game.query.filter_by(started=False).first()
+    if ~game:
+        game = Game()
+        db.session.add(game)
+    player = Player(game.id, user.id)
+    db.session.add(player)
 
     try:
         db.session.commit()
@@ -88,4 +90,53 @@ def create_game():
 
     return jsonify(
         game_id=game.id,
+        user_id=user.id
     )
+
+@app.route("/api/game/ready", methods=["GET"])
+@requires_auth
+def begin_game():
+    table = db.query(User, Game, Player).filter_by(email=g.current_user["email"]).\
+                                         filter_by(userId=User.id).\
+                                         filter_by(gameId=Game.id).\
+                                         filter_by(started=False).first()
+    player = Player.query.filter(gameId=table.gameId, userId=table.userId)
+    player.ready = True
+    db.session.add(player)
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(message="There was an error"), 501
+
+    players = Player.query.filter_by(gameId=table.gameId).all()
+
+    # IF EVERY PLAYER IS READY, AND THERE ARE AT LEAST 3, THEN THE GAME STARTS, OTHERWISE THE GAME WAITS:
+    if len(players) > 2:
+        for p in players:
+            if p.ready == False:
+                flash("Please wait for other players")
+                return jsonify(
+                    game_id=table.gameId,
+                )
+        flash("Game starting")
+        game = Game.query.filter_by(id=table.gameId).first()
+        game.started = True
+        db.add(game)
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            return jsonify(message="There was an error"), 501
+        return jsonify(
+            game_id=table.gameId,
+        ) #dealHands(table.gameId, 1) TODO
+
+    else:
+        flash("Please wait for other players")
+        return jsonify(
+            game_id=table.gameId,
+        )
+
+
