@@ -1,4 +1,4 @@
-from flask import request, render_template, jsonify, url_for, redirect, g, flash
+from flask import request, render_template, jsonify, url_for, redirect, g, flash, session
 from .models.user import User
 from .models.game import Game
 from .models.card import Card
@@ -69,19 +69,28 @@ def is_token_valid():
     else:
         return jsonify(token_is_valid=False), 403
 
+
 @app.route("/api/game/start", methods=["GET"])
 @requires_auth
 def create_game():
     user = User.query.filter_by(email=g.current_user["email"]).first()
-    print(user.id)
-
+    print("user: ", user.id)
     game = Game.query.filter_by(started=False).first()
-    if ~game:
+
+    # Creates game if there is no active one waiting to begin
+    if game is None:
         game = Game()
         db.session.add(game)
-    player = Player(game.id, user.id)
-    db.session.add(player)
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(e)
+        return jsonify(message="There was an error"), 501
+    print("game: ", game.id)
 
+    # Creates and commits new player, binds to the current game and user
+    player = Player(gameId=game.id, userId=user.id)
+    db.session.add(player)
     try:
         db.session.commit()
     except Exception as e:
@@ -93,13 +102,13 @@ def create_game():
         user_id=user.id
     )
 
-@app.route("/api/game/ready", methods=["GET"])
+
+@app.route("/game/start/ready", methods=["GET"])
 @requires_auth
 def begin_game():
-    table = db.query(User, Game, Player).filter_by(email=g.current_user["email"]).\
-                                         filter_by(userId=User.id).\
-                                         filter_by(gameId=Game.id).\
-                                         filter_by(started=False).first()
+    table = (Player.query.join(User).join(Game).
+             filter_by(email=g.current_user["email"]).
+             filter_by(started=False)).first()
     player = Player.query.filter(gameId=table.gameId, userId=table.userId)
     player.ready = True
     db.session.add(player)
@@ -110,6 +119,7 @@ def begin_game():
         print(e)
         return jsonify(message="There was an error"), 501
 
+    print("User: " + player.userId + " Game: " + player.gameId + " Ready: " + player.ready)
     players = Player.query.filter_by(gameId=table.gameId).all()
 
     # IF EVERY PLAYER IS READY, AND THERE ARE AT LEAST 3, THEN THE GAME STARTS, OTHERWISE THE GAME WAITS:
