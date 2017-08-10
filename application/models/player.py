@@ -3,9 +3,8 @@ from index import db
 
 class Player(db.Model):
     __tablename__ = 'player'
-    id = db.Column(db.Integer(), primary_key=True)
-    gameId = db.Column(db.Integer, db.ForeignKey('game.id'))
-    userId = db.Column(db.Integer, db.ForeignKey('user.id'))
+    gameId = db.Column(db.Integer, db.ForeignKey('game.id'), primary_key=True)
+    userId = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
 
     wood = db.Column(db.Integer, default=0)
     brick = db.Column(db.Integer, default=0)
