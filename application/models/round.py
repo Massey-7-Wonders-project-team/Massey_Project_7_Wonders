@@ -11,6 +11,6 @@ class Round(db.Model):
     gameId = db.Column(db.Integer, primary_key=True)
     cardName = db.Column(db.String(50), primary_key=True)
     cardNoPlayers = db.Column(db.Integer, primary_key=True)
-    __table_args__ = (db.ForeignKeyConstraint([cardName, cardNoPlayers], [Card.name, Card.noPlayers]),
+    __table_args__ = (db.ForeignKeyConstraint([cardName, cardNoPlayers, age], [Card.name, Card.noPlayers, Card.age]),
                       db.ForeignKeyConstraint([userId, gameId], [Player.userId, Player.gameId]), {})
 
