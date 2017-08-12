@@ -4,7 +4,7 @@ class GameScreen extends React.Component { // eslint-disable-line react/prefer-s
 
     componentDidMount() {
         const token = localStorage.getItem('token');
-        fetch(`/api/game/status?game_id=${this.props.gameId}`, {
+        fetch(`/api/game/status?player_id=${this.props.playerId}`, {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -17,7 +17,7 @@ class GameScreen extends React.Component { // eslint-disable-line react/prefer-s
         .then((body) => {
             // do something
             console.log(body);
-            if (body.game_id) {
+            if (body.player_id) {
                 this.setState({
                     game: true,
                     error: false,
