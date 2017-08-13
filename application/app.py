@@ -126,10 +126,14 @@ def game_status():
     try:
         game_id = request.args.get('game_id')
         game = Game.query.filter_by(gameId = game_id)
+        handId = db.Column(db.Integer, primary_key=True)
+        userId = db.Column(db.Integer, db.ForeignKey('user.id'))
+        moveSubmitted = db.Column(db.Boolean, default=False)
 
         if (game.started == False):
             return jsonify(status="Waiting")
         else:
+            #Cards=Hand.dealAge()  # <- dont know if this works?
             # Game has started return full game state
             return jsonify(
                 status="Started"
