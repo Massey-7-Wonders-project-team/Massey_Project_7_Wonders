@@ -20,3 +20,21 @@ class Player(db.Model):
     points = db.Column(db.Integer, default=0)
     military = db.Column(db.Integer, default=0)
     money = db.Column(db.Integer, default=3)
+
+    def serialise(self):
+        return {
+            'id':self.id,
+            'gameId':self.gameId,
+            'userId':self.userId,
+            'ready':self.ready,
+            'wood':self.wood,
+            'brick':self.brick,
+            'ore':self.ore,
+            'stone':self.stone,
+            'glass':self.glass,
+            'paper':self.paper,
+            'cloth':self.cloth,
+            'points':self.points,
+            'military':self.military,
+            'money':self.money
+        }

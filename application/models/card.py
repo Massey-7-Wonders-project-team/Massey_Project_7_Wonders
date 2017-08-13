@@ -38,6 +38,36 @@ class Card(db.Model):
         self.noPlayers = noPlayers
         self.age = age
         self.colour = colour
+
+    def serialise(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'noPlayers': self.noPlayers,
+            'age': self.age,
+            'colour': self.colour,
+            'costWood': self.costWood,
+            'costBrick': self.costBrick,
+            'costOre': self.costOre,
+            'costStone': self.costStone,
+            'costGlass': self.costGlass,
+            'costPaper': self.costPaper,
+            'costCloth': self.costCloth,
+            'prerequisite1': self.prerequisite1,
+            'prerequisite2': self.prerequisite2,
+            'giveWood': self.giveWood,
+            'giveBrick': self.giveBrick,
+            'giveOre': self.giveOre,
+            'giveStone': self.giveStone,
+            'giveGlass': self.giveGlass,
+            'givePaper': self.givePaper,
+            'giveCloth': self.giveCloth,
+            'resourceAlternating': self.resourceAlternating,
+            'givePoints': self.givePoints,
+            'giveMilitary': self.giveMilitary,
+            'giveMoney': self.giveMoney,
+            'giveResearch': self.giveResearch
+        }
     
     def set_cost_money(self, money):
         self.costMoney = money
