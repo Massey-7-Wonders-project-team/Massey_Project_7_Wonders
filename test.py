@@ -9,7 +9,7 @@ def main():
     argv = []
 
     argv.extend(sys.argv[1:])
-    print argv
+    print(argv)
     pytest.main(argv)
 
     try:

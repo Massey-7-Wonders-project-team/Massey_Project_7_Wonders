@@ -16,8 +16,9 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(actionCreators, dispatch);
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
-class Play extends React.Component {
+// we must export the class for testing. Then also default export the class
+// at the end of the file which is used for the actual production render
+export class Play extends React.Component {
 
     constructor() {
         super();
