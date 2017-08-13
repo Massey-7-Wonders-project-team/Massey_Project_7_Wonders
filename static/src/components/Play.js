@@ -55,7 +55,7 @@ export class Play extends React.Component {
             } else {
                 this.setState({
                     game: false,
-                    error: true,
+                    error: false,
                 });
             }
         })
@@ -110,7 +110,7 @@ export class Play extends React.Component {
     render() {
         const { game, error, playerId } = this.state;
         return (
-            <div className="Game col-md-8">
+            <div className="Game col-md-12">
                 <h1>Play</h1>
                 <hr />
                 {error &&
@@ -118,7 +118,7 @@ export class Play extends React.Component {
                 }
                 {!game &&
                     <RaisedButton
-                        label="Create Game"
+                        label="Create/Join Game"
                         onClick={() => this.createGame()}
                     />
                 }
