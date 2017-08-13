@@ -4,6 +4,8 @@ from .models.game import Game
 from .models.card import Card
 from .models.player import Player
 from .models.round import Round
+from .controllers.state import *
+from .controllers.logic import *
 from index import app, db
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
@@ -74,9 +76,13 @@ def is_token_valid():
 def check_game():
     """ Check if a user has already joined a game """
     player = (Player.query.join(User).filter_by(email=g.current_user["email"])
-            .join(Game).filter_by(started=False)).first()
+              .join(Game).filter_by(started=False)).first()
 
-    print(player)
+    if player is None:
+        return jsonify(
+            status="Need to join game"
+        )
+
     return jsonify(
         player_id=player.id
     )
@@ -123,25 +129,25 @@ def game_status():
     """ Send the status of a game """
     # firstly check game has started
     try:
-<<<<<<< HEAD
-        game_id = request.args.get('game_id')
-        game = Game.query.filter_by(gameId = game_id)
-        handId = db.Column(db.Integer, primary_key=True)
-        userId = db.Column(db.Integer, db.ForeignKey('user.id'))
-        moveSubmitted = db.Column(db.Boolean, default=False)
-=======
         player_id = request.args.get('player_id')
         player = Player.query.filter_by(id=player_id).first()
         game = Game.query.filter_by(id=player.gameId).first()
->>>>>>> master
+        cards = (Round.query
+                 .filter_by(playerId=player.id)
+                 .filter_by(age=game.age)
+                 .filter_by(round=game.round)
+                 .join(Card)).all()
 
-        if (game.started == False):
+        if not game.started:
             return jsonify(status="Waiting")
         else:
             #Cards=Hand.dealAge()  # <- dont know if this works?
             # Game has started return full game state
+
+
             return jsonify(
-                status="Started"
+                status="Started",
+                game=print_json(player, cards)
             )
 
     except Exception as e:
@@ -173,13 +179,36 @@ def begin_game():
         game = Game.query.filter_by(id=player.gameId).first()
         game.started = True
         db.add(game)
+        deal_hands(1, players)
+        cards = Round.query.join(Card).filter_by(playerId=player.id).all()
         try:
             db.session.commit()
         except Exception as e:
             print(e)
             return jsonify(message="There was an error"), 501
-        return jsonify(status="Starting")
-        #dealHands(table.gameId, 1) TODO
+        return jsonify(
+            status="Starting",
+            game=print_json(player, cards)
+        )
+
     else:
         return jsonify(status="Waiting")
 
+@app.route("/api/game/play_card", methods=["GET"])
+@requires_auth
+def play_card():
+    player_id = request.args.get('player_id')
+    card_id = request.args.get('card_id')
+    discarded = request.args.get('discarded')
+    player = Player.query.filter(id=player_id).first()
+    card = Card.query.filter(id=card_id).first()
+
+    if process_card(card, player, discarded, False):
+        return jsonify(status="Card played")
+    else:
+        game = Game.query.filter_by(id=player.gameId).first()
+        cards = Round.query.filter_by(playerId=player.id, age=game.age, round=game.round).all()
+        return jsonify(
+            status="Invalid move",
+            game=print_json(player, cards)
+        )
