@@ -10,6 +10,9 @@ class Player(db.Model):
     userId = db.Column(db.Integer, db.ForeignKey('user.id'))
     ready = db.Column(db.Boolean, default=False)
 
+    left_id = db.Column(db.Integer)
+    right_id = db.Column(db.Integer)
+
     wood = db.Column(db.Integer, default=0)
     brick = db.Column(db.Integer, default=0)
     ore = db.Column(db.Integer, default=0)
