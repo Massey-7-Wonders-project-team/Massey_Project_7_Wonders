@@ -48,6 +48,7 @@
     "bootstrap-sass": "^3.3.6",
     "bootstrap-webpack": "0.0.5",
     "classnames": "^2.2.3",
+    "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.26.1",
     "csswring": "^5.1.0",
     "deep-equal": "^1.0.1",
