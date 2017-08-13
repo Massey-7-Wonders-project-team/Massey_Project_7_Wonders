@@ -14,9 +14,13 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def create_db():
     """Creates the db tables."""
-    db.drop_all()
     db.create_all()
     db_populate_cards(app, db)
+
+@manager.command
+def drop_db():
+    """Use when rebuilding DB."""
+    db.drop_all()
 
 if __name__ == '__main__':
     manager.run()

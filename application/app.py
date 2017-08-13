@@ -78,7 +78,7 @@ def check_game():
 
     print(player)
     return jsonify(
-        game_id=player.gameId
+        player_id=player.id
     )
 
 @app.route("/api/game/create", methods=["GET"])
@@ -113,7 +113,7 @@ def create_game():
         return jsonify(message="There was an error"), 501
 
     return jsonify(
-        game_id=game.id,
+        player_id=player.id,
         players=player_count
     )
 
@@ -121,14 +121,19 @@ def create_game():
 @requires_auth
 def game_status():
     """ Send the status of a game """
-
     # firstly check game has started
     try:
+<<<<<<< HEAD
         game_id = request.args.get('game_id')
         game = Game.query.filter_by(gameId = game_id)
         handId = db.Column(db.Integer, primary_key=True)
         userId = db.Column(db.Integer, db.ForeignKey('user.id'))
         moveSubmitted = db.Column(db.Boolean, default=False)
+=======
+        player_id = request.args.get('player_id')
+        player = Player.query.filter_by(id=player_id).first()
+        game = Game.query.filter_by(id=player.gameId).first()
+>>>>>>> master
 
         if (game.started == False):
             return jsonify(status="Waiting")
@@ -146,10 +151,8 @@ def game_status():
 @app.route("/api/game/start", methods=["GET"])
 @requires_auth
 def begin_game():
-    table = (Player.query.join(User).join(Game).
-             filter_by(email=g.current_user["email"]).
-             filter_by(started=False)).first()
-    player = Player.query.filter(gameId=table.gameId, userId=table.userId)
+    player_id = request.args.get('player_id')
+    player = Player.query.filter(id=player_id)
     player.ready = True
     db.session.add(player)
 
@@ -159,19 +162,15 @@ def begin_game():
         print(e)
         return jsonify(message="There was an error"), 501
 
-    print("User: " + player.userId + " Game: " + player.gameId + " Ready: " + player.ready)
-    players = Player.query.filter_by(gameId=table.gameId).all()
+    print("Player: " + player.id + " Ready: " + player.ready)
+    players = Player.query.filter_by(gameId=player.gameId).all()
 
     # IF EVERY PLAYER IS READY, AND THERE ARE AT LEAST 3, THEN THE GAME STARTS, OTHERWISE THE GAME WAITS:
     if len(players) > 2:
         for p in players:
             if p.ready == False:
-                flash("Please wait for other players")
-                return jsonify(
-                    game_id=table.gameId,
-                )
-        flash("Game starting")
-        game = Game.query.filter_by(id=table.gameId).first()
+                return jsonify(status="Waiting")
+        game = Game.query.filter_by(id=player.gameId).first()
         game.started = True
         db.add(game)
         try:
@@ -179,12 +178,8 @@ def begin_game():
         except Exception as e:
             print(e)
             return jsonify(message="There was an error"), 501
-        return jsonify(
-            game_id=table.gameId,
-        ) #dealHands(table.gameId, 1) TODO
-
+        return jsonify(status="Starting")
+        #dealHands(table.gameId, 1) TODO
     else:
-        flash("Please wait for other players")
-        return jsonify(
-            game_id=table.gameId,
-        )
+        return jsonify(status="Waiting")
+

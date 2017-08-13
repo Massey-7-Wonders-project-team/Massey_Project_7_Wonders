@@ -16,15 +16,16 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(actionCreators, dispatch);
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
-class Play extends React.Component {
+// we must export the class for testing. Then also default export the class
+// at the end of the file which is used for the actual production render
+export class Play extends React.Component {
 
     constructor() {
         super();
         this.state = {
             game: false,
             error: false,
-            gameId: null,
+            playerId: null,
         };
         this.createGame = this.createGame.bind(this);
     }
@@ -45,11 +46,11 @@ class Play extends React.Component {
         .then((body) => {
             // do something
             console.log(body);
-            if (body.game_id) {
+            if (body.player_id) {
                 this.setState({
                     game: true,
                     error: false,
-                    gameId: body.game_id,
+                    playerId: body.player_id,
                 });
             } else {
                 this.setState({
@@ -84,10 +85,18 @@ class Play extends React.Component {
         .then((body) => {
             // do something
             console.log(body);
-            this.setState({
-                game: true,
-                error: false,
-            });
+            if (body.player_id) {
+                this.setState({
+                    game: true,
+                    error: false,
+                    playerId: body.player_id,
+                });
+            } else {
+                this.setState({
+                    game: false,
+                    error: true,
+                });
+            }
         })
         .catch((err) => {
             // catch error
@@ -99,7 +108,7 @@ class Play extends React.Component {
         });
     }
     render() {
-        const { game, error, gameId } = this.state;
+        const { game, error, playerId } = this.state;
         return (
             <div className="Game col-md-8">
                 <h1>Play</h1>
@@ -114,7 +123,7 @@ class Play extends React.Component {
                     />
                 }
                 {game &&
-                    <GameScreen gameId={gameId} />
+                    <GameScreen playerId={playerId} />
                 }
             </div>
         );

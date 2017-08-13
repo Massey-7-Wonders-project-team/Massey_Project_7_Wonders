@@ -3,9 +3,10 @@ from index import db
 
 class Card(db.Model):
     __tablename__ = 'card'
-    name = db.Column(db.String(50), primary_key=True)
-    noPlayers = db.Column(db.Integer, primary_key=True)
-    age = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    noPlayers = db.Column(db.Integer)
+    age = db.Column(db.Integer)
     colour = db.Column(db.String(10))
 
     costMoney = db.Column(db.Integer, default=0)
@@ -58,7 +59,7 @@ class Card(db.Model):
         self.prerequisite1 = prereq
     def set_prerequisite_2(self, prereq):
         self.prerequisite2 = prereq
-    
+
     def set_benefit_wood(self, wood):
         self.giveWood = wood
     def set_benefit_brick(self, brick):
