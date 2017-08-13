@@ -75,10 +75,7 @@ def is_token_valid():
 @requires_auth
 def check_game():
     """ Check if a user has already joined a game """
-    #we return the first one. Even if game has started we should still
-    #return the playerid so the user can continue there game
-    # we need to extend this further has more games are created
-    player = Player.query.join(User).filter_by(email=g.current_user["email"]).first()
+    player = Player.query.join(User).filter_by(email=g.current_user["email"]).join(Game).filter_by(complete=False).first()
 
     if player is None:
         return jsonify(
