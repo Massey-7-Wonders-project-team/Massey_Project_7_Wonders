@@ -8,15 +8,15 @@ import random
 
 
 def deal_hands(age, players):
-    cards = Card.query.filter_by(Card.noPlayers <= len(players)).filter_by(age=age).all()
-    print("Number of cards drawn are: " + len(cards))
+    cards = Card.query.filter(Card.noPlayers <= len(players)).filter_by(age=age).all()
 
     for player in players:
         for j in range(7):
-            card = cards.pop(random.len(cards))
-            dealt_card = round(age=age, round=1, playerId=player.id, cardId=card.id)
-            db.add(dealt_card)
-    db.commit_all()
+            param = random.randint(0, len(cards)-1)
+            card = cards.pop(param)
+            dealt_card = Round(age=age, roundNum=1, playerId=player.id, cardId=card.id)
+            db.session.add(dealt_card)
+    db.session.commit()
 
 """
 def check_move (card, player, is_discarded, for_wonder):
@@ -116,4 +116,3 @@ def process_card(card, player, is_discarded, for_wonder):
 
     db.add(game_info)
     db.commit_all()
-

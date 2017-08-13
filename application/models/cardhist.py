@@ -5,6 +5,7 @@ from .card import Card
 
 class Cardhist(db.Model):
     __tablename__ = 'cardhist'
-    playerId = db.Column(db.Integer, db.ForeignKey('player.id'), primary_key=True)
-    cardId = db.Column(db.Integer, db.ForeignKey('card.id'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    playerId = db.Column(db.Integer, db.ForeignKey('player.id'))
+    cardId = db.Column(db.Integer, db.ForeignKey('card.id'))
     discarded = db.Column(db.Boolean, default=False)

@@ -64,6 +64,10 @@ const common = {
         }, {
             test: /\.jpg$/,
             loader: 'file?name=[name].[ext]',
+        },
+        {
+            test: /\.(jpe?g|png|gif)$/i,
+            loader: 'file?name=[name].[ext]',
         }],
     },
 

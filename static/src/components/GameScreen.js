@@ -1,25 +1,19 @@
 import React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
-import {GridList, GridTitle} from 'material-ui/GridList';
-import IconButton from 'material-ui/IconButton';
-import FlatButton from 'material-ui/FlatButton';
-import cards from '../Components';
-const styles = {
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-  },
-  gridList: {
-    display: 'flex',
-    flexWrap: 'nowrap',
-    overflowX: 'auto',
-  },
-  titleStyle: {
-    color: 'rgb(0, 188, 212)',
-  },
-};
+import { RaisedButton, CardActions, FlatButton, Card, CardText, CardMedia, CardTitle } from 'material-ui';
+
 export class GameScreen extends React.Component {
+
+    constructor() {
+        super();
+        this.state = {
+            error: false,
+            playerId: null,
+            game: null,
+            started: false,
+        };
+        this.startGame = this.startGame.bind(this);
+    }
+
     componentDidMount() {
         const token = localStorage.getItem('token');
         fetch(`/api/game/status?player_id=${this.props.playerId}`, {
@@ -29,26 +23,24 @@ export class GameScreen extends React.Component {
                 'Accept': 'application/json', // eslint-disable-line quote-props
                 'Content-Type': 'application/json',
                 Authorization: token,
-            }
+            },
         })
         .then(response => response.json())
         .then((body) => {
             // do something
             console.log(body);
-            if (body.player_id) {
+            if (body.status === 'Started') {
                 this.setState({
-                    game: true,
                     error: false,
+                    game: body.game,
+                    playerId: this.props.playerId,
+                    started: true,
                 });
             } else {
                 this.setState({
-                    game: false,
-                    error: true,
+                    error: false,
                 });
             }
-          var user_Cards = body.userId.cards; //gets infromation needed for hand of cards
-          var userId = body.userId;
-          var gameId = body.gameId;
         })
         .catch((err) => {
             // catch error
@@ -57,89 +49,91 @@ export class GameScreen extends React.Component {
                 game: false,
                 error: true,
             });
-          });
-        }
+        });
+    }
 
-    selectedCard(card){
-      var selected_card=card;
-    }; //gets selected card
-    playcard(card){
-      this.game.checkMove(card,userId);
-      this.game.playCard(card,userId);
-    }; //plays card to users wonderbard
-    discard(card){
-      this.game.discardCard(card,user);
-    }; //discard card for 3 coins
-    const cardsData=[           //list of cards and names for Hand
-      {img:'/cards/'+user_Cards[0].name+'.png',
-      title:user_Cards[0].name,
-      author:user_Cards[0]},
-      {img:'/cards/'+user_Cards[1].name+'.png'
-      title:user_Cards[1].name,
-      author:user_Cards[1]},
-      {img:'/cards/'+user_Cards[2].name+'.png',
-      title:user_Cards[2].name,
-      author:user_Cards[2]},
-      {img:'/cards/'+user_Cards[3].name+'.png',
-      title:user_Cards[3].name,
-      author:user_Cards[3]}.
-      {img:'/cards/'+user_Cards[4].name+'.png',
-      title:user_Cards[4].name,
-      author:user_Cards[4]},
-      {img:'/cards/'+user_Cards[5].name+'.png',
-      title:user_Cards[5].name,
-      author:user_Cards[5]},
-      {img:'/cards/'+user_Cards[6].name+'.png',
-      title:user_Cards[6].name,
-      author:user_Cards[6]},
-    ];
+    startGame() {
+        const token = localStorage.getItem('token');
+        fetch(`/api/game/start?player_id=${this.props.playerId}`, {
+            method: 'get',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json', // eslint-disable-line quote-props
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+        })
+        .then(response => response.json())
+        .then((body) => {
+            // do something
+            console.log(body);
+            if (body.game) {
+                this.setState({
+                    error: false,
+                    game: body.game,
+                    started: true,
+
+                });
+            } else {
+                this.setState({
+                    error: false,
+                    game: false,
+                });
+            }
+        })
+        .catch((err) => {
+            // catch error
+            console.log(err);
+            this.setState({
+                game: false,
+                error: true,
+            });
+        });
+    }
+
     render() {
-
+        const { error, game, started } = this.state;
         return (
-          const gridList = () =>(
-            <div style={styles.root}>
-              <GridList style={styles.gridList} cols={2.2}>
-                {cardsData.map((tile) => (
-                  <GridTile
-                    key={tile.img}
-                    title={tile.title}
-                    <RadioButton
-                    value='simple'
-                    label='Select'
-                    onChange(selectedCard(tile.author))
+            <div>
+                {game && !error && started &&
+                    <div>
+                        {
+                            game.cards.map((card) => {
+                                console.log(card);
+                                const imageName = (card.card.name).replace(/\s+/g, '').toLowerCase();
+                                return (
+                                    <Card key={card.id} style={{ display: 'inline-block' }}>
+                                        <CardTitle title={card.card.name} />
+                                        <CardMedia>
+                                            <img alt="" src={`src/components/cards/${imageName}.png`} />
+                                        </CardMedia>
+                                        <CardText>
+                                            <p>Discription of what card does</p>
+                                        </CardText>
+                                        <CardActions>
+                                            <FlatButton label="Play Card" />
+                                            <FlatButton label="Discard" />
+                                        </CardActions>
+                                    </Card>
+                                );
+                            })
+                        }
+                    </div>
+                }
+                {!error && !game && !started &&
+                    <RaisedButton
+                        label="I am ready"
+                        onClick={() => this.startGame()}
                     />
-                    titleStyle={styles.titleStyle}
-                    titleBackground="linear-gradient(to top, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
-                  >
-                    <img src={tile.img} />
-                  </GridTile>
-                ))}
-              </GridList>
+                }
+                {!error && !game &&
+                    <p>Waiting on more players...</p>
+                }
+                {error &&
+                    <p>There was an error</p>
+                }
             </div>
-          );
-          const Card_selected = () => ( ///With Avatar to be added later
-          <Card>
-            <CardHeader
-              ///title="Avatar"
-              ///avatar="images/jsa-128.jpg"
-            />
-            <CardMedia
-              overlay={<CardTitle title=selected_card.name/>}
-            >
-              <img src='/cards/'+selected_card.name+'.png'/>
-            </CardMedia>
-            <CardText>
-            "Discription of what card does"
-            </CardText>
-            <CardActions>
-              <FlatButton label="Play Card"
-               onClick={playcard(selected_card)}/>
-              <FlatButton label="Discard +$"
-               onClick={discard(selected_card)}/>
-            </CardActions>
-          </Card>
         );
-      );
     }
 }
 
