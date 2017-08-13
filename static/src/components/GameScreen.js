@@ -94,7 +94,7 @@ export class GameScreen extends React.Component {
     render() {
         const { error, game, started } = this.state;
         return (
-            <div style={styles.root}>
+            <div>
                 {game && !error && started &&
                     <div>
                         {
