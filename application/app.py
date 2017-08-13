@@ -141,6 +141,10 @@ def game_status():
         if not game.started:
             return jsonify(status="Waiting")
         else:
+            #Cards=Hand.dealAge()  # <- dont know if this works?
+            # Game has started return full game state
+
+
             return jsonify(
                 status="Started",
                 game=print_json(player, cards)
