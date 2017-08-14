@@ -1,5 +1,8 @@
+/* eslint import/no-extraneous-dependencies: "off" */
+
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     devtool: 'source-map',
@@ -32,9 +35,10 @@ module.exports = {
                 warnings: false,
             },
         }),
+        new CopyWebpackPlugin([{ from: './src/images', to: 'images' }]),
         new webpack.ProvidePlugin({
             jQuery: 'jquery',
-            $: "jquery",
+            $: 'jquery',
         }),
     ],
 };
