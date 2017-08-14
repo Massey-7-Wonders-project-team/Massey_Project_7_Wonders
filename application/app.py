@@ -169,7 +169,7 @@ def begin_game():
         return jsonify(message="There was an error"), 501
 
     # print("Player: " + player.id + " Ready: " + player.ready)
-    players = Player.query.filter_by(gameId=player.gameId).all()
+    players = Player.query.filter_by(gameId=player.gameId).order_by(id).all()
     print(players);
     # IF EVERY PLAYER IS READY, AND THERE ARE AT LEAST 3, THEN THE GAME STARTS, OTHERWISE THE GAME WAITS:
     if len(players) > 2:
@@ -180,6 +180,7 @@ def begin_game():
         game = Game.query.filter_by(id=player.gameId).first()
         game.started = True
         db.session.add(game)
+        set_neighbours(players)
         deal_hands(1, players)
 
         cards = Round.query.filter_by(playerId=player.id).join(Card).all()
