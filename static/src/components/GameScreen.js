@@ -105,7 +105,7 @@ export class GameScreen extends React.Component {
                                     <Card key={card.id} style={{ display: 'inline-block' }}>
                                         <CardTitle title={card.card.name} />
                                         <CardMedia>
-                                            <img alt="" src={`/images/cards/${imageName}.png`} />
+                                            <img alt="" src={`dist/images/cards/${imageName}.png`} />
                                         </CardMedia>
                                         <CardText>
                                             <p>Discription of what card does</p>
