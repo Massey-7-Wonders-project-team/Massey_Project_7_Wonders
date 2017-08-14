@@ -18,6 +18,20 @@ def deal_hands(age, players):
             db.session.add(dealt_card)
     db.session.commit()
 
+
+def set_neighbours(players):
+    num_players = len(players)
+    i = num_players
+
+    for player in players:
+        player.left_id = players[(i-1) % num_players].id
+        player.right_id = players[(i+1) % num_players].id
+        db.session.add(player)
+        i += 1
+
+    db.session.commit()
+
+
 """
 def check_move (card, player, is_discarded, for_wonder):
 
@@ -48,7 +62,7 @@ def process_card(card, player, is_discarded, for_wonder):
         player.money += 3
 
         history = Cardhist(playerId=player.id, cardId=card.id, discarded=True)
-        db.add(history)
+        db.session.add(history)
 
     else:
         if card.colour == 'brown':
@@ -66,7 +80,7 @@ def process_card(card, player, is_discarded, for_wonder):
         player.points += card.givePoints
 
         history = Cardhist(playerId=player.id, cardId=card.id, discarded=False)
-        db.add(history)
+        db.session.add(history)
 
 
     #############
@@ -89,10 +103,10 @@ def process_card(card, player, is_discarded, for_wonder):
 
     for unplayed in old_round:
         next_round = round(playerId=next_player, age=age, round=round_number+1, cardId=unplayed.id)
-        db.add(next_round)
+        db.session.add(next_round)
 
-    db.add(player)
-    db.commit_all()
+    db.session.add(player)
+    db.session.commit()
 
 
     #########################
@@ -114,5 +128,5 @@ def process_card(card, player, is_discarded, for_wonder):
         else:
             deal_hands(game_info.age, players)
 
-    db.add(game_info)
-    db.commit_all()
+    db.session.add(game_info)
+    db.session.commit()
