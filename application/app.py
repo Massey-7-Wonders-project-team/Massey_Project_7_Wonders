@@ -176,8 +176,9 @@ def begin_game():
     # Checks if game can begin #
     ############################
     players = Player.query.filter_by(gameId=player.gameId).order_by(id).all()
-    if len(players) > 2:
-        if len(players) < 7:
+    player_count = len(players)
+    if player_count > 2:
+        if player_count < 7:
             for p in players:
                 if p.ready == False:
                     print("Players not ready")
