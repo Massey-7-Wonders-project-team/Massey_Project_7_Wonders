@@ -9,10 +9,6 @@ import random
 
 def deal_hands(age, players):
     """Call to have the next age's hands dealt"""
-    if (age not in range(1, 4)) or (len(players) not in range(3, 8)):
-        print("Invalid call, age: " + age + " Number of players: " + len(players))
-        return False
-
     cards = Card.query.filter(Card.noPlayers <= len(players)).filter_by(age=age).all()
     if len(cards) is not 7*len(players):
         print("Incorrect number of cards in age: " + age + " Number of players: " + len(players))
