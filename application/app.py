@@ -107,7 +107,6 @@ def create_game():
     # Creates and commits new player, binds to the current game and user
     player = Player(gameId=game.id, userId=user.id)
     db.session.add(player)
-
     player_count = len(Player.query.filter_by(gameId=game.id).all())
 
     try:
@@ -124,7 +123,11 @@ def create_game():
 @app.route("/api/game/status", methods=["GET"])
 @requires_auth
 def game_status():
-    """ Send the status of a game """
+    """ Send the status of a game
+     Inputs - player_id, (later) is_owned_by_player (bool)
+     Output
+        Game not started - status comment, playerCount
+        Game started - status comment, game (player, cards), playerCount """
     # firstly check game has started
     try:
         player_id = request.args.get('player_id')
@@ -138,12 +141,7 @@ def game_status():
                 playerCount=player_count
             )
         else:
-            cards = (Round.query
-                     .filter_by(playerId=player.id)
-                     .filter_by(age=game.age)
-                     .filter_by(round=game.round)
-                     .join(Card)).all()
-            # Game has started return full game state
+            cards = (Round.query.filter_by(playerId=player.id, age=game.age, round=game.round).join(Card)).all()
             return jsonify(
                 status="Started",
                 game=print_json(player, cards),
@@ -157,34 +155,45 @@ def game_status():
 @app.route("/api/game/start", methods=["GET"])
 @requires_auth
 def begin_game():
+    """This endpoint is for once a player is ready to start. Will begin a game if all players (3+) 
+    are ready or there are 7 players
+    Inputs - player_id
+    Outputs -
+        Game not started - status comment
+        Game started - status comment, game (player, cards)"""
     player_id = request.args.get('player_id')
     player = Player.query.filter_by(id=player_id).first()
     player.ready = True
-    db.session.add(player)
 
     try:
+        db.session.add(player)
         db.session.commit()
     except Exception as e:
         print(e)
         return jsonify(message="There was an error"), 501
 
-    # print("Player: " + player.id + " Ready: " + player.ready)
+    ############################
+    # Checks if game can begin #
+    ############################
     players = Player.query.filter_by(gameId=player.gameId).order_by(id).all()
-    print(players);
-    # IF EVERY PLAYER IS READY, AND THERE ARE AT LEAST 3, THEN THE GAME STARTS, OTHERWISE THE GAME WAITS:
     if len(players) > 2:
-        for p in players:
-            if p.ready == False:
-                print("Players not ready")
-                return jsonify(status="Waiting")
+        if len(players) < 7:
+            for p in players:
+                if p.ready == False:
+                    print("Players not ready")
+                    return jsonify(status="Waiting")
+        # Game can begin
         game = Game.query.filter_by(id=player.gameId).first()
         game.started = True
-        db.session.add(game)
+
+        # Sets up neighbours and first round
         set_neighbours(players)
         deal_hands(1, players)
 
+        # DB update and begin game
         cards = Round.query.filter_by(playerId=player.id).join(Card).all()
         try:
+            db.session.add(game)
             db.session.commit()
         except Exception as e:
             print(e)
@@ -201,6 +210,9 @@ def begin_game():
 @app.route("/api/game/play_card", methods=["GET"])
 @requires_auth
 def play_card():
+    """Endpoint for all card playing actions
+    Inputs - player_id, card_id, discarded (bool), and (later on) for_wonder(bool)
+    Outputs - status comment"""
     player_id = request.args.get('player_id')
     card_id = request.args.get('card_id')
     discarded = request.args.get('discarded')
