@@ -31,7 +31,7 @@ class Player(db.Model):
             'userId':self.userId,
             'ready':self.ready,
             'left_id':self.left_id,
-            'right_id':self.right.id,
+            'right_id':self.right_id,
             'wood':self.wood,
             'brick':self.brick,
             'ore':self.ore,
