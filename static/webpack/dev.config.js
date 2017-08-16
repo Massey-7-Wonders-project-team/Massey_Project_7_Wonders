@@ -6,7 +6,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
     devtool: 'cheap-module-eval-source-map',
     entry: [
-        'bootstrap-loader',
         'webpack-hot-middleware/client',
         './src/index',
     ],
@@ -33,9 +32,5 @@ module.exports = {
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin(),
         new CopyWebpackPlugin([{ from: './src/images' }]),
-        new webpack.ProvidePlugin({
-            jQuery: 'jquery',
-            $: 'jquery',
-        }),
     ],
 };

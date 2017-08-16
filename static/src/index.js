@@ -9,9 +9,6 @@ import configureStore from './store/configureStore';
 import routes from './routes';
 import './style.scss';
 
-require('expose?$!expose?jQuery!jquery');
-require('bootstrap-webpack');
-
 injectTapEventPlugin();
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);

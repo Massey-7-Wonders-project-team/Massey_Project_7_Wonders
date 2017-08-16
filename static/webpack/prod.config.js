@@ -7,8 +7,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
     devtool: 'source-map',
 
-    entry: ['bootstrap-loader/extractStyles'],
-
     output: {
         publicPath: 'dist/',
     },
@@ -36,9 +34,5 @@ module.exports = {
             },
         }),
         new CopyWebpackPlugin([{ from: './src/images', to: 'images' }]),
-        new webpack.ProvidePlugin({
-            jQuery: 'jquery',
-            $: 'jquery',
-        }),
     ],
 };
