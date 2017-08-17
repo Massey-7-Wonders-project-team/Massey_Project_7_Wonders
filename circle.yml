@@ -1,0 +1,21 @@
+machine:
+    python:
+        version: 3.5.1
+    node:
+        version: v6.1.0
+
+dependencies:
+    post:
+        - pip install -r requirements.txt
+
+test:
+    override:
+        - python test.py tests/
+    post:
+        - npm run test
+
+deployment:
+  staging:
+    branch: master
+    heroku:
+      appname: massey7wonders

@@ -7,8 +7,6 @@ const proxy = httpProxy.createProxyServer({});
 
 const app = express();
 
-app.use(require('morgan')('short'));
-
 (function initWebpack() {
     const webpack = require('webpack');
     const webpackConfig = require('./webpack/common.config');
