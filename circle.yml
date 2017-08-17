@@ -13,9 +13,3 @@ test:
         - python test.py tests/
     post:
         - npm run test
-
-deployment:
-  staging:
-    branch: master
-    heroku:
-      appname: massey7wonders
