@@ -1,105 +1,65 @@
-import React from 'react';
+import React, { PropTypes, Component } from 'react';
 import { RaisedButton, CardActions, FlatButton, Card, CardText, CardMedia, CardTitle } from 'material-ui';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../actions/game';
+import { poll } from '../utils/misc';
 
-export class GameScreen extends React.Component {
+function mapStateToProps(state) {
+    return {
+        game: state.game.game,
+        started: state.game.started,
+        error: state.game.error,
+        loading: state.game.loading,
+        playerCount: state.game.playerCount,
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators(actions, dispatch);
+}
+
+export class GameScreen extends Component {
 
     constructor() {
         super();
         this.state = {
-            error: false,
-            playerId: null,
-            game: null,
-            started: false,
+            polling: false,
         };
         this.startGame = this.startGame.bind(this);
+        this.pollGameStatus = this.pollGameStatus.bind(this);
     }
 
     componentDidMount() {
-        const token = localStorage.getItem('token');
-        fetch(`/api/game/status?player_id=${this.props.playerId}`, {
-            method: 'get',
-            credentials: 'include',
-            headers: {
-                'Accept': 'application/json', // eslint-disable-line quote-props
-                'Content-Type': 'application/json',
-                Authorization: token,
-            },
-        })
-        .then(response => response.json())
-        .then((body) => {
-            // do something
-            console.log(body);
-            if (body.status === 'Started') {
-                this.setState({
-                    error: false,
-                    game: body.game,
-                    playerId: this.props.playerId,
-                    started: true,
-                });
-            } else {
-                this.setState({
-                    error: false,
-                });
-            }
-        })
-        .catch((err) => {
-            // catch error
-            console.log(err);
+        this.props.checkGameStatus(this.props.playerId);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.started && !this.state.polling) {
             this.setState({
-                game: false,
-                error: true,
+                polling: true,
             });
-        });
+            this.pollGameStatus();
+        }
+    }
+
+    pollGameStatus() {
+        poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
     }
 
     startGame() {
-        const token = localStorage.getItem('token');
-        fetch(`/api/game/start?player_id=${this.props.playerId}`, {
-            method: 'get',
-            credentials: 'include',
-            headers: {
-                'Accept': 'application/json', // eslint-disable-line quote-props
-                'Content-Type': 'application/json',
-                Authorization: token,
-            },
-        })
-        .then(response => response.json())
-        .then((body) => {
-            // do something
-            console.log(body);
-            if (body.game) {
-                this.setState({
-                    error: false,
-                    game: body.game,
-                    started: true,
-
-                });
-            } else {
-                this.setState({
-                    error: false,
-                    game: false,
-                });
-            }
-        })
-        .catch((err) => {
-            // catch error
-            console.log(err);
-            this.setState({
-                game: false,
-                error: true,
-            });
-        });
+        this.props.startGame(this.props.playerId);
     }
 
     render() {
-        const { error, game, started } = this.state;
+        const { error, game, started, playerCount } = this.props;
+
         return (
             <div>
                 {game && !error && started &&
                     <div>
                         {
                             game.cards.map((card) => {
-                                console.log(card);
                                 const imageName = (card.card.name).replace(/\s+/g, '').toLowerCase();
                                 return (
                                     <Card key={card.id} style={{ display: 'inline-block' }}>
@@ -127,7 +87,7 @@ export class GameScreen extends React.Component {
                     />
                 }
                 {!error && !game &&
-                    <p>Waiting on more players...</p>
+                    <p>Waiting on more players... { playerCount} players so far.</p>
                 }
                 {error &&
                     <p>There was an error</p>
@@ -137,4 +97,18 @@ export class GameScreen extends React.Component {
     }
 }
 
-export default GameScreen;
+GameScreen.propTypes = {
+    checkGameStatus: PropTypes.func.isRequired,
+    startGame: PropTypes.func.isRequired,
+    error: PropTypes.bool.isRequired,
+    game: PropTypes.object,
+    started: PropTypes.bool.isRequired,
+    loading: PropTypes.bool.isRequired,
+    playerId: PropTypes.number,
+    playerCount: PropTypes.number,
+};
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(GameScreen);

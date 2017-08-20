@@ -1,20 +1,6 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { RaisedButton } from 'material-ui';
-import * as actionCreators from '../actions/auth';
 import GameScreen from './GameScreen';
-
-function mapStateToProps(state) {
-    return {
-        isRegistering: state.auth.isRegistering,
-        registerStatusText: state.auth.registerStatusText,
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators(actionCreators, dispatch);
-}
 
 // we must export the class for testing. Then also default export the class
 // at the end of the file which is used for the actual production render
@@ -130,4 +116,4 @@ export class Play extends React.Component {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Play);
+export default Play;
