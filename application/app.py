@@ -175,10 +175,9 @@ def begin_game():
     ############################
     # Checks if game can begin #
     ############################
-    players = Player.query.filter_by(gameId=player.gameId).order_by(id).all()
-    player_count = len(players)
-    if player_count > 2:
-        if player_count < 7:
+    players = Player.query.filter_by(gameId=player.gameId).all()
+    if len(players) > 2:
+        if len(players) < 7:
             for p in players:
                 if p.ready == False:
                     print("Players not ready")
@@ -189,6 +188,7 @@ def begin_game():
 
         # Sets up neighbours and first round
         set_neighbours(players)
+        deal_wonders(players)
         deal_hands(1, players)
 
         # DB update and begin game
