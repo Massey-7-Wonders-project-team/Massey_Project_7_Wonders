@@ -5,11 +5,25 @@ import {
     REQUEST_START_GAME,
     RECEIVE_START_GAME,
     ERROR_START_GAME,
+    REQUEST_PLAY_CARD,
+    ERROR_PLAY_CARD,
 } from '../constants/index';
 
 export function requestGameStatus() {
     return {
         type: REQUEST_GAME_STATUS,
+    };
+}
+
+export function requestPlayCard() {
+    return {
+        type: REQUEST_PLAY_CARD,
+    };
+}
+
+export function playCardFailed() {
+    return {
+        type: ERROR_PLAY_CARD,
     };
 }
 
@@ -53,6 +67,34 @@ export function checkGameStatus(playerId) {
             // catch error
             console.log(err);
             dispatch(gameStatusFailed({ game: null, started: false, error: true }));
+        });
+    };
+}
+export function playCard(playerId, cardId, discarded) {
+    return (dispatch) => {
+        dispatch(requestPlayCard());
+        const token = localStorage.getItem('token');
+        fetch(`/api/game/play_card?player_id=${playerId},card_id=${cardId},discarded=${discarded}`, {
+            method: 'get',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json', // eslint-disable-line quote-props
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+        })
+        .then(response => response.json())
+        .then((body) => {
+            console.log(body);
+            if (body.cardplayed) {
+                dispatch(playCardFailed({ game: body.game, cardplayed: true }));
+            } else {
+                dispatch(requestPlayCard({ game: body.game, cardplayed: false }));
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            dispatch(playCardFailed({ game: null, error: true }));
         });
     };
 }
