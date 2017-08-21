@@ -50,6 +50,12 @@ export class GameScreen extends Component {
     startGame() {
         this.props.startGame(this.props.playerId);
     }
+    playCard(card) {
+        this.props.playCard(card);
+    }
+    discard(card) {
+        this.props.discard(card);
+    }
 
     render() {
         const { error, game, started, playerCount } = this.props;
@@ -71,8 +77,14 @@ export class GameScreen extends Component {
                                             <p>Discription of what card does</p>
                                         </CardText>
                                         <CardActions>
-                                            <FlatButton label="Play Card" />
-                                            <FlatButton label="Discard" />
+                                            <FlatButton
+                                                label="Play Card"
+                                                onClick={() => this.playCard(card)}
+                                            />
+                                            <FlatButton
+                                                label="Discard"
+                                                onClick={() => this.discard(card)}
+                                            />
                                         </CardActions>
                                     </Card>
                                 );
@@ -106,6 +118,8 @@ GameScreen.propTypes = {
     loading: PropTypes.bool.isRequired,
     playerId: PropTypes.number,
     playerCount: PropTypes.number,
+    playCard: PropTypes.func.isRequired,
+    discard: PropTypes.func.isRequired,
 };
 
 export default connect(
