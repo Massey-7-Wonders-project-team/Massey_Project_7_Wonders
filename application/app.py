@@ -217,10 +217,11 @@ def play_card():
     player_id = request.args.get('player_id')
     card_id = request.args.get('card_id')
     discarded = request.args.get('discarded')
+    for_wonder = request.args.get('for_wonder')
     player = Player.query.filter(id=player_id).first()
     card = Card.query.filter(id=card_id).first()
 
-    if process_card(card, player, discarded, False):
+    if process_card(card, player, discarded, for_wonder):
         return jsonify(status="Card played")
     else:
         game = Game.query.filter_by(id=player.gameId).first()
