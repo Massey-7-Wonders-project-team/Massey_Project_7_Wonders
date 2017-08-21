@@ -3,16 +3,31 @@ from ..models.player import Player
 from ..models.game import Game
 from ..models.cardhist import Cardhist
 from ..models.round import Round
+from ..models.wonder import Wonder
 from index import db
 import random
+
+
+def deal_wonders(players):
+    wonders = Wonder.query.all()
+
+    for player in players:
+        wonder = wonders.pop(random.randint(0, len(wonders)-1))
+        player.wonder = wonder.name
+
+        card = Card.query.filter_by(name=wonder.card_0).first()
+        update_player(card, player)
+        db.session.add(player)
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(e)
 
 
 def deal_hands(age, players):
     """Call to have the next age's hands dealt"""
     cards = Card.query.filter(Card.noPlayers <= len(players)).filter_by(age=age).all()
-    if len(cards) is not 7*len(players):
-        print("Incorrect number of cards in age: " + age + " Number of players: " + len(players))
-        return False
 
     try:
         # Randomly assign cards to players
@@ -20,7 +35,7 @@ def deal_hands(age, players):
             for j in range(7):
                 param = random.randint(0, len(cards)-1)
                 card = cards.pop(param)
-                dealt_card = Round(age=age, roundNum=1, playerId=player.id, cardId=card.id)
+                dealt_card = Round(age=age, round=1, playerId=player.id, cardId=card.id)
                 db.session.add(dealt_card)
         db.session.commit()
     except Exception as e:
@@ -40,18 +55,12 @@ def set_neighbours(players):
             i += 1
 
         db.session.commit()
-    except Error as e:
+    except Exception as e:
         print(e)
 
 
-def check_move(card, player, is_discarded, for_wonder):
+def check_move(card, player):
     """Call before processing card to check that it is a valid move, returns boolean"""
-    if is_discarded:
-        return True
-
-    if for_wonder:
-        pass
-        # TODO IMPLEMENT WONDER LOGIC
 
     if (card.costStone > player.stone or
         card.costBrick > player.brick or
@@ -66,7 +75,7 @@ def check_move(card, player, is_discarded, for_wonder):
         return True
 
 
-def update_player(card, player):
+def update_player(card, player, for_wonder=False):
     """Helper function for process_card"""
     player.brick += card.giveBrick
     player.ore += card.giveOre
@@ -79,6 +88,9 @@ def update_player(card, player):
     player.military += card.giveMilitary
     player.money += card.giveMoney - card.costMoney
     player.points += card.givePoints
+
+    if for_wonder:
+        player.wonder_level += 1
 
 
 def set_next_round(game_info, players):
@@ -101,7 +113,7 @@ def set_next_round(game_info, players):
         print(e)
 
 
-def update_db(card, player, is_discarded, game_info):
+def update_db(card, player, is_discarded, for_wonder, game_info):
     old_round = Round.query.filter_by(playerId=player.id, age=game_info.age, round=game_info.round).first()
     old_round.remove(card)
 
@@ -113,7 +125,7 @@ def update_db(card, player, is_discarded, game_info):
     try:
         db.session.add(player)
 
-        history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded)
+        history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder)
         db.session.add(history)
 
         for unplayed_card in old_round:
@@ -126,24 +138,43 @@ def update_db(card, player, is_discarded, game_info):
         print(e)
 
 
+def find_wonder_card(player):
+    """Logic for processing a turn where a wonder is built"""
+    wonder = Wonder.query.filter_by(id=player.wonder).first()
+
+    # Makes sure a wonder is not played when it is already maxed out
+    if wonder.slots is player.wonder_level:
+        return False
+
+    # Finds wonder card and returns it
+    if player.wonder_level == 1:
+        card = Card.query.filter_by(id=wonder.card_1).first()
+    elif player.wonder_level == 2:
+        card = Card.query.filter_by(id=wonder.card_2).first()
+    elif player.wonder_level == 3:
+        card = Card.query.filter_by(id=wonder.card_3).first()
+    else:
+        card = Card.query.filter_by(id=wonder.card_4).first()
+
+    return card
+
+
 def process_card(card, player, is_discarded, for_wonder):
     """Called from play_card API endpoint, plays card, updates DB, and checks if able to go to next turn
     Returns false if card unable to be played, otherwise true"""
-    if not check_move(card, player, is_discarded, for_wonder):
-        return False
-
-    # UPDATE PLAYER
     if is_discarded:
         player.money += 3
-    elif for_wonder:
-        pass
-        # TODO WONDER LOGIC
     else:
-        update_player(card, player)
+        if for_wonder:
+            # use wonder card instead of played card
+            card = find_wonder_card(player)
+        if card is False or check_move(card, player) is False:
+            return False
+        update_player(card, player, for_wonder)
 
     # UPDATE DB
     game_info = Game.query.filter_by(id=player.gameId).first()
-    update_db(card, player, is_discarded, game_info)
+    update_db(card, player, is_discarded, for_wonder, game_info)
 
     # TURN COMPLETION LOGIC
     players = (Player.query.filter_by(gameId=player.gameId)).all()
