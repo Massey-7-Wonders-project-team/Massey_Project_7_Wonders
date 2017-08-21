@@ -13,6 +13,9 @@ class Player(db.Model):
     left_id = db.Column(db.Integer)
     right_id = db.Column(db.Integer)
 
+    wonder = db.Column(db.String(50), default='')
+    wonder_level = db.Column(db.Integer, default=0)
+
     wood = db.Column(db.Integer, default=0)
     brick = db.Column(db.Integer, default=0)
     ore = db.Column(db.Integer, default=0)
@@ -32,6 +35,8 @@ class Player(db.Model):
             'ready':self.ready,
             'left_id':self.left_id,
             'right_id':self.right_id,
+            'wonder':self.wonder,
+            'wonder_level':self.wonder_level,
             'wood':self.wood,
             'brick':self.brick,
             'ore':self.ore,
