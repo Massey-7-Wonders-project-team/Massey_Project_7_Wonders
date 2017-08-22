@@ -83,7 +83,7 @@ def check_move(card, player):
     else:
         return True
 
-
+      
 def rec_search(balance, cards):
     """Helper function for check_move. Checks resource permutations for alternating resource cards
      Returns False if not possible, True if possible"""
@@ -110,7 +110,7 @@ def rec_search(balance, cards):
     # Search sub-space exhausted without success
     return False
 
-
+  
 def update_player(card, player, for_wonder=False):
     """Helper function for process_card"""
     if card.resourceAlternating is True:
@@ -132,6 +132,9 @@ def update_player(card, player, for_wonder=False):
         player.military += card.giveMilitary
         player.money += card.giveMoney - card.costMoney
         player.points += card.givePoints
+
+    if for_wonder:
+        player.wonder_level += 1
 
     if for_wonder:
         player.wonder_level += 1
@@ -170,6 +173,27 @@ def update_db(card, player, is_discarded, for_wonder, game_info):
                             cardId=unplayed_card.id))
 
     db_add(p=player, h=history, r=rounds)
+
+
+def find_wonder_card(player):
+    """Logic for processing a turn where a wonder is built"""
+    wonder = Wonder.query.filter_by(id=player.wonder).first()
+
+    # Makes sure a wonder is not played when it is already maxed out
+    if wonder.slots is player.wonder_level:
+        return False
+
+    # Finds wonder card and returns it
+    if player.wonder_level == 1:
+        card = Card.query.filter_by(id=wonder.card_1).first()
+    elif player.wonder_level == 2:
+        card = Card.query.filter_by(id=wonder.card_2).first()
+    elif player.wonder_level == 3:
+        card = Card.query.filter_by(id=wonder.card_3).first()
+    else:
+        card = Card.query.filter_by(id=wonder.card_4).first()
+
+    return card
 
 
 def find_wonder_card(player):
