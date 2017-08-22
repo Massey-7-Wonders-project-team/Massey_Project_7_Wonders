@@ -65,7 +65,7 @@ export class GameScreen extends Component {
                 {game && !error && started &&
                     <div>
                         {
-                            game.playedCards.map(pcard) => {
+                            game.playedCards.map((pcard) => {
                                 const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
                                 return (
                                     <Card key={pcard.id} style={{ display: 'inline-block' }}>
