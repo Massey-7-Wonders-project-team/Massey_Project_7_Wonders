@@ -65,6 +65,21 @@ export class GameScreen extends Component {
                 {game && !error && started &&
                     <div>
                         {
+                            game.playedCards.map(pcard) => {
+                                const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
+                                return (
+                                    <Card key={pcard.id} style={{ display: 'inline-block' }}>
+                                        <CardTitle title={pcard.card.name} />
+                                        <CardMedia>
+                                            <img alt="" src={`dist/images/cards/${imageName}.png`} />
+                                        </CardMedia>
+                                    </Card>
+                                );
+                            })
+                        }
+                    </div>
+                    <div>
+                        {
                             game.cards.map((card) => {
                                 const imageName = (card.card.name).replace(/\s+/g, '').toLowerCase();
                                 return (
@@ -118,8 +133,8 @@ GameScreen.propTypes = {
     loading: PropTypes.bool.isRequired,
     playerId: PropTypes.number,
     playerCount: PropTypes.number,
-    playCard: PropTypes.func.isRequired,
-    discard: PropTypes.func.isRequired,
+    playCard: PropTypes.func,
+    discard: PropTypes.func,
 };
 
 export default connect(
