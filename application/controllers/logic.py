@@ -113,17 +113,25 @@ def rec_search(balance, cards):
 
 def update_player(card, player, for_wonder=False):
     """Helper function for process_card"""
-    player.brick += card.giveBrick
-    player.ore += card.giveOre
-    player.wood += card.giveWood
-    player.stone += card.giveStone
-    player.paper += card.givePaper
-    player.cloth += card.giveCloth
-    player.glass += card.giveGlass
-
-    player.military += card.giveMilitary
-    player.money += card.giveMoney - card.costMoney
-    player.points += card.givePoints
+    if card.resourceAlternating is True:
+        player.extra_brick += card.giveBrick
+        player.extra_ore += card.giveOre
+        player.extra_wood += card.giveWood
+        player.extra_stone += card.giveStone
+        player.extra_paper += card.givePaper
+        player.extra_cloth += card.giveCloth
+        player.extra_glass += card.giveGlass
+    else:
+        player.brick += card.giveBrick
+        player.ore += card.giveOre
+        player.wood += card.giveWood
+        player.stone += card.giveStone
+        player.paper += card.givePaper
+        player.cloth += card.giveCloth
+        player.glass += card.giveGlass
+        player.military += card.giveMilitary
+        player.money += card.giveMoney - card.costMoney
+        player.points += card.givePoints
 
     if for_wonder:
         player.wonder_level += 1
