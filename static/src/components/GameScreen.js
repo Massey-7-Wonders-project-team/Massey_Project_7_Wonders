@@ -77,8 +77,6 @@ export class GameScreen extends Component {
                                 );
                             })
                         }
-                    </div>
-                    <div>
                         {
                             game.cards.map((card) => {
                                 const imageName = (card.card.name).replace(/\s+/g, '').toLowerCase();
