@@ -11,12 +11,6 @@ class Round(db.Model):
     playerId = db.Column(db.Integer, db.ForeignKey('player.id'))
     cardId = db.Column(db.Integer, db.ForeignKey('card.id'))
 
-    def __init__(self, age, roundNum, playerId, cardId):
-        self.age = age
-        self.round = roundNum
-        self.playerId = playerId
-        self.cardId = cardId
-
     def serialise(self):
         return {
             'id': self.id,
