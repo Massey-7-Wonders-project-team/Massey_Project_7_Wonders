@@ -5,11 +5,14 @@ from ..models.cardhist import Cardhist
 from ..models.round import Round
 from ..models.wonder import Wonder
 from index import db
+import copy
 import random
 
 
 def deal_wonders(players):
     wonders = Wonder.query.all()
+
+    cardhists = []
 
     for player in players:
         wonder = wonders.pop(random.randint(0, len(wonders)-1))
@@ -17,29 +20,24 @@ def deal_wonders(players):
 
         card = Card.query.filter_by(name=wonder.card_0).first()
         update_player(card, player)
-        db.session.add(player)
+        cardhists.append(Cardhist(playerId=player.id, cardId=card.id, discarded=False, for_wonder=True))
 
-    try:
-        db.session.commit()
-    except Exception as e:
-        print(e)
+    db_add(p=players, c=cardhists)
 
 
 def deal_hands(age, players):
     """Call to have the next age's hands dealt"""
     cards = Card.query.filter(Card.noPlayers <= len(players)).filter_by(age=age).all()
 
-    try:
-        # Randomly assign cards to players
-        for player in players:
-            for j in range(7):
-                param = random.randint(0, len(cards)-1)
-                card = cards.pop(param)
-                dealt_card = Round(age=age, round=1, playerId=player.id, cardId=card.id)
-                db.session.add(dealt_card)
-        db.session.commit()
-    except Exception as e:
-        print(e)
+    # Randomly assign cards to players
+    dealt_cards = []
+    for player in players:
+        for j in range(7):
+            param = random.randint(0, len(cards)-1)
+            card = cards.pop(param)
+            dealt_cards.append(Round(age=age, round=1, playerId=player.id, cardId=card.id))
+
+    db_add(d=dealt_cards)
 
 
 def set_neighbours(players):
@@ -47,47 +45,102 @@ def set_neighbours(players):
     num_players = len(players)
     i = num_players
 
-    try:
-        for player in players:
-            player.left_id = players[(i-1) % num_players].id
-            player.right_id = players[(i+1) % num_players].id
-            db.session.add(player)
-            i += 1
+    for player in players:
+        player.left_id = players[(i-1) % num_players].id
+        player.right_id = players[(i+1) % num_players].id
+        i += 1
 
-        db.session.commit()
-    except Exception as e:
-        print(e)
+    db_add(p=players)
 
 
 def check_move(card, player):
     """Call before processing card to check that it is a valid move, returns boolean"""
 
-    if (card.costStone > player.stone or
-        card.costBrick > player.brick or
-        card.costOre > player.ore or
-        card.costWood > player.wood or
-        card.costGlass > player.glass or
-        card.costPaper > player.paper or
-        card.costCloth > player.cloth or
-        card.costMoney > player.money):
+    # Checks if card can be played using prerequisites
+    if (card.prerequisite1 is not None
+        and Card.query.filter_by(name=card.prerequisite1).join(Cardhist).filter_by(playerId=player.id) is not None
+        or card.prerequisite2 is not None
+        and Card.query.filter_by(name=card.prerequisite2).join(Cardhist).filter_by(playerId=player.id) is not None):
+        return True
+
+    # Check money
+    if card.costMoney > player.money:
         return False
+
+    balance = [card.costStone - player.stone, card.costBrick - player.brick, card.costOre - player.ore,
+               card.costWood - player.wood, card.costGlass - player.glass, card.costPaper - player.paper,
+               card.costCloth - player.cloth]
+
+    # If true, there are materials missing, and checks for resource alternating materials ensues
+    if filter(lambda x: x > 0, balance) is not None:
+        extra = [player.extra_stone, player.extra_brick, player.extra_ore, player.extra_wood, player.extra_glass,
+                 player.extra_paper, player.extra_cloth]
+        maximum = [x-y for (x,y) in zip(balance, extra)]
+
+        # Investigates if there is a permutation that will work after checking that there could be a chance of success
+        if filter(lambda x: x > 0, maximum) is not None:
+            return False
+        else:
+            ra_cards = (Cardhist.query.filter_by(playerId=player.id, discarded=False).join(Card)
+                        .filter_by(resourceAlternating=True)
+                        .with_entities(Card.giveStone, Card.giveBrick, Card.giveOre, Card.giveWood,
+                                       Card.giveGlass, Card.givePaper, Card.giveCloth)).all()
+
+            return rec_search(balance, ra_cards)
+
+    # Triggers if there are enough materials without considering resource alternation
     else:
         return True
 
 
+def rec_search(balance, cards):
+    """Helper function for check_move. Checks resource permutations for alternating resource cards
+     Returns False if not possible, True if possible"""
+    if filter(lambda x: x > 0, balance) is None:
+        return True
+    if cards is None:
+        return False
+
+    new_cards = copy.deepcopy(cards)
+    new_bal = copy.deepcopy(balance)
+
+    for card in new_cards:
+        c = new_cards.pop(card)
+
+        for i in range(len(balance)):
+            if balance[i] > 0 and c[i] > 0:
+                new_bal[i] -= c[i]
+                if rec_search(new_bal, new_cards):
+                    return True
+                else:
+                    # Roll back changes from iteration
+                    new_bal[i] += c[i]
+
+    # Search sub-space exhausted without success
+    return False
+
+
 def update_player(card, player, for_wonder=False):
     """Helper function for process_card"""
-    player.brick += card.giveBrick
-    player.ore += card.giveOre
-    player.wood += card.giveWood
-    player.stone += card.giveStone
-    player.paper += card.givePaper
-    player.cloth += card.giveCloth
-    player.glass += card.giveGlass
-
-    player.military += card.giveMilitary
-    player.money += card.giveMoney - card.costMoney
-    player.points += card.givePoints
+    if card.resourceAlternating is True:
+        player.extra_brick += card.giveBrick
+        player.extra_ore += card.giveOre
+        player.extra_wood += card.giveWood
+        player.extra_stone += card.giveStone
+        player.extra_paper += card.givePaper
+        player.extra_cloth += card.giveCloth
+        player.extra_glass += card.giveGlass
+    else:
+        player.brick += card.giveBrick
+        player.ore += card.giveOre
+        player.wood += card.giveWood
+        player.stone += card.giveStone
+        player.paper += card.givePaper
+        player.cloth += card.giveCloth
+        player.glass += card.giveGlass
+        player.military += card.giveMilitary
+        player.money += card.giveMoney - card.costMoney
+        player.points += card.givePoints
 
     if for_wonder:
         player.wonder_level += 1
@@ -106,11 +159,7 @@ def set_next_round(game_info, players):
         else:
             deal_hands(game_info.age, players)
 
-    try:
-        db.session.add(game_info)
-        db.session.commit()
-    except Exception as e:
-        print(e)
+    db_add(game=game_info)
 
 
 def update_db(card, player, is_discarded, for_wonder, game_info):
@@ -122,20 +171,14 @@ def update_db(card, player, is_discarded, for_wonder, game_info):
     else:
         next_player = player.left_id
 
-    try:
-        db.session.add(player)
+    history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder)
 
-        history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder)
-        db.session.add(history)
+    rounds = []
+    for unplayed_card in old_round:
+        rounds.append(Round(playerId=next_player, age=game_info.age, round=game_info.round + 1,
+                            cardId=unplayed_card.id))
 
-        for unplayed_card in old_round:
-            next_round = Round(playerId=next_player, age=game_info.age, round=game_info.round + 1,
-                               cardId=unplayed_card.id)
-            db.session.add(next_round)
-
-        db.session.commit()
-    except Exception as e:
-        print(e)
+    db_add(p=player, h=history, r=rounds)
 
 
 def find_wonder_card(player):
@@ -185,3 +228,12 @@ def process_card(card, player, is_discarded, for_wonder):
     # Only triggers if all players have finished their turn
     set_next_round(game_info, players)
     return True
+
+
+def db_add(**kwargs):
+    try:
+        for key in kwargs.items():
+            db.session.add_all(key)
+        db.session.commit()
+    except Exception as e:
+        print(e)

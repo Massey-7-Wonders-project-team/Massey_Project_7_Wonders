@@ -27,6 +27,14 @@ class Player(db.Model):
     military = db.Column(db.Integer, default=0)
     money = db.Column(db.Integer, default=3)
 
+    extra_wood = db.Column(db.Integer, default=0)
+    extra_brick = db.Column(db.Integer, default=0)
+    extra_ore = db.Column(db.Integer, default=0)
+    extra_stone = db.Column(db.Integer, default=0)
+    extra_glass = db.Column(db.Integer, default=0)
+    extra_paper = db.Column(db.Integer, default=0)
+    extra_cloth = db.Column(db.Integer, default=0)
+
     def serialise(self):
         return {
             'id':self.id,
@@ -44,6 +52,13 @@ class Player(db.Model):
             'glass':self.glass,
             'paper':self.paper,
             'cloth':self.cloth,
+            'extra_wood': self.extra_wood,
+            'extra_brick': self.extra_brick,
+            'extra_ore': self.extra_ore,
+            'extra_stone': self.extra_stone,
+            'extra_glass': self.extra_glass,
+            'extra_paper': self.extra_paper,
+            'extra_cloth': self.extra_cloth,
             'points':self.points,
             'military':self.military,
             'money':self.money
