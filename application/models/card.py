@@ -4,10 +4,10 @@ from index import db
 class Card(db.Model):
     __tablename__ = 'card'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
-    noPlayers = db.Column(db.Integer)
-    age = db.Column(db.Integer)
-    colour = db.Column(db.String(10))
+    name = db.Column(db.String(50), default='')
+    noPlayers = db.Column(db.Integer, default=0)
+    age = db.Column(db.Integer, default=0)
+    colour = db.Column(db.String(10), default='')
 
     costMoney = db.Column(db.Integer, default=0)
     costWood = db.Column(db.Integer, default=0)
@@ -32,6 +32,7 @@ class Card(db.Model):
     giveMilitary = db.Column(db.Integer, default=0)
     giveMoney = db.Column(db.Integer, default=0)
     giveResearch = db.Column(db.String(10), default='')
+
     
     def __init__(self, name, noPlayers, age, colour):
         self.name = name
