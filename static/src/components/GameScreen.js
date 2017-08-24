@@ -50,6 +50,12 @@ export class GameScreen extends Component {
     startGame() {
         this.props.startGame(this.props.playerId);
     }
+    playCard(card) {
+        this.props.playCard(card);
+    }
+    discard(card) {
+        this.props.discard(card);
+    }
 
     render() {
         const { error, game, started, playerCount } = this.props;
@@ -58,6 +64,19 @@ export class GameScreen extends Component {
             <div>
                 {game && !error && started &&
                     <div>
+                        {
+                            game.playedCards.map((pcard) => {
+                                const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
+                                return (
+                                    <Card key={pcard.id} style={{ display: 'inline-block' }}>
+                                        <CardTitle title={pcard.card.name} />
+                                        <CardMedia>
+                                            <img alt="" src={`dist/images/cards/${imageName}.png`} />
+                                        </CardMedia>
+                                    </Card>
+                                );
+                            })
+                        }
                         {
                             game.cards.map((card) => {
                                 const imageName = (card.card.name).replace(/\s+/g, '').toLowerCase();
@@ -71,8 +90,14 @@ export class GameScreen extends Component {
                                             <p>Discription of what card does</p>
                                         </CardText>
                                         <CardActions>
-                                            <FlatButton label="Play Card" />
-                                            <FlatButton label="Discard" />
+                                            <FlatButton
+                                                label="Play Card"
+                                                onClick={() => this.playCard(card)}
+                                            />
+                                            <FlatButton
+                                                label="Discard"
+                                                onClick={() => this.discard(card)}
+                                            />
                                         </CardActions>
                                     </Card>
                                 );
@@ -106,6 +131,8 @@ GameScreen.propTypes = {
     loading: PropTypes.bool.isRequired,
     playerId: PropTypes.number,
     playerCount: PropTypes.number,
+    playCard: PropTypes.func,
+    discard: PropTypes.func,
 };
 
 export default connect(

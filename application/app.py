@@ -155,7 +155,7 @@ def game_status():
 @app.route("/api/game/start", methods=["GET"])
 @requires_auth
 def begin_game():
-    """This endpoint is for once a player is ready to start. Will begin a game if all players (3+) 
+    """This endpoint is for once a player is ready to start. Will begin a game if all players (3+)
     are ready or there are 7 players
     Inputs - player_id
     Outputs -
@@ -176,8 +176,9 @@ def begin_game():
     # Checks if game can begin #
     ############################
     players = Player.query.filter_by(gameId=player.gameId).all()
-    if len(players) > 2:
-        if len(players) < 7:
+    player_count = len(players)
+    if player_count > 2:
+        if player_count < 7:
             for p in players:
                 if p.ready == False:
                     print("Players not ready")
