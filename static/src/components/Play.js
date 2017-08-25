@@ -1,6 +1,7 @@
 import React from 'react';
 import { RaisedButton } from 'material-ui';
 import GameScreen from './GameScreen';
+import PlayerDisplay from './PlayerDisplay';
 
 // we must export the class for testing. Then also default export the class
 // at the end of the file which is used for the actual production render
@@ -98,6 +99,7 @@ export class Play extends React.Component {
         return (
             <div className="Game col-md-12">
                 <h1>Play</h1>
+
                 <hr />
                 {error &&
                     <p>There was an error</p>
@@ -109,7 +111,10 @@ export class Play extends React.Component {
                     />
                 }
                 {game &&
-                    <GameScreen playerId={playerId} />
+                    <div>
+                      <PlayerDisplay playerId={playerId} />
+                      <GameScreen playerId={playerId} />
+                    </div>
                 }
             </div>
         );
