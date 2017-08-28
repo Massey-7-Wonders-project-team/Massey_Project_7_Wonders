@@ -63,6 +63,7 @@
     "less": "^2.5.3",
     "less-loader": "^2.2.2",
     "mocha": "^3.0.2",
+    "nightwatch": "^0.9.16",
     "node-sass": "^3.4.2",
     "postcss-import": "^9.0.0",
     "postcss-loader": "^1.1.1",
