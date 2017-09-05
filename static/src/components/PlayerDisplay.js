@@ -228,7 +228,7 @@ export class PlayerDisplay extends Component {
                     />
                 }
                 {!error && !game &&
-                    <p>Waiting on more players... {this.state.playerCount} players so far.</p>
+                    <p>Waiting on more players... {this.props.playerCount} players so far.</p>
                 }
                 {error &&
                     <p>There was an error</p>
@@ -239,12 +239,8 @@ export class PlayerDisplay extends Component {
 }
 
 PlayerDisplay.propTypes = {
-    // checkGameStatus: PropTypes.func.isRequired,
-    // startGame: PropTypes.func.isRequired,
-    error: PropTypes.bool.isRequired,
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
-    // loading: PropTypes.bool.isRequired,
     playerId: PropTypes.number.isRequired,
     playerCount: PropTypes.number,
 };
