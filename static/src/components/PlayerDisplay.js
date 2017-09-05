@@ -1,45 +1,11 @@
 import React, { PropTypes, Component } from 'react';
-import { RaisedButton, CardActions, FlatButton, Card, CardHeader, CardText, CardMedia, CardTitle } from 'material-ui';
+import { RaisedButton, CardActions, FlatButton, Card,
+    CardHeader, CardText, CardMedia, CardTitle, List,
+    Table, TableBody, TableRow, TableRowColumn } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { List } from 'material-ui/List';
-import Avatar from 'material-ui/Avatar';
-//import Subheader from 'material-ui/Subheader';
-import Chip from 'material-ui/Chip';
-import {
-  Table,
-  TableBody,
-  TableRow,
-  TableRowColumn,
-} from 'material-ui/Table';
 import * as actions from '../actions/game';
-
-class CardExampleControlled extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      expanded: false,
-    };
-  }
-
-  handleExpandChange = (expanded) => {
-    this.setState({expanded: expanded});
-  };
-
-  handleToggle = (event, toggle) => {
-    this.setState({expanded: toggle});
-  };
-
-  handleExpand = () => {
-    this.setState({expanded: true});
-  };
-
-  handleReduce = () => {
-    this.setState({expanded: false});
-  };
-}
-
+import Inventory from './Inventory';
 
 function mapStateToProps(state) {
     return {
@@ -78,31 +44,31 @@ export class PlayerDisplay extends Component {
 
     getData() {
         if (this.state.fetch) {
-          const token = localStorage.getItem('token');
-          fetch(`/api/game/status?player_id=${this.state.displayID}`, {
-              method: 'get',
-              credentials: 'include',
-              headers: {
-                  'Accept': 'application/json', // eslint-disable-line quote-props
-                  'Content-Type': 'application/json',
-                  Authorization: token,
-              },
-          })
-          .then(response => response.json())
-          .then((body) => {
-              console.log('body', body);
-              const newDisplayData = body.game.player;
-              this.setState({
-                  displayData: newDisplayData,
-                  fetch: false,
+            const token = localStorage.getItem('token');
+            fetch(`/api/game/status?player_id=${this.state.displayID}`, {
+                method: 'get',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json', // eslint-disable-line quote-props
+                    'Content-Type': 'application/json',
+                    Authorization: token,
+                },
+            })
+              .then(response => response.json())
+              .then((body) => {
+                  console.log('body', body);
+                  const newDisplayData = body.game.player;
+                  this.setState({
+                      displayData: newDisplayData,
+                      fetch: false,
+                  });
               });
-          });
         }
     }
 
 
     lookLeft() {
-        console.log('** CLICKED LEFT **')
+        console.log('** CLICKED LEFT **');
         const newDisplayID = this.state.displayData.left_id;
         this.setState({
             displayID: newDisplayID,
@@ -112,7 +78,7 @@ export class PlayerDisplay extends Component {
     }
 
     lookRight() {
-        console.log('** CLICKED RIGHT **')
+        console.log('** CLICKED RIGHT **');
         const newDisplayID = this.state.displayData.right_id;
         this.setState({
             displayID: newDisplayID,
@@ -122,7 +88,7 @@ export class PlayerDisplay extends Component {
     }
 
     lookUser() {
-        console.log('** CLICKED View User **')
+        console.log('** CLICKED View User **');
         const newDisplayID = this.state.userID;
         this.setState({
             displayID: newDisplayID,
@@ -132,16 +98,22 @@ export class PlayerDisplay extends Component {
     }
 
     render() {
-        const { error, game, started, playerCount } = this.props;
+        const { error, game, started } = this.props;
         const ListStyle = { width: 100 };
         const inventorycustomColumnStyle = { padding: 0, width: 100 };
 
-        const longCityNameArray = (this.state.displayData.wonder).split(' ');
-        const city = longCityNameArray.length - 1;
-        const imageName = longCityNameArray[city].toLowerCase();
-        console.log("imageName: ",imageName);
+        let imageName;
 
+        if (this.state.displayData) {
+            const longCityNameArray = (this.state.displayData.wonder).split(' ');
+            const city = longCityNameArray.length - 1;
+            imageName = longCityNameArray[city].toLowerCase();
+        }
         // when cards are generating substitute this code >>   ${game.cards[0].age}
+
+        const actAsExpander = true;
+        const showExpandableButton = true;
+        const expandable = true;
 
         return (
             <div>
@@ -155,9 +127,9 @@ export class PlayerDisplay extends Component {
                                 <CardHeader
                                     title={`Player Name (id:${this.state.displayID})`}  // "(Add players Name here)"
                                     subtitle={this.state.displayData.wonder}
-                                    avatar={`dist/images/cards/age1.png`}
-                                    actAsExpander={true}
-                                    showExpandableButton={true}
+                                    avatar={'dist/images/cards/age1.png'}
+                                    actAsExpander={actAsExpander}
+                                    showExpandableButton={showExpandableButton}
                                     onChange={this.getData()}
                                 />
                                 <CardText>
@@ -168,7 +140,7 @@ export class PlayerDisplay extends Component {
                                                     <TableRowColumn
                                                         style={inventorycustomColumnStyle}
                                                     >
-                                                        <List innerDivStyle={ListStyle}>
+                                                        <List style={ListStyle}>
                                                             <Inventory item="wood" amount={this.state.displayData.wood} />
                                                             <Inventory item="brick" amount={this.state.displayData.brick} />
                                                             <Inventory item="ore" amount={this.state.displayData.ore} />
@@ -191,19 +163,19 @@ export class PlayerDisplay extends Component {
                                                                 >
                                                                     <TableRow>
                                                                         <TableRowColumn>
-                                                                            <Inventory item="cogs" amount="0" />
+                                                                            <Inventory item="cogs" amount={0} />
                                                                         </TableRowColumn>
                                                                         <TableRowColumn>
-                                                                            <Inventory item="script" amount="0" />
+                                                                            <Inventory item="script" amount={0} />
                                                                         </TableRowColumn>
                                                                         <TableRowColumn>
-                                                                            <Inventory item="compas" amount="0" />
+                                                                            <Inventory item="compas" amount={0} />
                                                                         </TableRowColumn>
                                                                         <TableRowColumn>
-                                                                            <Inventory item="commercial" amount="0" />
+                                                                            <Inventory item="commercial" amount={0} />
                                                                         </TableRowColumn>
                                                                         <TableRowColumn>
-                                                                            <Inventory item="civillian" amount="0" />
+                                                                            <Inventory item="civillian" amount={0} />
                                                                         </TableRowColumn>
                                                                     </TableRow>
                                                                 </TableBody>
@@ -214,7 +186,7 @@ export class PlayerDisplay extends Component {
                                                     <TableRowColumn
                                                         style={inventorycustomColumnStyle}
                                                     >
-                                                        <List innerDivStyle={ListStyle}>
+                                                        <List style={ListStyle}>
                                                             <Inventory item="vp" amount={this.state.displayData.points} />
                                                             <Inventory item="coin" amount={this.state.displayData.money} />
                                                             <hr />
@@ -235,7 +207,7 @@ export class PlayerDisplay extends Component {
                                         </CardActions>
                                     </div>
                                 </CardText>
-                                <CardText id="played cards" expandable={true}>
+                                <CardText id="played cards" expandable={expandable}>
                                     <hr />
                                     <h3>All Cards Played for Wonder</h3>
                                     <p><i>
@@ -256,7 +228,7 @@ export class PlayerDisplay extends Component {
                     />
                 }
                 {!error && !game &&
-                    <p>Waiting on more players... {this.state.game.playerCount} players so far.</p>
+                    <p>Waiting on more players... {this.state.playerCount} players so far.</p>
                 }
                 {error &&
                     <p>There was an error</p>
@@ -266,34 +238,20 @@ export class PlayerDisplay extends Component {
     }
 }
 
-const styles = {
-    chip: {
-        margin: 4,
-    },
-    wrapper: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-};
-
-function Inventory(props) {
-    return (
-        <Chip style={styles.chip}>
-            <Avatar src={`dist/images/icons/${props.item}.png`} />
-            {props.amount.toString()}
-        </Chip>
-    )
-}
-
 PlayerDisplay.propTypes = {
-    checkGameStatus: PropTypes.func.isRequired,
-    startGame: PropTypes.func.isRequired,
+    // checkGameStatus: PropTypes.func.isRequired,
+    // startGame: PropTypes.func.isRequired,
     error: PropTypes.bool.isRequired,
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
-    loading: PropTypes.bool.isRequired,
-    playerId: PropTypes.number,
+    // loading: PropTypes.bool.isRequired,
+    playerId: PropTypes.number.isRequired,
     playerCount: PropTypes.number,
+};
+
+PlayerDisplay.defaultProps = {
+    game: null,
+    playerCount: null,
 };
 
 export default connect(
