@@ -59,11 +59,10 @@ export class PlayerDisplay extends Component {
 
     constructor(props) {
         super(props);
-        console.log("constructor");
         this.state = {
-            displayID: undefined,
-            displayData: undefined,
-            userID: undefined,
+            displayID: null,
+            displayData: null,
+            userID: null,
             fetch: true,
         };
         if (this.props.playerId) {
@@ -77,14 +76,8 @@ export class PlayerDisplay extends Component {
         }
     }
 
-    componentDidMount() {
-        console.log("CDM");
-        // this.getData();
-    }
-
     getData() {
         if (this.state.fetch) {
-          console.log('GET DATA FUNCTION ACTIVE');
           const token = localStorage.getItem('token');
           fetch(`/api/game/status?player_id=${this.state.displayID}`, {
               method: 'get',
@@ -99,12 +92,10 @@ export class PlayerDisplay extends Component {
           .then((body) => {
               console.log('body', body);
               const newDisplayData = body.game.player;
-              console.log('newData', newDisplayData);
               this.setState({
                   displayData: newDisplayData,
+                  fetch: false,
               });
-              console.log('displayData', this.state.displayData);
-              this.setState({ fetch: false });
           });
         }
     }
