@@ -1,23 +1,18 @@
 import React, { PropTypes, Component } from 'react';
-import { RaisedButton, CardActions, FlatButton, Card,CardHeader, CardText, CardMedia, CardTitle } from 'material-ui';
+import { RaisedButton, CardActions, FlatButton, Card, CardHeader, CardText, CardMedia, CardTitle } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as actions from '../actions/game';
-import { poll } from '../utils/misc';
-import Toggle from 'material-ui/Toggle';
-import {List, ListItem} from 'material-ui/List';
+import { List } from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
-import Subheader from 'material-ui/Subheader';
+//import Subheader from 'material-ui/Subheader';
 import Chip from 'material-ui/Chip';
 import {
   Table,
   TableBody,
-  TableHeader,
-  TableHeaderColumn,
   TableRow,
   TableRowColumn,
 } from 'material-ui/Table';
-
+import * as actions from '../actions/game';
 
 class CardExampleControlled extends React.Component {
 
@@ -62,113 +57,196 @@ function mapDispatchToProps(dispatch) {
 
 export class PlayerDisplay extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            polling: false,
+            displayID: null,
+            displayData: null,
+            userID: null,
+            fetch: true,
         };
-        this.startGame = this.startGame.bind(this);
-        this.pollGameStatus = this.pollGameStatus.bind(this);
-    }
-
-    componentDidMount() {
-        this.props.checkGameStatus(this.props.playerId);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.started && !this.state.polling) {
-            this.setState({
-                polling: true,
-            });
-            this.pollGameStatus();
+        if (this.props.playerId) {
+            this.state.displayID = this.props.playerId;
+            this.state.userID = this.props.playerId;
+            this.lookLeft = this.lookLeft.bind(this);
+            this.lookRight = this.lookRight.bind(this);
+            this.lookUser = this.lookUser.bind(this);
+            this.getData = this.getData.bind(this);
+            this.getData();
         }
     }
 
-    pollGameStatus() {
-        poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
+    getData() {
+        if (this.state.fetch) {
+          const token = localStorage.getItem('token');
+          fetch(`/api/game/status?player_id=${this.state.displayID}`, {
+              method: 'get',
+              credentials: 'include',
+              headers: {
+                  'Accept': 'application/json', // eslint-disable-line quote-props
+                  'Content-Type': 'application/json',
+                  Authorization: token,
+              },
+          })
+          .then(response => response.json())
+          .then((body) => {
+              console.log('body', body);
+              const newDisplayData = body.game.player;
+              this.setState({
+                  displayData: newDisplayData,
+                  fetch: false,
+              });
+          });
+        }
     }
 
-    startGame() {
-        this.props.startGame(this.props.playerId);
+
+    lookLeft() {
+        console.log('** CLICKED LEFT **')
+        const newDisplayID = this.state.displayData.left_id;
+        this.setState({
+            displayID: newDisplayID,
+            fetch: true,
+        });
+        this.getData();
     }
 
+    lookRight() {
+        console.log('** CLICKED RIGHT **')
+        const newDisplayID = this.state.displayData.right_id;
+        this.setState({
+            displayID: newDisplayID,
+            fetch: true,
+        });
+        this.getData();
+    }
 
+    lookUser() {
+        console.log('** CLICKED View User **')
+        const newDisplayID = this.state.userID;
+        this.setState({
+            displayID: newDisplayID,
+            fetch: true,
+        });
+        this.getData();
+    }
 
     render() {
         const { error, game, started, playerCount } = this.props;
-        const ListStyle = {width: 100};
-        const inventorycustomColumnStyle = {padding:0, width: 100};
-        const imageName = (game.player.wonder).replace(/\s+/g, '').toLowerCase();
+        const ListStyle = { width: 100 };
+        const inventorycustomColumnStyle = { padding: 0, width: 100 };
+
+        const longCityNameArray = (this.state.displayData.wonder).split(' ');
+        const city = longCityNameArray.length - 1;
+        const imageName = longCityNameArray[city].toLowerCase();
+        console.log("imageName: ",imageName);
+
+        // when cards are generating substitute this code >>   ${game.cards[0].age}
 
         return (
             <div>
                 {game && !error && started &&
-                  <div>
-                      {
-                          <Card expanded={this.state.expanded} onExpandChange={this.handleExpandChange} >
-                            <CardHeader
-                              title= "(Add players Name here)"
-                              subtitle={game.player.wonder}
-                              avatar={`dist/images/cards/age${game.cards[0].age}.png`}
-                              actAsExpander={true}
-                              showExpandableButton={true}
-                            />
-                            <CardText>
-                              <div>
-                                <Table>
-                                  <TableBody displayRowCheckbox={false}>
-                                    <TableRow>
-                                      <TableRowColumn style={inventorycustomColumnStyle} >
-                                        <List innerDivStyle={ListStyle}>
-                                            <Inventory item="wood" amount={game.player.wood} />
-                                            <Inventory item="brick" amount={game.player.brick} />
-                                            <Inventory item="ore" amount={game.player.ore} />
-                                            <Inventory item="stone" amount={game.player.stone} />
-                                            <Inventory item="glass" amount={game.player.glass} />
-                                            <Inventory item="paper" amount={game.player.paper} />
-                                            <Inventory item="cloth" amount={game.player.cloth} />
-                                        </List>
-                                      </TableRowColumn>
-                                      <TableRowColumn>
-                                        <CardMedia
-                                          overlay={<CardTitle subtitle="Need to create dynamic links for wonderboards - And change filenames" />}
-                                          >
-                                          <img src={`dist/images/cities/alexandriaB.png`} />
-                                        </CardMedia>
+                    <div>
+                        {
+                            <Card
+                                expanded={this.state.expanded}
+                                onExpandChange={this.handleExpandChange}
+                            >
+                                <CardHeader
+                                    title={`Player Name (id:${this.state.displayID})`}  // "(Add players Name here)"
+                                    subtitle={this.state.displayData.wonder}
+                                    avatar={`dist/images/cards/age1.png`}
+                                    actAsExpander={true}
+                                    showExpandableButton={true}
+                                    onChange={this.getData()}
+                                />
+                                <CardText>
+                                    <div>
+                                        <Table>
+                                            <TableBody displayRowCheckbox={false}>
+                                                <TableRow>
+                                                    <TableRowColumn
+                                                        style={inventorycustomColumnStyle}
+                                                    >
+                                                        <List innerDivStyle={ListStyle}>
+                                                            <Inventory item="wood" amount={this.state.displayData.wood} />
+                                                            <Inventory item="brick" amount={this.state.displayData.brick} />
+                                                            <Inventory item="ore" amount={this.state.displayData.ore} />
+                                                            <Inventory item="stone" amount={this.state.displayData.stone} />
+                                                            <Inventory item="glass" amount={this.state.displayData.glass} />
+                                                            <Inventory item="paper" amount={this.state.displayData.paper} />
+                                                            <Inventory item="cloth" amount={this.state.displayData.cloth} />
+                                                        </List>
+                                                    </TableRowColumn>
+                                                    <TableRowColumn>
+                                                        <CardMedia
+                                                            overlay={<CardTitle subtitle="Player thinking..." />}
+                                                        >
+                                                            <img alt="" src={`dist/images/cities/${imageName}A.png`} />
+                                                        </CardMedia>
+                                                        <div id="building_stats">
+                                                            <Table>
+                                                                <TableBody
+                                                                    displayRowCheckbox={false}
+                                                                >
+                                                                    <TableRow>
+                                                                        <TableRowColumn>
+                                                                            <Inventory item="cogs" amount="0" />
+                                                                        </TableRowColumn>
+                                                                        <TableRowColumn>
+                                                                            <Inventory item="script" amount="0" />
+                                                                        </TableRowColumn>
+                                                                        <TableRowColumn>
+                                                                            <Inventory item="compas" amount="0" />
+                                                                        </TableRowColumn>
+                                                                        <TableRowColumn>
+                                                                            <Inventory item="commercial" amount="0" />
+                                                                        </TableRowColumn>
+                                                                        <TableRowColumn>
+                                                                            <Inventory item="civillian" amount="0" />
+                                                                        </TableRowColumn>
+                                                                    </TableRow>
+                                                                </TableBody>
+                                                            </Table>
+                                                        </div>
+
+                                                    </TableRowColumn>
+                                                    <TableRowColumn
+                                                        style={inventorycustomColumnStyle}
+                                                    >
+                                                        <List innerDivStyle={ListStyle}>
+                                                            <Inventory item="vp" amount={this.state.displayData.points} />
+                                                            <Inventory item="coin" amount={this.state.displayData.money} />
+                                                            <hr />
+                                                            <Inventory item="military" amount={this.state.displayData.military} />
+                                                            <Inventory item="pyramid-stage0" amount={this.state.displayData.wonder_level} />
+                                                        </List>
+                                                    </TableRowColumn>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                        <hr />
                                         <CardActions>
-                                          <center>
-                                            <FlatButton label="<< View Left Player" onClick={this.checkLeft}/>
-                                            <FlatButton label="Back to your Wonder" />
-                                            <FlatButton labelPosition="before" label="View Right Player >>" />
-                                          </center>
+                                            <center>
+                                                <FlatButton label="<< View Left Player" onClick={this.lookLeft} />
+                                                <FlatButton label="Back to your Wonder" onClick={this.lookUser} />
+                                                <FlatButton label="View Right Player >>" onClick={this.lookRight} />
+                                            </center>
                                         </CardActions>
-                                      </TableRowColumn>
-                                      <TableRowColumn style={inventorycustomColumnStyle}>
+                                    </div>
+                                </CardText>
+                                <CardText id="played cards" expandable={true}>
+                                    <hr />
+                                    <h3>All Cards Played for Wonder</h3>
+                                    <p><i>
+                                        This will be where we place all played cards for current user
+                                    </i></p>
+                                </CardText>
 
-
-                                        <h1></h1>
-                                        <List innerDivStyle={ListStyle}>
-                                          <Inventory item="vp" amount={game.player.points} />
-                                          <Inventory item="coin" amount={game.player.money} />
-                                          <Inventory item="military" amount={game.player.military} />
-                                        </List>
-                                      </TableRowColumn>
-                                    </TableRow>
-                                  </TableBody>
-                                </Table>
-                              </div>
-
-                            </CardText>
-
-                            <CardText id="played cards" expandable={true}>
-                              <h3>All Cards Played for Wonder</h3>
-                              <p><i> This will be where we place all played cards for current user </i></p>
-                            </CardText>
-
-                          </Card>
-                  }
-                  <hr />
-                  </div>
+                            </Card>
+                          }
+                        <hr />
+                    </div>
 
                 }
                 {!error && !game && !started &&
@@ -178,7 +256,7 @@ export class PlayerDisplay extends Component {
                     />
                 }
                 {!error && !game &&
-                    <p>Waiting on more players... {state.game.playerCount} players so far.</p>
+                    <p>Waiting on more players... {this.state.game.playerCount} players so far.</p>
                 }
                 {error &&
                     <p>There was an error</p>
@@ -188,29 +266,23 @@ export class PlayerDisplay extends Component {
     }
 }
 
-function Player(props) {
-   return <div>
-      <center><h1>Player: {props.player} <i> (ID: {props.ID}) </i></h1></center>
-      </div>;
-}
-
 const styles = {
-  chip: {
-    margin: 4,
-  },
-  wrapper: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
+    chip: {
+        margin: 4,
+    },
+    wrapper: {
+        display: 'flex',
+        flexWrap: 'wrap',
+    },
 };
 
-function Inventory (props) {
-   return(
-     <Chip style={styles.chip}>
-          <Avatar src={`dist/images/icons/${props.item}.png`} />
-          {props.amount.toString()}
+function Inventory(props) {
+    return (
+        <Chip style={styles.chip}>
+            <Avatar src={`dist/images/icons/${props.item}.png`} />
+            {props.amount.toString()}
         </Chip>
-      )
+    )
 }
 
 PlayerDisplay.propTypes = {
