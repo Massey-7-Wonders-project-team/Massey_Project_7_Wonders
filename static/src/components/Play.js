@@ -112,8 +112,8 @@ export class Play extends React.Component {
                 }
                 {game &&
                     <div>
-                      <PlayerDisplay playerId={playerId} />
-                      <GameScreen playerId={playerId} />
+                        <PlayerDisplay playerId={playerId} />
+                        <GameScreen playerId={playerId} />
                     </div>
                 }
             </div>

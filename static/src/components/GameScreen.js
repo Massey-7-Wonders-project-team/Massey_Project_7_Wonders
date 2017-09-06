@@ -64,7 +64,7 @@ export class GameScreen extends Component {
             <div>
                 {game && !error && started &&
                     <div>
-                        {
+                        {game.playedCards &&
                             game.playedCards.map((pcard) => {
                                 const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
                                 return (
@@ -77,7 +77,7 @@ export class GameScreen extends Component {
                                 );
                             })
                         }
-                        {
+                        {game.cards &&
                             game.cards.map((card) => {
                                 const imageName = (card.card.name).replace(/\s+/g, '').toLowerCase();
                                 return (
