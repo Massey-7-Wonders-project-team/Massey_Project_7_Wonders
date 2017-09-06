@@ -230,10 +230,12 @@ def process_card(card, player, is_discarded, for_wonder):
     return True
 
 
-def db_add(**kwargs):
+def db_add(*args, **kwargs):
     try:
-        for key in kwargs.items():
-            db.session.add_all(key)
+        for value in args:
+            db.session.add_all(value)
+        for key, value in kwargs.items():
+            db.session.add_all(value)
         db.session.commit()
     except Exception as e:
         print(e)
