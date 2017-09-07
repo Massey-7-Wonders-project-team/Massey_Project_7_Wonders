@@ -44,7 +44,7 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-        poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
+        // poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
     }
 
     startGame() {
@@ -81,10 +81,10 @@ export class GameScreen extends Component {
                         }
                         {game.cards &&
                             game.cards.map((card) => {
-                                const imageName = (card.card.name).replace(/\s+/g, '').toLowerCase();
+                                const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                 return (
                                     <Card key={card.id} style={{ display: 'inline-block' }}>
-                                        <CardTitle title={card.card.name} />
+                                        <CardTitle title={card.name} />
                                         <CardMedia>
                                             <img alt="" src={`dist/images/cards/${imageName}.png`} />
                                         </CardMedia>
