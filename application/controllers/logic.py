@@ -163,14 +163,11 @@ def set_next_round(game_info, players):
 
 
 def update_db(card, player, is_discarded, for_wonder, game_info):
+
     old_round_cardId = db.session.query(Round.cardId).filter_by(playerId=player.id, age=game_info.age, round=game_info.round).all()
     newVar = [i[0] for i in old_round_cardId]
-    print(old_round_cardId)
-    print(newVar)
-    print(card.id)
 
     newVar.remove(card.id)
-
 
     if game_info.age == 2:
         next_player = player.right_id

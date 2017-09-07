@@ -141,7 +141,8 @@ def game_status():
                 playerCount=player_count
             )
         else:
-            cards = (Round.query.filter_by(playerId=player.id, age=game.age, round=game.round).join(Card)).all()
+            card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age, round=game.round).all()]
+            cards = Card.query.filter(Card.id.in_(card_ids)).all()
             return jsonify(
                 status="Started",
                 game=print_json(player, cards),
