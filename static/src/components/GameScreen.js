@@ -50,11 +50,13 @@ export class GameScreen extends Component {
     startGame() {
         this.props.startGame(this.props.playerId);
     }
-    playCard(card) {
-        this.props.playCard(card);
+
+    playCard(cardId) {
+        this.props.playCard(this.props.playerId, cardId, false);
     }
-    discard(card) {
-        this.props.discard(card);
+
+    discard(cardId) {
+        this.props.playCard(this.props.playerId, cardId, true);
     }
 
     render() {
@@ -92,11 +94,11 @@ export class GameScreen extends Component {
                                         <CardActions>
                                             <FlatButton
                                                 label="Play Card"
-                                                onClick={() => this.playCard(card)}
+                                                onClick={() => this.playCard(card.id)}
                                             />
                                             <FlatButton
                                                 label="Discard"
-                                                onClick={() => this.discard(card)}
+                                                onClick={() => this.discard(card.id)}
                                             />
                                         </CardActions>
                                     </Card>
