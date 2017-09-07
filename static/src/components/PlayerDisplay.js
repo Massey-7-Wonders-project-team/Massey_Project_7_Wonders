@@ -221,18 +221,6 @@ export class PlayerDisplay extends Component {
                     </div>
 
                 }
-                {!error && !game && !started &&
-                    <RaisedButton
-                        label="I am ready"
-                        onClick={() => this.startGame()}
-                    />
-                }
-                {!error && !game &&
-                    <p>Waiting on more players... {this.props.playerCount} players so far.</p>
-                }
-                {error &&
-                    <p>There was an error</p>
-                }
             </div>
         );
     }
@@ -242,7 +230,6 @@ PlayerDisplay.propTypes = {
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
     playerId: PropTypes.number.isRequired,
-    playerCount: PropTypes.number,
 };
 
 PlayerDisplay.defaultProps = {

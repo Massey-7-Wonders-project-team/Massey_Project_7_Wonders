@@ -74,7 +74,7 @@ export function playCard(playerId, cardId, discarded) {
     return (dispatch) => {
         dispatch(requestPlayCard());
         const token = localStorage.getItem('token');
-        fetch(`/api/game/play_card?player_id=${playerId},card_id=${cardId},discarded=${discarded}`, {
+        fetch(`/api/game/play_card?player_id=${playerId}&card_id=${cardId}&discarded=${discarded}&for_wonder=false`, {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -131,7 +131,6 @@ export function startGame(playerId) {
                 Authorization: token,
             },
         })
-        .then(response => response.json())
         .then(response => response.json())
         .then((body) => {
             console.log(body);

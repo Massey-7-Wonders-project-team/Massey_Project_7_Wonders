@@ -163,8 +163,11 @@ def set_next_round(game_info, players):
 
 
 def update_db(card, player, is_discarded, for_wonder, game_info):
-    old_round = Round.query.filter_by(playerId=player.id, age=game_info.age, round=game_info.round).first()
-    old_round.remove(card)
+
+    old_round_cardId = db.session.query(Round.cardId).filter_by(playerId=player.id, age=game_info.age, round=game_info.round).all()
+    old_round_list = [i[0] for i in old_round_cardId]
+
+    old_round_list.remove(card.id)
 
     if game_info.age == 2:
         next_player = player.right_id
@@ -174,9 +177,9 @@ def update_db(card, player, is_discarded, for_wonder, game_info):
     history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder)
 
     rounds = []
-    for unplayed_card in old_round:
+    for unplayed_card in old_round_list:
         rounds.append(Round(playerId=next_player, age=game_info.age, round=game_info.round + 1,
-                            cardId=unplayed_card.id))
+                            cardId=unplayed_card))
 
     db_add(p=player, h=history, r=rounds)
 

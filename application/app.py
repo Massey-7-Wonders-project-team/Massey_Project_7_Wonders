@@ -141,7 +141,8 @@ def game_status():
                 playerCount=player_count
             )
         else:
-            cards = (Round.query.filter_by(playerId=player.id, age=game.age, round=game.round).join(Card)).all()
+            card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age, round=game.round).all()]
+            cards = Card.query.filter(Card.id.in_(card_ids)).all()
             return jsonify(
                 status="Started",
                 game=print_json(player, cards),
@@ -219,8 +220,8 @@ def play_card():
     card_id = request.args.get('card_id')
     discarded = request.args.get('discarded')
     for_wonder = request.args.get('for_wonder')
-    player = Player.query.filter(id=player_id).first()
-    card = Card.query.filter(id=card_id).first()
+    player = Player.query.filter_by(id=player_id).first()
+    card = Card.query.filter_by(id=card_id).first()
 
     if process_card(card, player, discarded, for_wonder):
         return jsonify(status="Card played")
