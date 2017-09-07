@@ -236,9 +236,16 @@ def process_card(card, player, is_discarded, for_wonder):
 def db_add(*args, **kwargs):
     try:
         for value in args:
+            print('args')
             db.session.add_all(value)
         for key, value in kwargs.items():
-            db.session.add_all(value)
+            print(key)
+            print(value)
+            if type(value) is list:
+               db.session.add_all(value)
+            else:
+               db.session.add(value)
         db.session.commit()
     except Exception as e:
+        print('Error commiting database update')
         print(e)
