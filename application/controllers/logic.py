@@ -237,7 +237,10 @@ def db_add(*args, **kwargs):
     try:
         for value in args:
             print('args')
-            db.session.add_all(value)
+            if type(value) is list:
+               db.session.add_all(value)
+            else:
+               db.session.add(value)
         for key, value in kwargs.items():
             if type(value) is list:
                db.session.add_all(value)
