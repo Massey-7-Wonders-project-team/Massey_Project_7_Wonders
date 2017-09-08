@@ -245,5 +245,5 @@ def db_add(*args, **kwargs):
                db.session.add(value)
         db.session.commit()
     except Exception as e:
-        print('Error commiting database update')
+        print('Error committing database update')
         print(e)
