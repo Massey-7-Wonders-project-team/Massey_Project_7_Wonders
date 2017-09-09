@@ -28,8 +28,8 @@ export class Header extends Component {
         super(props);
         this.state = {
             open: false,
+            email: null,
         };
-
     }
 
     dispatchNewRoute(route) {
@@ -37,7 +37,6 @@ export class Header extends Component {
         this.setState({
             open: false,
         });
-
     }
 
 
@@ -69,6 +68,16 @@ export class Header extends Component {
                     {
                         !this.props.isAuthenticated ?
                             <div>
+                                <MenuItem onClick={() => this.dispatchNewRoute('/home')}>
+                                    <img
+                                        alt="logo"
+                                        width="200"
+                                        src={`dist/images/background/7w_logo.png`}
+                                        padding="10px"
+                                        align="center"
+                                    />
+                                </MenuItem>
+                                <Divider />
                                 <MenuItem onClick={() => this.dispatchNewRoute('/login')}>
                                     Login
                                 </MenuItem>
@@ -79,12 +88,30 @@ export class Header extends Component {
                             :
                             <div>
                                 <MenuItem onClick={() => this.dispatchNewRoute('/play')}>
-                                    Play
+                                    <img
+                                        alt="logo"
+                                        width="200"
+                                        src={`dist/images/background/7w_logo.png`}
+                                    />
+                                </MenuItem>
+                                <MenuItem onClick={() => this.dispatchNewRoute('/home')}>
+                                    <i>Signed in ({this.props.userName})</i>
                                 </MenuItem>
                                 <Divider />
-
+                                <MenuItem onClick={() => this.dispatchNewRoute('/play')}>
+                                    <b>Play</b>
+                                </MenuItem>
+                                <Divider />
+                                <MenuItem onClick={() => this.dispatchNewRoute('/instructions')}>
+                                    How to Play
+                                </MenuItem>
+                                <Divider />
+                                <MenuItem onClick={() => this.dispatchNewRoute('/home')}>
+                                    Home
+                                </MenuItem>
+                                <Divider />
                                 <MenuItem onClick={(e) => this.logout(e)}>
-                                    Logout
+                                    <i>Logout</i>
                                 </MenuItem>
                             </div>
                     }
@@ -93,7 +120,14 @@ export class Header extends Component {
                   title="7 Wonders"
                   onLeftIconButtonTouchTap={() => this.openNav()}
                   iconElementRight={
-                      <FlatButton label="Home" onClick={() => this.dispatchNewRoute('/')} />
+                      !this.props.userName ?
+                        <FlatButton label="Home" onClick={() => this.dispatchNewRoute('/')} />
+                        :
+                        <div>
+                          <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onClick={() => this.dispatchNewRoute('/home')} />
+                          <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onClick={() => this.dispatchNewRoute('/')} />
+                        </div>
+
                     }
                 />
             </header>
