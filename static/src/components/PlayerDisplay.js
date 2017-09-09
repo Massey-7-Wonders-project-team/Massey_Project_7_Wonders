@@ -29,9 +29,6 @@ export class PlayerDisplay extends Component {
             userID: null,
             displayID: null,
             displayData: null,
-            leftData: null,
-            rightData: null,
-            totalPlayers: null,
             fetch: true,
         };
         if (this.props.playerId) {
