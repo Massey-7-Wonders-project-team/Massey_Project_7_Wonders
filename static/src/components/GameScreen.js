@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
-import { RaisedButton, CardActions, FlatButton, Card, CardText, CardMedia, CardTitle } from 'material-ui';
+import { RaisedButton, CardActions, FlatButton, Card,
+    CardText, CardMedia, CardTitle, CircularProgress } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
@@ -60,10 +61,13 @@ export class GameScreen extends Component {
     }
 
     render() {
-        const { error, game, started, playerCount } = this.props;
+        const { error, game, started, playerCount, loading } = this.props;
 
         return (
             <div>
+                {loading &&
+                    <CircularProgress />
+                }
                 {game && !error && started &&
                     <div>
                         {game.playedCards &&
@@ -134,7 +138,14 @@ GameScreen.propTypes = {
     playerId: PropTypes.number,
     playerCount: PropTypes.number,
     playCard: PropTypes.func,
-    discard: PropTypes.func,
+    clearGame: PropTypes.func.isRequired,
+};
+
+GameScreen.defaultProps = {
+    game: null,
+    playerId: null,
+    playerCount: null,
+    playCard: null,
 };
 
 export default connect(
