@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
 import { poll } from '../utils/misc';
+import PlayerDisplay from './PlayerDisplay';
 
 function mapStateToProps(state) {
     return {
@@ -66,59 +67,76 @@ export class GameScreen extends Component {
             <div>
                 {game && !error && started &&
                     <div>
-                        {game.playedCards &&
-                            game.playedCards.map((pcard) => {
-                                const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
-                                return (
-                                    <Card key={pcard.id} style={{ display: 'inline-block' }}>
-                                        <CardTitle title={pcard.card.name} />
-                                        <CardMedia>
-                                            <img alt="" src={`dist/images/cards/${imageName}.png`} />
-                                        </CardMedia>
-                                    </Card>
-                                );
-                            })
-                        }
-                        {game.cards &&
-                            game.cards.map((card) => {
-                                const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
-                                return (
-                                    <Card key={card.id} style={{ display: 'inline-block' }}>
-                                        <CardTitle title={card.name} />
-                                        <CardMedia>
-                                            <img alt="" src={`dist/images/cards/${imageName}.png`} />
-                                        </CardMedia>
-                                        <CardText>
-                                            <p>Discription of what card does</p>
-                                        </CardText>
-                                        <CardActions>
-                                            <FlatButton
-                                                label="Play Card"
-                                                onClick={() => this.playCard(card.id)}
-                                            />
-                                            <FlatButton
-                                                label="Discard"
-                                                onClick={() => this.discard(card.id)}
-                                            />
-                                        </CardActions>
-                                    </Card>
-                                );
-                            })
-                        }
+                        <div>
+                            <PlayerDisplay playerId={game.player.id} />
+                        </div>
+                        <div>
+                            {game.playedCards &&
+                                game.playedCards.map((pcard) => {
+                                    const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
+                                    return (
+                                        <Card key={pcard.id} style={{ display: 'inline-block' }}>
+                                            <CardTitle title={pcard.card.name} />
+                                            <CardMedia>
+                                                <img alt="" src={`dist/images/cards/${imageName}.png`} />
+                                            </CardMedia>
+                                        </Card>
+                                    );
+                                })
+                            }
+                            {game.cards &&
+                                game.cards.map((card) => {
+                                    const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
+                                    return (
+                                        <Card key={card.id} style={{ display: 'inline-block' }}>
+                                            <CardTitle title={card.name} />
+                                            <CardMedia>
+                                                <img alt="" src={`dist/images/cards/${imageName}.png`} />
+                                            </CardMedia>
+                                            <CardText>
+                                                <p>Discription of what card does</p>
+                                            </CardText>
+                                            <CardActions>
+                                                <FlatButton
+                                                    label="Play Card"
+                                                    onClick={() => this.playCard(card.id)}
+                                                />
+                                                <FlatButton
+                                                    label="Discard"
+                                                    onClick={() => this.discard(card.id)}
+                                                />
+                                            </CardActions>
+                                        </Card>
+                                    );
+                                })
+                            }
+                        </div>
                     </div>
                 }
-                {!error && !game && !started &&
-                    <RaisedButton
-                        label="I am ready"
-                        onClick={() => this.startGame()}
-                    />
-                }
-                {!error && !game &&
-                    <p>Waiting on more players... { playerCount} players so far.</p>
-                }
-                {error &&
-                    <p>There was an error</p>
-                }
+                <div>
+                    <div style={{ float: "left", padding: 100 }}>
+                        {!error && !game && !started &&
+                            <RaisedButton
+                                label="I am ready"
+                                onClick={() => this.startGame()}
+                            />
+                        }
+                        {!error && !game &&
+                            <div style={{ padding: '50' }} >
+
+                              <p>Waiting on more players... <i id="number">#(playersLoggedIn)</i> players so far.</p>
+                            </div>
+                        }
+                        {error &&
+                            <p>There was an error</p>
+                        }
+                    </div>
+                    {!game &&
+                        <div id="GameScreen" style={{ float: "right", marginRight: 50 }}>
+                            <img width="100%" alt="statue" src={'dist/images/background/statue.jpg'} />
+                        </div>
+                    }
+                </div>
             </div>
         );
     }
