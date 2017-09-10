@@ -7,6 +7,9 @@ import {
     ERROR_START_GAME,
     REQUEST_PLAY_CARD,
     ERROR_PLAY_CARD,
+    REQUEST_END_GAME,
+    RECEIVE_END_GAME,
+    ERROR_END_GAME,
 } from '../constants/index';
 
 export function requestGameStatus() {
@@ -140,6 +143,51 @@ export function startGame(playerId) {
             // catch error
             console.log(err);
             dispatch(errorStartGame({ game: null, started: false, error: true }));
+        });
+    };
+}
+
+function requestEndGame() {
+    return {
+        type: REQUEST_END_GAME,
+    };
+}
+
+function receiveEndGame(payload) {
+    return {
+        type: RECEIVE_END_GAME,
+        payload,
+    };
+}
+
+function errorEndGame() {
+    return {
+        type: ERROR_END_GAME,
+    };
+}
+
+export function endGame(playerId) {
+    return (dispatch) => {
+        dispatch(requestEndGame());
+        const token = localStorage.getItem('token');
+        fetch(`/api/game/end?player_id=${playerId}`, {
+            method: 'get',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json', // eslint-disable-line quote-props
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+        })
+        .then(response => response.json())
+        .then((body) => {
+            console.log(body);
+            dispatch(receiveEndGame());
+        })
+        .catch((err) => {
+            // catch error
+            console.log(err);
+            dispatch(errorEndGame());
         });
     };
 }

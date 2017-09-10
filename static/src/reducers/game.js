@@ -5,6 +5,9 @@ import {
     REQUEST_START_GAME,
     RECEIVE_START_GAME,
     ERROR_START_GAME,
+    REQUEST_END_GAME,
+    RECEIVE_END_GAME,
+    ERROR_END_GAME,
 } from '../constants/index';
 import { createReducer } from '../utils/misc';
 
@@ -47,6 +50,20 @@ export default createReducer(initialState, {
             error: false,
         }),
     [ERROR_START_GAME]: state =>
+        Object.assign({}, state, {
+            error: true,
+        }),
+    [REQUEST_END_GAME]: state =>
+        Object.assign({}, state, {
+            loading: true,
+        }),
+    [RECEIVE_END_GAME]: state =>
+        Object.assign({}, state, {
+            loading: false,
+            error: false,
+            game: null,
+        }),
+    [ERROR_END_GAME]: state =>
         Object.assign({}, state, {
             error: true,
         }),

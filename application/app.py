@@ -102,7 +102,7 @@ def create_game():
         db.session.commit()
     except Exception as e:
         print(e)
-        return jsonify(message="There was an error"), 501
+        return jsonify(message="There was an error"), 500
 
     # Creates and commits new player, binds to the current game and user
     player = Player(gameId=game.id, userId=user.id)
@@ -113,7 +113,7 @@ def create_game():
         db.session.commit()
     except Exception as e:
         print(e)
-        return jsonify(message="There was an error"), 501
+        return jsonify(message="There was an error"), 500
 
     return jsonify(
         player_id=player.id,
@@ -151,7 +151,7 @@ def game_status():
 
     except Exception as e:
         print(e)
-        return jsonify(message="There was an error"), 501
+        return jsonify(message="There was an error"), 500
 
 @app.route("/api/game/start", methods=["GET"])
 @requires_auth
@@ -171,7 +171,7 @@ def begin_game():
         db.session.commit()
     except Exception as e:
         print(e)
-        return jsonify(message="There was an error"), 501
+        return jsonify(message="There was an error"), 500
 
     ############################
     # Checks if game can begin #
@@ -200,7 +200,7 @@ def begin_game():
             db.session.commit()
         except Exception as e:
             print(e)
-            return jsonify(message="There was an error"), 501
+            return jsonify(message="There was an error"), 500
         return jsonify(
             status="Starting",
             game=print_json(player, cards)
@@ -232,3 +232,24 @@ def play_card():
             status="Invalid move",
             game=print_json(player, cards)
         )
+
+@app.route("/api/game/end", methods=["GET"])
+@requires_auth
+def end_game():
+    """Endpoint for ending a game mid game
+    Inputs - player_id
+    Outputs - status comment"""
+    player_id = request.args.get('player_id')
+    player = Player.query.filter_by(id=player_id).first()
+    game = Game.query.filter_by(id=player.gameId).first()
+    game.complete = True
+    db.session.add(game)
+
+    try:
+        print('Ending game')
+        db.session.commit()
+        return jsonify(message="Success")
+
+    except Exception as e:
+        print(e)
+        return jsonify(message="There was an error"), 500
