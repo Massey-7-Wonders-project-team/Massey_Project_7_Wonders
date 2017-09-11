@@ -32,7 +32,7 @@ def age_calcs_and_dealing(players, game):
     if game.age > 0:
         military_calcs(players, game.age)
 
-    if game.age > 3:
+    if game.age > 2:
         game.complete = True
     else:
         game.round = 1
@@ -158,11 +158,11 @@ def update_player(card, player, for_wonder=False):
     if card.giveResearch:
         if card.giveResearch == 'cog':
             player.cog += 1
-        if card.giveResearch == 'tablet':
+        elif card.giveResearch == 'tablet':
             player.tablet += 1
-        if card.giveResearch == 'compass':
+        elif card.giveResearch == 'compass':
             player.compass += 1
-        if card.giveResearch == 'wildcard':
+        elif card.giveResearch == 'wildcard':
             player.wildcard += 1
 
 
@@ -191,11 +191,13 @@ def military_calcs(players, age):
             player.points += win
         elif player.military < left_player.military:
             player.points -= 1
+            player.military_loss += 1
 
         if player.military > right_player.military:
             player.points += win
         elif player.military < right_player.military:
             player.points -= 1
+            player.military_loss += 1
 
 
 def update_db(card, player, is_discarded, for_wonder, game_info):
