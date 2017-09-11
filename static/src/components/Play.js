@@ -31,6 +31,7 @@ export class Play extends React.Component {
             error: false,
             playerId: null,
             endGame: false,
+            playerCount: null,
         };
         this.createGame = this.createGame.bind(this);
         this.gameStatusCheck = this.gameStatusCheck.bind(this);
@@ -64,6 +65,7 @@ export class Play extends React.Component {
                     game: true,
                     error: false,
                     playerId: body.player_id,
+                    playerCount: body.playerCount,
                 });
             } else {
                 this.setState({
@@ -143,8 +145,7 @@ export class Play extends React.Component {
     }
 
     render() {
-        const { game, error, playerId,endGame } = this.state;
-        const fullWidth = true;
+        const { game, error, playerId, endGame, playerCount } = this.state;
         const primary = true;
         const endGameActions = [
             <FlatButton
@@ -184,7 +185,6 @@ export class Play extends React.Component {
                 }
                 {game &&
                     <div style={{ clear: 'both' }}>
-                        <PlayerDisplay playerId={playerId} />
                         <GameScreen playerId={playerId} />
                     </div>
                 }

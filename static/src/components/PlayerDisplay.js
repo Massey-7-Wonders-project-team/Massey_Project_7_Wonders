@@ -51,28 +51,31 @@ export class PlayerDisplay extends Component {
       // need to send props of current, left, right to getData(props)
     }
 
-    getData(props) {
+    getData() {
         if (this.state.fetch) {
-          //console.log('GET DATA FUNCTION ACTIVE');
-          const token = localStorage.getItem('token');
-          fetch(`/api/game/status?player_id=${this.state.displayID}`, {
-              method: 'get',
-              credentials: 'include',
-              headers: {
-                  'Accept': 'application/json', // eslint-disable-line quote-props
-                  'Content-Type': 'application/json',
-                  Authorization: token,
-              },
-          })
-          .then(response => response.json())
-          .then((body) => {
-              console.log('getData(body): ', body);
-              this.setState({
-                  displayData: body.game.player,
-                  totalPlayers: body.players,
-                  fetch: false,
-              });
-          });
+            // console.log('GET DATA FUNCTION ACTIVE');
+            const token = localStorage.getItem('token');
+            fetch(`/api/game/status?player_id=${this.state.displayID}`, {
+                method: 'get',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json', // eslint-disable-line quote-props
+                    'Content-Type': 'application/json',
+                    Authorization: token,
+                },
+            })
+            .then(response => response.json())
+            .then((body) => {
+                console.log('getData(body): ', body);
+
+                if (body.game) {
+                    this.setState({
+                        displayData: body.game.player,
+                        totalPlayers: body.players,
+                        fetch: false,
+                    });
+                }
+            });
         }
     }
 
