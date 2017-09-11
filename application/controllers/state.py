@@ -11,7 +11,7 @@ def print_json (player, players, cards):
     })"""
     return {
         'player': player.serialise(),
-        'allPlayers': [player.serialise() for player in players],
+        'allPlayers': [p.serialise() for p in players if p is not player],
         'cards': [card.serialise() for card in cards],
     }
 
