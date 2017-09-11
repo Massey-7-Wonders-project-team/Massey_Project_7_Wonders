@@ -28,7 +28,7 @@ def deal_wonders(players):
 def age_calcs_and_dealing(players, game):
     """Call to calculate end of age calculations
     and/or the next age's hands dealt"""
-    print(game.age, " Game Age")
+    print(game.age, " Game Age - Will Now Be Processed And Incremented")
     if game.age > 0:
         military_calcs(players, game.age)
 
@@ -202,6 +202,7 @@ def update_db(card, player, is_discarded, for_wonder, game_info):
 
     old_round_cardId = db.session.query(Round.cardId).filter_by(playerId=player.id, age=game_info.age, round=game_info.round).all()
     old_round_list = [i[0] for i in old_round_cardId]
+    print("Cards in hand", old_round_list, "    Card trying to remove:", card.id)
     old_round_list.remove(card.id)
 
     history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder)
@@ -273,7 +274,7 @@ def process_card(card, player, is_discarded, for_wonder):
     for p in players:
         query = Round.query.filter_by(age=game_info.age, round=game_info.round+1, playerId=p.id).all()
         if not query:
-            print("Does not increment round - " + str(p.id), " still needs to play")
+            print("Does not increment round - Player", str(p.id), "still needs to play")
             return True
 
     # Only triggers if all players have finished their turn
