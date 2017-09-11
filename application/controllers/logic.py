@@ -11,12 +11,12 @@ import random
 
 def deal_wonders(players):
     wonders = Wonder.query.all()
-
     cardhists = []
 
     for player in players:
         wonder = wonders.pop(random.randint(0, len(wonders)-1))
         player.wonder = wonder.name
+        player.max_wonder = wonder.slots
 
         card = Card.query.filter_by(name=wonder.card_0).first()
         update_player(card, player)
@@ -25,19 +25,29 @@ def deal_wonders(players):
     db_add(p=players, c=cardhists)
 
 
-def deal_hands(age, players):
-    """Call to have the next age's hands dealt"""
-    cards = Card.query.filter(Card.noPlayers <= len(players)).filter_by(age=age).all()
+def age_calcs_and_dealing(players, game):
+    """Call to calculate end of age calculations
+    and/or the next age's hands dealt"""
+    print(game.age, " Game Age - Will Now Be Processed And Incremented")
+    if game.age > 0:
+        military_calcs(players, game.age)
 
-    # Randomly assign cards to players
-    dealt_cards = []
-    for player in players:
-        for j in range(7):
-            param = random.randint(0, len(cards)-1)
-            card = cards.pop(param)
-            dealt_cards.append(Round(age=age, round=1, playerId=player.id, cardId=card.id))
+    if game.age > 3:
+        game.complete = True
+    else:
+        game.round = 1
+        game.age += 1
+        cards = Card.query.filter(Card.noPlayers <= len(players)).filter_by(age=game.age).all()
 
-    db_add(d=dealt_cards)
+        # Randomly assign cards to players
+        dealt_cards = []
+        for player in players:
+            for j in range(7):
+                param = random.randint(0, len(cards)-1)
+                card = cards.pop(param)
+                dealt_cards.append(Round(age=game.age, round=1, playerId=player.id, cardId=card.id))
+
+    db_add(d=dealt_cards, p=players, g=game)
 
 
 def set_neighbours(players):
@@ -145,40 +155,61 @@ def update_player(card, player, for_wonder=False):
     if for_wonder:
         player.wonder_level += 1
 
+    if card.giveResearch:
+        if card.giveResearch == 'cog':
+            player.cog += 1
+        if card.giveResearch == 'tablet':
+            player.tablet += 1
+        if card.giveResearch == 'compass':
+            player.compass += 1
+        if card.giveResearch == 'wildcard':
+            player.wildcard += 1
+
 
 def set_next_round(game_info, players):
     """Helper function to process_card, changes round"""
-    game_info.round += 1
 
-    if game_info.round == 7:
-        game_info.round = 1
-        game_info.age += 1
-        if game_info.age == 4:
-            game_info.complete = True
-            # TODO FINAL CALCULATIONS FOR END GAME
-        else:
-            deal_hands(game_info.age, players)
+    if game_info.round == 6:
+        age_calcs_and_dealing(players, game_info)
+    else:
+        game_info.round += 1
+        db_add(game=game_info)
 
-    db_add(game=game_info)
+
+def military_calcs(players, age):
+    if age is 1:
+        win = 1
+    elif age is 2:
+        win = 3
+    elif age is 3:
+        win = 5
+
+    for player in players:
+        left_player = list(filter(lambda p: p.id == player.left_id, players))[0]
+        right_player = list(filter(lambda p: p.id == player.right_id, players))[0]
+        if player.military > left_player.military:
+            player.points += win
+        elif player.military < left_player.military:
+            player.points -= 1
+
+        if player.military > right_player.military:
+            player.points += win
+        elif player.military < right_player.military:
+            player.points -= 1
 
 
 def update_db(card, player, is_discarded, for_wonder, game_info):
 
     old_round_cardId = db.session.query(Round.cardId).filter_by(playerId=player.id, age=game_info.age, round=game_info.round).all()
     old_round_list = [i[0] for i in old_round_cardId]
-
+    print("Cards in hand", old_round_list, "    Card trying to remove:", card.id)
     old_round_list.remove(card.id)
-
-    if game_info.age == 2:
-        next_player = player.right_id
-    else:
-        next_player = player.left_id
 
     history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder)
 
     rounds = []
     for unplayed_card in old_round_list:
-        rounds.append(Round(playerId=next_player, age=game_info.age, round=game_info.round + 1,
+        rounds.append(Round(playerId=next_player(player, game_info.age), age=game_info.age, round=game_info.round + 1,
                             cardId=unplayed_card))
 
     db_add(p=player, h=history, r=rounds)
@@ -205,30 +236,49 @@ def find_wonder_card(player):
     return card
 
 
+def next_player(player, age):
+    if age == 2:
+        return player.right_id
+    else:
+        return player.left_id
+
+
 def process_card(card, player, is_discarded, for_wonder):
     """Called from play_card API endpoint, plays card, updates DB, and checks if able to go to next turn
     Returns false if card unable to be played, otherwise true"""
+
+    game_info = Game.query.filter_by(id=player.gameId).first()
+
+    # Guards against more than one card being played in a round
+    if Round.query.filter_by(age=game_info.age, round=game_info.round+1, playerId=next_player(player, game_info.age)).all():
+        return False
+
     if is_discarded:
+        print(str(card.id) + " is discarded")
         player.money += 3
     else:
         if for_wonder:
             # use wonder card instead of played card
+            print(str(card.id) + " is used for wonder")
             card = find_wonder_card(player)
         if card is False or check_move(card, player) is False:
             return False
+        print(str(card.id) + " is used for wonder or is processed")
         update_player(card, player, for_wonder)
 
     # UPDATE DB
-    game_info = Game.query.filter_by(id=player.gameId).first()
     update_db(card, player, is_discarded, for_wonder, game_info)
 
     # TURN COMPLETION LOGIC
     players = (Player.query.filter_by(gameId=player.gameId)).all()
     for p in players:
-        if Round.query.filter_by(age=game_info.age, round=game_info.round+1, playerId=p.id) is None:
+        query = Round.query.filter_by(age=game_info.age, round=game_info.round+1, playerId=p.id).all()
+        if not query:
+            print("Does not increment round - Player", str(p.id), "still needs to play")
             return True
 
     # Only triggers if all players have finished their turn
+    print("Increments round")
     set_next_round(game_info, players)
     return True
 

@@ -1,0 +1,20 @@
+Updated 11/09/2017 by Jacob Stringer
+
+Immutable models that should not be adjusted:
+- Wonder (manage.create_db calls cards_setup)
+- Card (manage.create_db calls cards_setup)
+
+Immutable from in-game's perspective after setup:
+- User (created by authentication process)
+- Game (created by application.app.create_game())
+
+Mutable from in-game:
+- Player (created by application.app.create_game())
+Player stores all current state information for a player
+- Round
+Round stores hand information. When searched by a round, age and player, it will return that player's hand
+- Cardhist
+Stores how cards have been played so far. Searching this table by player will return all cards played.
+Specify not discarded to avoid discard pile. Search by discarded for every player to return discard pile.
+Does not include cards that are used for wonder construction - the wonder cards will be in here instead.
+

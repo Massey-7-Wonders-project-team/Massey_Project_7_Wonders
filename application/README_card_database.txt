@@ -1,3 +1,5 @@
+NOTE AS OF 11/9/2017 ---- DEPRECATED INFORMATION
+
 Card database containing the data for the cards in 7 Wonders.
 Contains all of the information needed to deal with all cards except yellow and purple cards.
 

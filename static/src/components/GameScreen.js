@@ -46,7 +46,7 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-        // poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
+        poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
     }
 
     startGame() {
