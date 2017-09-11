@@ -15,6 +15,7 @@ class Wonder(db.Model):
         return {
             'id':self.id,
             'name':self.name,
+            'slots':self.slots,
             'card_0':self.card_0,
             'card_1':self.card_1,
             'card_2':self.card_2,
