@@ -61,9 +61,11 @@ export function checkGameStatus(playerId) {
         .then((body) => {
             console.log(body);
             if (body.status === 'Started') {
-                dispatch(receiveGameStatus({ game: body.game, started: true }));
+                dispatch(receiveGameStatus({ game: body.game, started: true, cardPlayed: false }));
+            } else if (body.status === 'Card Played') {
+                dispatch(receiveGameStatus({ game: body.game, started: true, cardPlayed: true }));
             } else {
-                dispatch(receiveGameStatus({ game: body.game, started: false }));
+                dispatch(receiveGameStatus({ game: body.game, started: false, cardPlayed: false }));
             }
         })
         .catch((err) => {

@@ -17,6 +17,7 @@ const initialState = {
     started: false,
     loading: true,
     players: null,
+    cardPlayed: false,
 };
 
 export default createReducer(initialState, {
@@ -27,6 +28,7 @@ export default createReducer(initialState, {
             error: false,
             started: payload.started,
             loading: false,
+            cardPlayed: payload.cardPlayed,
         }),
     [REQUEST_GAME_STATUS]: state =>
         Object.assign({}, state, {
