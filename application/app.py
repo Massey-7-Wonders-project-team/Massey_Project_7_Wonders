@@ -161,7 +161,7 @@ def game_status():
                     status="Card Played",
                     game=print_json(player, players, cards),
                     players=player_count,
-                    played_card=(Cardhist.query.filter(Cardhist.cardId.in_(card_ids)).first()).serialise()
+                    played_card=(Cardhist.query.filter(Cardhist.cardId.in_(card_ids)).filter_by(playerId=player.id).first()).serialise()
                 )
             return jsonify(
                 status="Started",
