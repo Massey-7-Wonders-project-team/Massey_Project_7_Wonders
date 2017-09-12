@@ -156,7 +156,7 @@ def game_status():
             cards = Card.query.filter(Card.id.in_(card_ids)).all()
             return jsonify(
                 status="Completed",
-                game=print_json(players, cards),
+                game=print_json(player, players, cards),
                 players=player_count
             )
         else:
