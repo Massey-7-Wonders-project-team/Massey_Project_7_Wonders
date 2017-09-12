@@ -15,6 +15,7 @@ class Player(db.Model):
 
     wonder = db.Column(db.String(50), default='')
     wonder_level = db.Column(db.Integer, default=0)
+    max_wonder = db.Column(db.Integer, default=0)
 
     wood = db.Column(db.Integer, default=0)
     brick = db.Column(db.Integer, default=0)
@@ -26,6 +27,13 @@ class Player(db.Model):
     points = db.Column(db.Integer, default=0)
     military = db.Column(db.Integer, default=0)
     money = db.Column(db.Integer, default=3)
+
+    cog = db.Column(db.Integer, default=0)
+    tablet = db.Column(db.Integer, default=0)
+    compass = db.Column(db.Integer, default=0)
+    wildcard = db.Column(db.Integer, default=0)
+
+    military_loss = db.Column(db.Integer, default=0)
 
     extra_wood = db.Column(db.Integer, default=0)
     extra_brick = db.Column(db.Integer, default=0)
@@ -45,6 +53,7 @@ class Player(db.Model):
             'right_id':self.right_id,
             'wonder':self.wonder,
             'wonder_level':self.wonder_level,
+            'max_wonder':self.max_wonder,
             'wood':self.wood,
             'brick':self.brick,
             'ore':self.ore,
@@ -61,5 +70,10 @@ class Player(db.Model):
             'extra_cloth': self.extra_cloth,
             'points':self.points,
             'military':self.military,
-            'money':self.money
+            'military_loss':self.military_loss,
+            'money':self.money,
+            'cog':self.cog,
+            'tablet':self.tablet,
+            'compass':self.compass,
+            'wildcard':self.wildcard
         }

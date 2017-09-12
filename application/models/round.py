@@ -16,5 +16,6 @@ class Round(db.Model):
             'id': self.id,
             'age': self.age,
             'round': self.round,
+            'player': self.playerId,
             'card': Card.serialise(Card.query.filter_by(id=self.cardId).first())
         }
