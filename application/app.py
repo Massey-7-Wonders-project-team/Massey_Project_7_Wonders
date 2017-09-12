@@ -4,7 +4,7 @@ from .models.game import Game
 from .models.card import Card
 from .models.player import Player
 from .models.round import Round
-from .controllers.state import *
+from .controllers.state_printer import *
 from .controllers.logic import *
 from index import app, db
 from sqlalchemy.exc import IntegrityError
@@ -151,8 +151,18 @@ def game_status():
                 playerCount=player_count
             )
         else:
-            card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age, round=game.round).all()]
+            card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age,
+                                                                                     round=game.round).all()]
             cards = Card.query.filter(Card.id.in_(card_ids)).all()
+
+            if Round.query.filter_by(playerId=get_next_player_id(player, game.age), round=game.round+1, age=game.age).all():
+                return jsonify(
+                    status="Card Played",
+                    game=print_json(players, cards),
+                    players=player_count,
+                    played_card=(Cardhist.query.filter(Cardhist.cardId.in_(card_ids)).filter_by(
+                        playerId=player.id).first()).serialise()
+                )
             return jsonify(
                 status="Started",
                 game=print_json(players, cards),
@@ -213,7 +223,7 @@ def begin_game():
         game.started = True
 
         # Sets up neighbours and first round
-        set_neighbours(players)
+        set_player_neighbours(players)
         deal_wonders(players)
         age_calcs_and_dealing(players, game)
 
