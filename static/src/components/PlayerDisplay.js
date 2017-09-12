@@ -29,56 +29,58 @@ export class PlayerDisplay extends Component {
             userID: null,
             displayID: null,
             displayData: null,
+            allPlayerData: null,
             fetch: true,
         };
         if (this.props.playerId) {
+            // loading data
             this.state.displayID = this.props.playerId;
             this.state.userID = this.props.playerId;
+            this.state.allPlayerData = this.props.data;
+            // binding
             this.lookLeft = this.lookLeft.bind(this);
-            this.lookRight = this.lookRight.bind(this);
-            this.lookUser = this.lookUser.bind(this);
+            // this.lookRight = this.lookRight.bind(this);
+            // this.lookUser = this.lookUser.bind(this);
             this.getData = this.getData.bind(this);
-            this.getData();
+            this.search = this.search.bind(this);
+
         }
     }
 
     componentDidMount() {
         console.log("CDM");
-    }
+        // this.search(this.state.displayID, this.state.allPlayerData);
+        this.getData();
 
-    getDataLoop() {
-      // this function is to loop through current display and both left and right data retrieval
-      // need to send props of current, left, right to getData(props)
     }
 
     getData() {
         if (this.state.fetch) {
-            // console.log('GET DATA FUNCTION ACTIVE');
-            const token = localStorage.getItem('token');
-            fetch(`/api/game/status?player_id=${this.state.displayID}`, {
-                method: 'get',
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json', // eslint-disable-line quote-props
-                    'Content-Type': 'application/json',
-                    Authorization: token,
-                },
-            })
-            .then(response => response.json())
-            .then((body) => {
-                console.log('getData(body): ', body);
-
-                if (body.game) {
-                    this.setState({
-                        displayData: body.game.player,
-                        totalPlayers: body.players,
-                        fetch: false,
-                    });
-                }
-            });
+          //console.log('GET DATA FUNCTION ACTIVE');
+          const token = localStorage.getItem('token');
+          fetch(`/api/game/status?player_id=${this.state.displayID}`, {
+              method: 'get',
+              credentials: 'include',
+              headers: {
+                  'Accept': 'application/json', // eslint-disable-line quote-props
+                  'Content-Type': 'application/json',
+                  Authorization: token,
+              },
+          })
+          .then(response => response.json())
+          .then((body) => {
+              console.log('getData(body): ', body);
+              this.setState({
+                  allPlayerData: body.game.player,
+                  fetch: false,
+              });
+              const newD = this.search();
+              this.setState({
+                  displayData: newD,
+              })
+          });
         }
     }
-
 
     lookLeft() {
         console.log('** CLICKED LEFT **');
@@ -108,6 +110,20 @@ export class PlayerDisplay extends Component {
         this.getData();
     }
 
+    // This searches thru all player objects and selects correct one to display according to id
+    search() {
+        console.log("searching");
+        const nameKey = this.state.displayID;
+        const myArray = this.state.allPlayerData;
+        for (var i=0; i < myArray.length; i++) {
+            if (myArray[i].id === nameKey) {
+                const newData = myArray[i];
+                console.log("new: ", newData);
+                return (newData);
+            }
+        }
+    }
+
     render() {
         const { error, game, started } = this.props;
         const ListStyle = {
@@ -115,13 +131,30 @@ export class PlayerDisplay extends Component {
             paddingTop: 0,
         };
         const inventorycustomColumnStyle = {
-            paddingTop: 0, width: 100 };
+            padding: 0, width: 100 };
+        // extract wonder name for file
         let imageName = '';
         if (this.state.displayData) {
             const longCityNameArray = (this.state.displayData.wonder).split(' ');
             const city = longCityNameArray.length - 1;
             imageName = longCityNameArray[city].toLowerCase();
         }
+        console.log("DataDisplay: ", this.state.displayData);
+        //const pretendWonderLevel = 3;
+        //const pretendMaxWonders = 3;
+
+
+        // creates list of wonders completed to render on board
+        var rows = [];
+        for (var each=0; each<this.state.displayData.max_wonder; each ++) {
+            if (each<this.state.displayData.wonder_level) {
+              rows.push("Complete");
+            } else {
+              rows.push(null);
+            }
+        }
+        console.log("WonderList: ", rows);
+
 
         return (
             <div>
@@ -133,7 +166,12 @@ export class PlayerDisplay extends Component {
                               <TableBody displayRowCheckbox={false} >
                                 <TableRow selectable={false}>
                                   <TableRowColumn width="50" id="leftNav" >
-                                    <input type="image" width="20" src='dist/images/icons/left_arrow.png' onClick={this.lookLeft} />
+                                    <input
+                                        type="image"
+                                        width="20"
+                                        src='dist/images/icons/left_arrow.png'
+                                        onClick={this.lookLeft}
+                                    />
                                   </TableRowColumn>
                                   <TableRowColumn>
                                     <Card
@@ -167,15 +205,45 @@ export class PlayerDisplay extends Component {
                                                                     <Inventory item="cloth" amount={this.state.displayData.cloth} />
                                                                 </List>
                                                             </TableRowColumn>
-                                                            <TableRowColumn>
+                                                            <TableRowColumn id="wonderdisplay" style={{ padding: 0 }}>
+                                                                <CardActions>
+                                                                    <FlatButton label="Back to your Wonder" onClick={this.lookUser} />
+                                                                </CardActions>
                                                                 <CardMedia
                                                                     overlay={<CardTitle subtitle="Player thinking..." />}
+                                                                    overlayContentStyle={{
+                                                                        background: null
+                                                                    }}
                                                                 >
                                                                     <img alt="" src={`dist/images/cities/${imageName}A.png`} />
                                                                 </CardMedia>
-                                                                <CardActions>
-                                                                        <FlatButton label="Back to your Wonder" onClick={this.lookUser} />
-                                                                </CardActions>
+                                                                <Table id="wonderTable" style={{ marginLeft:10, marginRight: 10 }}>
+                                                                  <TableBody displayRowCheckbox={false}>
+                                                                    <TableRow>
+                                                                      {
+                                                                        rows.map((wCard) => {
+                                                                            console.log(wCard);
+                                                                            if (wCard) {
+                                                                              return (
+                                                                                  <TableRowColumn style={{ padding: 0}}>
+                                                                                  <center>
+                                                                                          <img width="150" alt="Complete" src={'dist/images/icons/wonderCard.png'} />
+                                                                                  </center>
+                                                                                  </TableRowColumn>
+                                                                              );
+                                                                            } else {
+                                                                              return (
+                                                                                <TableRowColumn style={{ padding: 0}}>
+
+                                                                                </TableRowColumn>
+                                                                            )
+                                                                            }
+                                                                        })
+
+                                                                      }
+                                                                    </TableRow>
+                                                                  </TableBody>
+                                                                </Table>
                                                             </TableRowColumn>
                                                             <TableRowColumn
                                                                 style={inventorycustomColumnStyle}
@@ -186,7 +254,7 @@ export class PlayerDisplay extends Component {
                                                                     <Inventory item="pyramid-stage0" amount={this.state.displayData.wonder_level} />
                                                                     <br />
                                                                     <Inventory item="military" amount={this.state.displayData.military} />
-                                                                    <Inventory item="victoryminus1" amount='0' />
+                                                                    <Inventory item="victoryminus1" amount={0} />
 
                                                                 </List>
                                                             </TableRowColumn>
@@ -194,11 +262,11 @@ export class PlayerDisplay extends Component {
                                                                 style={inventorycustomColumnStyle}
                                                             >
                                                                 <List id="buildings" style={ListStyle}>
-                                                                    <Inventory item="cogs" amount="0" />
-                                                                    <Inventory item="script" amount="0" />
-                                                                    <Inventory item="compas" amount="0" />
-                                                                    <Inventory item="commercial" amount="0" />
-                                                                    <Inventory item="civillian" amount="0" />
+                                                                    <Inventory item="cog" amount={this.state.displayData.cog} />
+                                                                    <Inventory item="tablet" amount={this.state.displayData.tablet} />
+                                                                    <Inventory item="compass" amount={this.state.displayData.compass} />
+                                                                    <Inventory item="commercial" amount={0} />
+                                                                    <Inventory item="civillian" amount={0} />
                                                                 </List>
                                                             </TableRowColumn>
                                                         </TableRow>
@@ -231,6 +299,7 @@ export class PlayerDisplay extends Component {
         );
     }
 }
+
 
 PlayerDisplay.propTypes = {
     game: PropTypes.object,
