@@ -150,6 +150,15 @@ def game_status():
                 status="Waiting",
                 playerCount=player_count
             )
+        elif game.complete:
+            card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age,
+                                                                                     round=game.round).all()]
+            cards = Card.query.filter(Card.id.in_(card_ids)).all()
+            return jsonify(
+                status="Completed",
+                game=print_json(players, cards),
+                players=player_count
+            )
         else:
             card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age, round=game.round).all()]
             cards = Card.query.filter(Card.id.in_(card_ids)).all()
