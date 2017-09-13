@@ -86,13 +86,12 @@ If you want to run the test in watch mode run:
 #### Browser tests
 Step 1:
 Setup Selenium.
-Download gecko web driver [here]() and ensure you add to your system path variable the folder you download the driver to.
-Run selenium ```java -jar selenium.jar``` from inside the static/selenium folder.
+`node static/selenium/setup.js`
 
 Step 2:
-``npm run test:browser`` will kick off the nightwatch tests.
+`npm run test:browser` will kick off the nightwatch tests.
 
-Browser tests are located in static/tests/browser 
+Browser tests are located in static/tests/browser
 
 ### Deployment
 The app is running on a hobby dyno instance on Heroku
