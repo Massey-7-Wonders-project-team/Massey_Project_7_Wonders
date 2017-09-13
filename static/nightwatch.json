@@ -1,5 +1,5 @@
 {
-  "src_folders" : ["tests"],
+  "src_folders" : ["tests/browser"],
   "output_folder" : "reports",
   "custom_commands_path" : "",
   "page_objects_path" : "",
