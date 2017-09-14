@@ -106,7 +106,7 @@ Further documentation can be found [here](https://drive.google.com/drive/folders
 * [Sam Irvine](https://github.com/Sam-Irv/)
 * [Jacob Stringer](https://github.com/jacobstringer)
 * [Marthijn Batlajeri](https://github.com/Marthijn-B)
-* Jade Graham
+* [Jade Graham](https://github.com/wackydapper)
 
 ## Credits
 This project was bootstrapped thanks to [React Redux Flask by Daniel Ternyak](https://github.com/dternyak/React-Redux-Flask)
