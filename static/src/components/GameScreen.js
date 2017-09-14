@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { RaisedButton, CardActions, FlatButton, Card,
-    CardText, CardMedia, CardTitle, CircularProgress } from 'material-ui';
+    CardText, CardMedia, CardTitle, CircularProgress, Dialog } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
@@ -14,6 +14,7 @@ function mapStateToProps(state) {
         error: state.game.error,
         loading: state.game.loading,
         playerCount: state.game.playerCount,
+        cardPlayed: state.game.cardPlayed,
     };
 }
 
@@ -27,9 +28,11 @@ export class GameScreen extends Component {
         super();
         this.state = {
             polling: false,
+            showPlayCardError: false,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
+        this.hidePlayCardError = this.hidePlayCardError.bind(this);
     }
 
     componentDidMount() {
@@ -47,6 +50,7 @@ export class GameScreen extends Component {
 
     pollGameStatus() {
         poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
+        console.log("POLLING from gamescreen");
     }
 
     startGame() {
@@ -54,33 +58,64 @@ export class GameScreen extends Component {
     }
 
     playCard(cardId) {
-        this.props.playCard(this.props.playerId, cardId, false);
+        if (!this.props.cardPlayed) {
+            this.props.playCard(this.props.playerId, cardId, false);
+        } else {
+            this.setState({
+                showPlayCardError: true,
+            });
+        }
     }
 
     discard(cardId) {
-        this.props.playCard(this.props.playerId, cardId, true);
+        if (!this.props.cardPlayed) {
+            this.props.playCard(this.props.playerId, cardId, true);
+        } else {
+            this.setState({
+                showPlayCardError: true,
+            });
+        }
+    }
+
+    hidePlayCardError() {
+        this.setState({
+            showPlayCardError: false,
+        });
     }
 
     render() {
-        const { error, game, started, playerCount, loading } = this.props;
+        const { error, game, started, loading, playerCount } = this.props;
+        const { showPlayCardError } = this.state;
+
+        const showPlayCardActions = [
+            <FlatButton
+                label="Ok"
+                onClick={this.hidePlayCardError}
+            />,
+        ];
 
         return (
             <div>
-
+                {loading && !game &&
+                    <CircularProgress />
+                }
                 {game && !error && started &&
                     <div>
                         <div>
-                            <PlayerDisplay playerId={this.props.playerId} data={game.player} />
+                            <PlayerDisplay playerId={this.props.playerId}/>
                         </div>
                         <div>
                             {game.playedCards &&
                                 game.playedCards.map((pcard) => {
                                     const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card key={pcard.id} style={{ display: 'inline-block' }}>
+                                        <Card key={pcard.id} style={{ width: 150, display: 'inline-block' }}>
                                             <CardTitle title={pcard.card.name} />
                                             <CardMedia>
-                                                <img width="50" alt="" src={`dist/images/cards/${imageName}.png`} />
+                                                <img
+                                                    alt={`${pcard.card.name} image`}
+                                                    src={`dist/images/cards/${imageName}.png`}
+                                                />
                                             </CardMedia>
                                         </Card>
                                     );
@@ -91,9 +126,12 @@ export class GameScreen extends Component {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
                                         <Card key={card.id} style={{ width: 150, display: 'inline-block' }}>
-                                            <CardTitle title={card.name} style={{fontSize: 10}}/>
+                                            <CardTitle title={card.name} />
                                             <CardMedia>
-                                                <img alt="" src={`dist/images/cards/${imageName}.png`} />
+                                                <img
+                                                    alt={`${card.name} image`}
+                                                    src={`dist/images/cards/${imageName}.png`}
+                                                />
                                             </CardMedia>
                                             <CardText>
                                                 <p>Discription of what card does</p>
@@ -113,10 +151,20 @@ export class GameScreen extends Component {
                                 })
                             }
                         </div>
+                        {showPlayCardError &&
+                            <Dialog
+                                title="You have already played a card this round"
+                                actions={showPlayCardActions}
+                                open={showPlayCardError}
+                                onRequestClose={this.hidePlayCardError}
+                            >
+                              Please what for other players to play their card
+                            </Dialog>
+                        }
                     </div>
                 }
                 <div>
-                    <div style={{ float: "left", padding: 100 }}>
+                    <div style={{ float: 'left', padding: 100 }}>
                         {!error && !game && !started &&
                             <RaisedButton
                                 label="I am ready"
@@ -126,7 +174,7 @@ export class GameScreen extends Component {
                         {!error && !game &&
                             <div style={{ padding: '50' }} >
 
-                              <p>Waiting on more players... <i id="number">#(playersLoggedIn)</i> players so far.</p>
+                              <p>Waiting on more players... <i id="number">{ playerCount }</i> players so far.</p>
                             </div>
                         }
                         {error &&
@@ -134,7 +182,7 @@ export class GameScreen extends Component {
                         }
                     </div>
                     {!game &&
-                        <div id="GameScreen" style={{ float: "right", marginRight: 50 }}>
+                        <div id="GameScreen" style={{ float: 'right', marginRight: 50 }}>
                             <img width="100%" alt="statue" src={'dist/images/background/statue.jpg'} />
                         </div>
                     }
@@ -152,9 +200,9 @@ GameScreen.propTypes = {
     started: PropTypes.bool.isRequired,
     loading: PropTypes.bool.isRequired,
     playerId: PropTypes.number,
-    playerCount: PropTypes.number,
     playCard: PropTypes.func,
-    clearGame: PropTypes.func.isRequired,
+    cardPlayed: PropTypes.bool.isRequired,
+    playerCount: PropTypes.number,
 };
 
 GameScreen.defaultProps = {
