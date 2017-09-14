@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
 import Inventory from './Inventory';
+import Wonder from './Wonder';
 
 function mapStateToProps(state) {
     return {
@@ -97,16 +98,6 @@ export class PlayerDisplay extends Component {
             const city = longCityNameArray.length - 1;
             imageName = longCityNameArray[city].toLowerCase();
         }
-        // creates list of wonders completed to render on board
-        var rows = [];
-        for (var each = 0; each < boardData.max_wonder; each ++) {
-            if (each < boardData.wonder_level) {
-                rows.push('Complete');
-            } else {
-                rows.push(null);
-            }
-        }
-        console.log("WonderList: ", rows);
 
         return (
             <div>
@@ -160,37 +151,7 @@ export class PlayerDisplay extends Component {
                                                                 >
                                                                     <img alt="" src={`dist/images/cities/${imageName}A.png`} />
                                                                 </CardMedia>
-                                                                <Table
-                                                                    id="wonderTable"
-                                                                    style={{ marginLeft:10, marginRight: 10 }}>
-                                                                    <TableBody
-                                                                        displayRowCheckbox={false}
-                                                                    >
-                                                                        <TableRow>
-                                                                            {
-                                                                                rows.map((wCard) => {
-                                                                                    console.log(wCard);
-                                                                            if (wCard) {
-                                                                              return (
-                                                                                  <TableRowColumn style={{ padding: 0}}>
-                                                                                  <center>
-                                                                                          <img width="150" alt="Complete" src={'dist/images/icons/wonderCard.png'} />
-                                                                                  </center>
-                                                                                  </TableRowColumn>
-                                                                              );
-                                                                            } else {
-                                                                              return (
-                                                                                <TableRowColumn style={{ padding: 0 }}>
-
-                                                                                </TableRowColumn>
-                                                                            )
-                                                                            }
-                                                                        })
-
-                                                                      }
-                                                                    </TableRow>
-                                                                  </TableBody>
-                                                                </Table>
+                                                                <Wonder data={boardData} />
                                                             </TableRowColumn>
                                                             <TableRowColumn
                                                                 style={inventorycustomColumnStyle}
