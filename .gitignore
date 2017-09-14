@@ -8,4 +8,4 @@ node_modules
 tmp
 static/dist
 *.log
-.idea/*
+/static/reports
