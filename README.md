@@ -83,6 +83,15 @@ Will run the frontend test suite
 If you want to run the test in watch mode run:
 `npm run test:watch`
 
+#### Browser tests
+Step 1:
+Setup Selenium.
+`node static/selenium/setup.js`
+
+Step 2:
+`npm run test:browser` will kick off the nightwatch tests.
+
+Browser tests are located in static/tests/browser
 
 ### Deployment
 The app is running on a hobby dyno instance on Heroku

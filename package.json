@@ -9,7 +9,8 @@
     "build:production": "cd static && npm run build:production",
     "lint": "cd static && npm run lint",
     "start": "cd static && npm run start",
-    "test": "cd static && npm run test"
+    "test": "cd static && npm run test",
+    "test:browser": "cd static && npm run test:browser"
   },
   "repository": {
     "type": "git",
