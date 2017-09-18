@@ -4,7 +4,7 @@ from .models.game import Game
 from .models.card import Card
 from .models.player import Player
 from .models.round import Round
-from .controllers.state import *
+from .controllers.state_printer import *
 from .controllers.logic import *
 from index import app, db
 from sqlalchemy.exc import IntegrityError
@@ -150,6 +150,15 @@ def game_status():
                 status="Waiting",
                 playerCount=player_count
             )
+        elif game.complete:
+            card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age,
+                                                                                     round=game.round).all()]
+            cards = Card.query.filter(Card.id.in_(card_ids)).all()
+            return jsonify(
+                status="Completed",
+                game=print_json(player, players, cards),
+                players=player_count
+            )
         else:
             card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age, round=game.round).all()]
             cards = Card.query.filter(Card.id.in_(card_ids)).all()
@@ -208,7 +217,6 @@ def begin_game():
     if player_count > 2:
         if player_count < 7:
             for p in players:
-
                 counter = 0
                 for i in range(len(players)):
                     if p.id is players[i].id:
@@ -224,11 +232,9 @@ def begin_game():
         game.started = True
 
         # Sets up neighbours and first round
-        set_neighbours(players)
+        set_player_neighbours(players)
         deal_wonders(players)
         age_calcs_and_dealing(players, game)
-
-        military_calcs(players, 1)
 
         # DB update and begin game
         cards = Round.query.filter_by(playerId=player.id).join(Card).all()
