@@ -50,6 +50,7 @@ export class GameScreen extends Component {
 
     pollGameStatus() {
         poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
+        console.log("POLLING from gamescreen");
     }
 
     startGame() {
@@ -93,7 +94,6 @@ export class GameScreen extends Component {
             />,
         ];
 
-
         return (
             <div>
                 {loading && !game &&
@@ -102,17 +102,20 @@ export class GameScreen extends Component {
                 {game && !error && started &&
                     <div>
                         <div>
-                            <PlayerDisplay playerId={game.player.id} />
+                            <PlayerDisplay playerId={this.props.playerId}/>
                         </div>
                         <div>
                             {game.playedCards &&
                                 game.playedCards.map((pcard) => {
                                     const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card key={pcard.id} style={{ display: 'inline-block' }}>
+                                        <Card key={pcard.id} style={{ width: 150, display: 'inline-block' }}>
                                             <CardTitle title={pcard.card.name} />
                                             <CardMedia>
-                                                <img alt="" src={`dist/images/cards/${imageName}.png`} />
+                                                <img
+                                                    alt={`${pcard.card.name} image`}
+                                                    src={`dist/images/cards/${imageName}.png`}
+                                                />
                                             </CardMedia>
                                         </Card>
                                     );
@@ -122,10 +125,13 @@ export class GameScreen extends Component {
                                 game.cards.map((card) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card key={card.id} style={{ display: 'inline-block' }}>
+                                        <Card key={card.id} style={{ width: 150, display: 'inline-block' }}>
                                             <CardTitle title={card.name} />
                                             <CardMedia>
-                                                <img alt="" src={`dist/images/cards/${imageName}.png`} />
+                                                <img
+                                                    alt={`${card.name} image`}
+                                                    src={`dist/images/cards/${imageName}.png`}
+                                                />
                                             </CardMedia>
                                             <CardText>
                                                 <p>Discription of what card does</p>
