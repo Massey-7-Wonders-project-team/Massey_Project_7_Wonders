@@ -153,7 +153,11 @@ def game_status():
         else:
             card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age, round=game.round).all()]
             cards = Card.query.filter(Card.id.in_(card_ids)).all()
+            card_hist = (Cardhist.query.filter(Cardhist.cardId.in_(card_ids)).filter_by(playerId=player.id).first())
 
+            if card_hist is not None:
+                card_hist = card_hist.serialise()
+                
             # the following checks to see if the player has played a card in the next round
             # which means it is waiting for other players to play this round
             if Round.query.filter_by(playerId=player.id, round=game.round+1, age=game.age).first():
@@ -161,7 +165,7 @@ def game_status():
                     status="Card Played",
                     game=print_json(player, players, cards),
                     players=player_count,
-                    played_card=(Cardhist.query.filter(Cardhist.cardId.in_(card_ids)).filter_by(playerId=player.id).first()).serialise()
+                    played_card=card_hist
                 )
             return jsonify(
                 status="Started",

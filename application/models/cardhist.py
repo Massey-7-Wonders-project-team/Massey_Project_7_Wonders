@@ -10,3 +10,12 @@ class Cardhist(db.Model):
     cardId = db.Column(db.Integer, db.ForeignKey('card.id'))
     discarded = db.Column(db.Boolean, default=False)
     for_wonder = db.Column(db.Boolean, default=False)
+
+    def serialise(self):
+        return {
+            'id':self.id,
+            'playerId':self.playerId,
+            'cardId':self.cardId,
+            'discarded':self.discarded,
+            'for_wonder':self.for_wonder
+        }
