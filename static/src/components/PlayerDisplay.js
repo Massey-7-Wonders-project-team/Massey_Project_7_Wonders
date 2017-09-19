@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
 import Inventory from './Inventory';
+import Wonder from './Wonder';
 
 function mapStateToProps(state) {
     return {
@@ -28,87 +29,62 @@ export class PlayerDisplay extends Component {
         this.state = {
             userID: null,
             displayID: null,
-            displayData: null,
-            fetch: true,
+            userData: null,
         };
-        if (this.props.playerId) {
-            this.state.displayID = this.props.playerId;
-            this.state.userID = this.props.playerId;
+        if (this.props.game) {
+            // load passed data
+            this.state.userID = this.props.game.player.id;
+            this.state.displayID = this.props.game.player.id;
+            this.state.userData = this.props.game.player;
+            // binding
             this.lookLeft = this.lookLeft.bind(this);
             this.lookRight = this.lookRight.bind(this);
             this.lookUser = this.lookUser.bind(this);
-            this.getData = this.getData.bind(this);
-            this.getData();
+            this.search = this.search.bind(this);
         }
     }
-
-    componentDidMount() {
-        console.log("CDM");
-    }
-
-    getDataLoop() {
-      // this function is to loop through current display and both left and right data retrieval
-      // need to send props of current, left, right to getData(props)
-    }
-
-    getData() {
-        if (this.state.fetch) {
-            // console.log('GET DATA FUNCTION ACTIVE');
-            const token = localStorage.getItem('token');
-            fetch(`/api/game/status?player_id=${this.state.displayID}`, {
-                method: 'get',
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json', // eslint-disable-line quote-props
-                    'Content-Type': 'application/json',
-                    Authorization: token,
-                },
-            })
-            .then(response => response.json())
-            .then((body) => {
-                console.log('getData(body): ', body);
-
-                if (body.game) {
-                    this.setState({
-                        displayData: body.game.player,
-                        totalPlayers: body.players,
-                        fetch: false,
-                    });
-                }
-            });
-        }
-    }
-
 
     lookLeft() {
         console.log('** CLICKED LEFT **');
-        const newDisplayID = this.state.displayData.left_id;
+        const newDisplayID = this.search().left_id;
         this.setState({
             displayID: newDisplayID,
-            fetch: true,
         });
-        this.getData();
     }
 
     lookRight() {
         console.log('** CLICKED RIGHT **');
         this.setState({
-            displayID: this.state.displayData.right_id,
-            fetch: true,
+            displayID: this.search().right_id,
         });
-        this.getData();
     }
 
     lookUser() {
         console.log('** CLICKED View User **');
         this.setState({
             displayID: this.state.userID,
-            fetch: true,
         });
-        this.getData();
+    }
+
+    search() {
+        const nameKey = this.state.displayID;
+        var data = {};
+        if (nameKey === this.state.userID) {
+            data = this.state.userData;
+        } else {
+          const myArray = this.props.game.allPlayers;
+          for (var i=0; i < myArray.length; i++) {
+              if (myArray[i].id === nameKey) {
+                  data = myArray[i];
+              }
+          }
+        }
+        return data;
     }
 
     render() {
+        const boardData = this.search();
+        console.log("boardData", boardData);
         const { error, game, started } = this.props;
         const ListStyle = {
             width: 100,
@@ -117,15 +93,15 @@ export class PlayerDisplay extends Component {
         const inventorycustomColumnStyle = {
             paddingTop: 0, width: 100 };
         let imageName = '';
-        if (this.state.displayData) {
-            const longCityNameArray = (this.state.displayData.wonder).split(' ');
+        if (true) {
+            const longCityNameArray = (boardData.wonder).split(' ');
             const city = longCityNameArray.length - 1;
             imageName = longCityNameArray[city].toLowerCase();
         }
 
         return (
             <div>
-                {game && !error && started && this.state.displayData &&
+                {game && !error && started && boardData &&
                     <div>
                         {
                           <div>
@@ -143,11 +119,10 @@ export class PlayerDisplay extends Component {
                                         <CardHeader
                                             id="CardHeader"
                                             title={`Player Name (id:${this.state.displayID})`}  // "(Add players Name here)"
-                                            subtitle={this.state.displayData.wonder}
-                                            avatar={`dist/images/cards/age1.png`}               // ${game.cards[0].age}
+                                            subtitle={boardData.wonder}
+                                            avatar={`dist/images/cards/age${game.cards[0].age}.png`}               // ${game.cards[0].age}
                                             actAsExpander={true}
                                             showExpandableButton={true}
-                                            onChange={this.getData()}
                                         />
                                         <CardText id="CardText" style={{ paddingBottom: 0, paddingTop: 0 }}>
                                             <div>
@@ -158,35 +133,36 @@ export class PlayerDisplay extends Component {
                                                                 style={inventorycustomColumnStyle}
                                                             >
                                                                 <List style={ListStyle}>
-                                                                    <Inventory item="wood" amount={this.state.displayData.wood} />
-                                                                    <Inventory item="brick" amount={this.state.displayData.brick} />
-                                                                    <Inventory item="ore" amount={this.state.displayData.ore} />
-                                                                    <Inventory item="stone" amount={this.state.displayData.stone} />
-                                                                    <Inventory item="glass" amount={this.state.displayData.glass} />
-                                                                    <Inventory item="paper" amount={this.state.displayData.paper} />
-                                                                    <Inventory item="cloth" amount={this.state.displayData.cloth} />
+                                                                    <Inventory item="wood" amount={boardData.wood} />
+                                                                    <Inventory item="brick" amount={boardData.brick} />
+                                                                    <Inventory item="ore" amount={boardData.ore} />
+                                                                    <Inventory item="stone" amount={boardData.stone} />
+                                                                    <Inventory item="glass" amount={boardData.glass} />
+                                                                    <Inventory item="paper" amount={boardData.paper} />
+                                                                    <Inventory item="cloth" amount={boardData.cloth} />
                                                                 </List>
                                                             </TableRowColumn>
                                                             <TableRowColumn>
+                                                                <CardActions>
+                                                                    <FlatButton label="Back to your Wonder" onClick={this.lookUser} />
+                                                                </CardActions>
                                                                 <CardMedia
                                                                     overlay={<CardTitle subtitle="Player thinking..." />}
                                                                 >
                                                                     <img alt="" src={`dist/images/cities/${imageName}A.png`} />
                                                                 </CardMedia>
-                                                                <CardActions>
-                                                                        <FlatButton label="Back to your Wonder" onClick={this.lookUser} />
-                                                                </CardActions>
+                                                                <Wonder data={boardData} />
                                                             </TableRowColumn>
                                                             <TableRowColumn
                                                                 style={inventorycustomColumnStyle}
                                                             >
                                                                 <List style={ListStyle}>
-                                                                    <Inventory item="vp" amount={this.state.displayData.points} />
-                                                                    <Inventory item="coin" amount={this.state.displayData.money} />
-                                                                    <Inventory item="pyramid-stage0" amount={this.state.displayData.wonder_level} />
+                                                                    <Inventory item="vp" amount={boardData.points} />
+                                                                    <Inventory item="coin" amount={boardData.money} />
+                                                                    <Inventory item="pyramid-stage0" amount={boardData.wonder_level} />
                                                                     <br />
-                                                                    <Inventory item="military" amount={this.state.displayData.military} />
-                                                                    <Inventory item="victoryminus1" amount='0' />
+                                                                    <Inventory item="military" amount={boardData.military} />
+                                                                    <Inventory item="victoryminus1" amount={0} />
 
                                                                 </List>
                                                             </TableRowColumn>
@@ -194,11 +170,11 @@ export class PlayerDisplay extends Component {
                                                                 style={inventorycustomColumnStyle}
                                                             >
                                                                 <List id="buildings" style={ListStyle}>
-                                                                    <Inventory item="cogs" amount="0" />
-                                                                    <Inventory item="script" amount="0" />
-                                                                    <Inventory item="compas" amount="0" />
-                                                                    <Inventory item="commercial" amount="0" />
-                                                                    <Inventory item="civillian" amount="0" />
+                                                                    <Inventory item="cog" amount={boardData.cog} />
+                                                                    <Inventory item="tablet" amount={boardData.tablet} />
+                                                                    <Inventory item="compass" amount={boardData.compass} />
+                                                                    <Inventory item="commercial" amount={0} />
+                                                                    <Inventory item="civillian" amount={0} />
                                                                 </List>
                                                             </TableRowColumn>
                                                         </TableRow>
@@ -236,6 +212,7 @@ PlayerDisplay.propTypes = {
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
     playerId: PropTypes.number.isRequired,
+
 };
 
 PlayerDisplay.defaultProps = {

@@ -10,7 +10,8 @@
     "lint": "eslint src",
     "start": "node bin/server.js",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "test:browser": "nightwatch"
   },
   "repository": {
     "type": "git",
@@ -72,6 +73,7 @@
     "resolve-url-loader": "^1.4.3",
     "rimraf": "^2.5.0",
     "sass-loader": "^4.0.0",
+    "selenium-download": "^2.0.10",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
     "webpack": "^1.12.11",

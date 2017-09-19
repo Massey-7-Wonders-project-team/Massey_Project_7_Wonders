@@ -33,6 +33,8 @@ class Player(db.Model):
     compass = db.Column(db.Integer, default=0)
     wildcard = db.Column(db.Integer, default=0)
 
+    military_loss = db.Column(db.Integer, default=0)
+
     extra_wood = db.Column(db.Integer, default=0)
     extra_brick = db.Column(db.Integer, default=0)
     extra_ore = db.Column(db.Integer, default=0)
@@ -68,6 +70,7 @@ class Player(db.Model):
             'extra_cloth': self.extra_cloth,
             'points':self.points,
             'military':self.military,
+            'military_loss':self.military_loss,
             'money':self.money,
             'cog':self.cog,
             'tablet':self.tablet,

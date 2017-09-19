@@ -1,5 +1,5 @@
 {
-  "src_folders" : ["tests"],
+  "src_folders" : ["tests/browser"],
   "output_folder" : "reports",
   "custom_commands_path" : "",
   "page_objects_path" : "",
@@ -10,16 +10,13 @@
   "disable_colors": false,
   "test_workers" : false,
 
-  "selenium" : {
-    "start_process" : false,
-    "server_path" : "",
-    "log_path" : "",
-    "host" : "127.0.0.1",
-    "port" : 4444,
-    "cli_args" : {
-      "webdriver.chrome.driver" : "",
-      "webdriver.ie.driver" : "",
-      "webdriver.firefox.profile" : ""
+  "selenium": {
+    "start_process": true,
+    "server_path": "./node_modules/nightwatch/bin/selenium.jar",
+    "host": "127.0.0.1",
+    "port": 4444,
+    "cli_args": {
+      "webdriver.chrome.driver": "./node_modules/nightwatch/bin/chromedriver"
     }
   },
 
@@ -35,7 +32,7 @@
         "path" : ""
       },
       "desiredCapabilities" : {
-        "browserName" : "firefox",
+        "browserName" : "chrome",
         "javascriptEnabled" : true,
         "acceptSslCerts" : true
       }

@@ -17,5 +17,4 @@ class Cardhist(db.Model):
             'playerId':self.playerId,
             'cardId':self.cardId,
             'discarded':self.discarded,
-            'for_wonder':self.for_wonder
-        }
+            'for_wonder': self.for_wonder

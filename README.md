@@ -83,6 +83,15 @@ Will run the frontend test suite
 If you want to run the test in watch mode run:
 `npm run test:watch`
 
+#### Browser tests
+Step 1:
+Setup Selenium.
+`node static/selenium/setup.js`
+
+Step 2:
+`npm run test:browser` will kick off the nightwatch tests.
+
+Browser tests are located in static/tests/browser
 
 ### Deployment
 The app is running on a hobby dyno instance on Heroku
@@ -106,7 +115,7 @@ Further documentation can be found [here](https://drive.google.com/drive/folders
 * [Sam Irvine](https://github.com/Sam-Irv/)
 * [Jacob Stringer](https://github.com/jacobstringer)
 * [Marthijn Batlajeri](https://github.com/Marthijn-B)
-* Jade Graham
+* [Jade Graham](https://github.com/wackydapper)
 
 ## Credits
 This project was bootstrapped thanks to [React Redux Flask by Daniel Ternyak](https://github.com/dternyak/React-Redux-Flask)
