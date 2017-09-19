@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Paper, FlatButton } from 'material-ui';
 import * as actionCreators from '../actions/data';
 
 function mapStateToProps(state) {
@@ -17,6 +18,16 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(actionCreators, dispatch);
 }
 
+const style = {
+    marginTop: 50,
+    paddingBottom: 50,
+    paddingTop: 25,
+    marginLeft: 100,
+    width: 300,
+    textAlign: 'center',
+    display: 'inline-block',
+};
+
 @connect(mapStateToProps, mapDispatchToProps)
 export default class ProtectedView extends React.Component {
     componentDidMount() {
@@ -30,15 +41,29 @@ export default class ProtectedView extends React.Component {
     }
 
     render() {
+        const Name = (this.props.userName).split('@')[0];
         return (
             <div>
                 {!this.props.loaded
                     ? <h1>Loading data...</h1>
                     :
                     <div>
-                        <h1>Welcome back,
-                            {this.props.userName}!</h1>
-                        <h1>{this.props.data.data.email}</h1>
+                        <div style={{ float: "left" }}>
+                            <h1>Welcome</h1>
+                            <Paper style={style} >
+                                <h1>&nbsp;&nbsp;{ Name }!</h1>
+                                <h3><i>&nbsp;&nbsp;({this.props.data.data.email})</i></h3>
+                            </Paper>
+                            <br />
+                            <FlatButton
+                                style={{ marginLeft: 55, marginTop: 25 }}
+                                label="Select Play in the Menu to find a Game to join"
+                                onClick={() => this.dispatchNewRoute('/play')}
+                            />
+                        </div>
+                        <div style={{ float: "right", paddingRight: 50 }}>
+                            <img alt="statue" src={'dist/images/background/statue.jpg'} />
+                        </div>
                     </div>
                 }
             </div>

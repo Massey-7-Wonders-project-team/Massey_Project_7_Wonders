@@ -29,10 +29,13 @@ export class GameScreen extends Component {
         this.state = {
             polling: false,
             showPlayCardError: false,
+            playerCount: null,
+            ready: false,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
         this.hidePlayCardError = this.hidePlayCardError.bind(this);
+        this.playersLogged = this.playersLogged.bind(this);
     }
 
     componentDidMount() {
@@ -54,6 +57,11 @@ export class GameScreen extends Component {
     }
 
     startGame() {
+        if (!this.state.ready) {
+            this.setState({
+                ready: true,
+            })
+        }
         this.props.startGame(this.props.playerId);
     }
 
@@ -83,9 +91,37 @@ export class GameScreen extends Component {
         });
     }
 
+    playersLogged() {
+      // this function is just to find how many players are logged into
+      // the currently created game
+      // Replication of what Game.js does
+      // Just not sure how to retrieve info from Game.js
+      const token = localStorage.getItem('token');
+      fetch(`/api/game/status?player_id=${this.props.playerId}`, {
+          method: 'get',
+          credentials: 'include',
+          headers: {
+              'Accept': 'application/json', // eslint-disable-line quote-props
+              'Content-Type': 'application/json',
+              Authorization: token,
+          },
+      })
+      .then(response => response.json())
+      .then((body) => {
+          if (this.state.playerCount < body.playerCount) {
+              this.setState({
+                  playerCount: body.playerCount,
+              });
+          }
+          console.log("PlayersLogged: ", this.state.playerCount);
+      });
+    }
+
     render() {
         const { error, game, started, loading, playerCount } = this.props;
         const { showPlayCardError } = this.state;
+        let minumum = false;
+        if (this.state.playerCount > 2) { minumum = true; }
 
         const showPlayCardActions = [
             <FlatButton
@@ -93,16 +129,17 @@ export class GameScreen extends Component {
                 onClick={this.hidePlayCardError}
             />,
         ];
+        // update total numbers of players logged in
+        if (!started) {
+            this.playersLogged();
+        }
 
         return (
             <div>
-                {loading && !game &&
-                    <CircularProgress />
-                }
                 {game && !error && started &&
                     <div>
                         <div>
-                            <PlayerDisplay playerId={this.props.playerId}/>
+                            <PlayerDisplay playerId={this.props.playerId} />
                         </div>
                         <div>
                             {game.playedCards &&
@@ -121,12 +158,12 @@ export class GameScreen extends Component {
                                     );
                                 })
                             }
-                            {game.cards &&
+                            {game.cards && game.cards[0].name &&
                                 game.cards.map((card) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card key={card.id} style={{ width: 150, display: 'inline-block' }}>
-                                            <CardTitle title={card.name} />
+                                        <Card key={card.id} style={{ width: 150, display: 'inline-block', paddingBottom: 0 }}>
+                                            <CardTitle title={card.name} titleStyle={{ fontSize: 18 }} />
                                             <CardMedia>
                                                 <img
                                                     alt={`${card.name} image`}
@@ -164,18 +201,45 @@ export class GameScreen extends Component {
                     </div>
                 }
                 <div>
-                    <div style={{ float: 'left', padding: 100 }}>
+                    <div style={{ float: 'left', padding: 20 }}>
                         {!error && !game && !started &&
-                            <RaisedButton
-                                label="I am ready"
-                                onClick={() => this.startGame()}
-                            />
-                        }
-                        {!error && !game &&
-                            <div style={{ padding: '50' }} >
-
-                              <p>Waiting on more players... <i id="number">{ playerCount }</i> players so far.</p>
+                          <div>
+                              <div id="GC" style={{ width: 500 }}>
+                                  <h2> Game creation...</h2>
+                              </div>
+                              <div style={{ padding: 20 }} >
+                                  <h3>Now we wait for players to join your game</h3>
+                                  <br />
+                                  <p>To start the game, there needs to be:</p>
+                                  <ul>
+                                    <li>Minumum of 3 players</li>
+                                    <li>Maximum of 7 players</li>
+                                  </ul>
+                                  <br />
+                                  <center>
+                                      <h4><b>... there are
+                                      <b style={{ color: 'red' }}> { this.state.playerCount }</b> players so far.
+                                      </b></h4>
+                                   </center>
+                                  <br />
+                                  <center><p>The game will start when all players have clicked ready</p></center>
+                                </div>
                             </div>
+                        }
+                        {!error && !game && !started &&
+                            <center>
+                                {!this.state.ready
+                                  ? <RaisedButton
+                                      label="I am ready"
+                                      onClick={() => this.startGame()}
+                                  />
+                                  :
+                                  <div>
+                                      <h4><b>Now we wait...</b></h4>
+                                      <p><i>(Rome was not built in a day)</i></p>
+                                  </div>
+                                }
+                            </center>
                         }
                         {error &&
                             <p>There was an error</p>
@@ -187,6 +251,9 @@ export class GameScreen extends Component {
                         </div>
                     }
                 </div>
+                {loading && !game &&
+                    <CircularProgress />
+                }
             </div>
         );
     }
