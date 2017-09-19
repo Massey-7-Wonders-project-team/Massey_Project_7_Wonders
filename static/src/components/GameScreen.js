@@ -29,6 +29,7 @@ export class GameScreen extends Component {
         this.state = {
             polling: false,
             showPlayCardError: false,
+            pollId: null,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
@@ -49,8 +50,9 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-        poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
-        console.log("POLLING from gamescreen");
+        const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
+        this.props.setPollId(pollId);
+        console.log('POLLING from gamescreen');
     }
 
     startGame() {
@@ -102,7 +104,7 @@ export class GameScreen extends Component {
                 {game && !error && started &&
                     <div>
                         <div>
-                            <PlayerDisplay playerId={this.props.playerId}/>
+                            <PlayerDisplay playerId={this.props.playerId} />
                         </div>
                         <div>
                             {game.playedCards &&
@@ -173,8 +175,7 @@ export class GameScreen extends Component {
                         }
                         {!error && !game &&
                             <div style={{ padding: '50' }} >
-
-                              <p>Waiting on more players... <i id="number">{ playerCount }</i> players so far.</p>
+                                <p>Waiting on more players... <i id="number">{ playerCount }</i> players so far.</p>
                             </div>
                         }
                         {error &&
@@ -203,6 +204,7 @@ GameScreen.propTypes = {
     playCard: PropTypes.func,
     cardPlayed: PropTypes.bool.isRequired,
     playerCount: PropTypes.number,
+    setPollId: PropTypes.func.isRequired,
 };
 
 GameScreen.defaultProps = {
