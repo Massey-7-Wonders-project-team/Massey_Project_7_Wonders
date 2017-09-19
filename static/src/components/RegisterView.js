@@ -23,9 +23,8 @@ function mapDispatchToProps(dispatch) {
 }
 
 const style = {
-    marginTop: 50,
-    paddingBottom: 50,
-    paddingTop: 25,
+    marginTop: 10,
+    padding: 25,
     width: '100%',
     textAlign: 'center',
     display: 'inline-block',
@@ -116,45 +115,60 @@ export default class RegisterView extends React.Component {
     render() {
         return (
             <div className="col-md-6 col-md-offset-3" onKeyPress={(e) => this._handleKeyPress(e)}>
-                <Paper style={style}>
-                    <div className="text-center">
-                        <h2>Register to view protected content!</h2>
-                        {
-                            this.props.registerStatusText &&
-                                <div className="alert alert-info">
-                                    {this.props.registerStatusText}
-                                </div>
-                        }
+                <div>
+                  <Paper style={style}>
+                      <div className="text-center">
+                          <h2>Register to play!</h2>
+                          <p>(Create your 7 Wonders profile)</p>
+                          {
+                              this.props.registerStatusText &&
+                                  <div className="alert alert-info">
+                                      {this.props.registerStatusText}
+                                  </div>
+                          }
 
-                        <div className="col-md-12">
-                            <TextField
-                              hintText="Email"
-                              floatingLabelText="Email"
-                              type="email"
-                              errorText={this.state.email_error_text}
-                              onChange={(e) => this.changeValue(e, 'email')}
-                            />
-                        </div>
-                        <div className="col-md-12">
-                            <TextField
-                              hintText="Password"
-                              floatingLabelText="Password"
-                              type="password"
-                              errorText={this.state.password_error_text}
-                              onChange={(e) => this.changeValue(e, 'password')}
-                            />
-                        </div>
+                          <div className="col-md-12">
+                              <TextField
+                                hintText="Player1"
+                                floatingLabelText="Profile Name"
+                              />
+                          </div>
+                          <div className="col-md-12">
+                              <TextField
+                                hintText="Email"
+                                floatingLabelText="Email"
+                                type="email"
+                                errorText={this.state.email_error_text}
+                                onChange={(e) => this.changeValue(e, 'email')}
+                              />
+                          </div>
+                          <div className="col-md-12">
+                              <TextField
+                                hintText="Password"
+                                floatingLabelText="Password"
+                                type="password"
+                                errorText={this.state.password_error_text}
+                                onChange={(e) => this.changeValue(e, 'password')}
+                              />
+                          </div>
 
-                        <RaisedButton
-                          disabled={this.state.disabled}
-                          style={{ marginTop: 50 }}
-                          label="Submit"
-                          onClick={(e) => this.login(e)}
-                        />
+                          <RaisedButton
+                            disabled={this.state.disabled}
+                            style={{ marginTop: 50 }}
+                            label="Submit"
+                            onClick={(e) => this.login(e)}
+                          />
 
-                    </div>
-                </Paper>
-
+                      </div>
+                  </Paper>
+                  <br />
+                  <center>
+                      <img alt='7_wonders_logo'
+                            width='300'
+                            src={`dist/images/background/7w_logo.png`}
+                      />
+                  </center>
+                </div>
             </div>
         );
 

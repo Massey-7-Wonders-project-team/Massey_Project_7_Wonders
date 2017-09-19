@@ -200,7 +200,6 @@ export class PlayerDisplay extends Component {
                             </Table>
                           </div>
                           }
-                        <hr />
                     </div>
                 }
             </div>

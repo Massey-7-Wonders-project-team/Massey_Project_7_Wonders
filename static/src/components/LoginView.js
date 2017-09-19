@@ -117,7 +117,8 @@ export default class LoginView extends React.Component {
                 <Paper style={style}>
                     <form role="form">
                         <div className="text-center">
-                            <h2>Login to view protected content!</h2>
+                            <h2>Login to 7 Wonders</h2>
+                            <p>(to load your current game settings!)</p>
                             {
                                 this.props.statusText &&
                                     <div className="alert alert-info">
@@ -154,7 +155,13 @@ export default class LoginView extends React.Component {
                         </div>
                     </form>
                 </Paper>
-
+                <br />
+                <center>
+                    <img alt='7_wonders_logo'
+                          width='300'
+                          src={`dist/images/background/7w_logo.png`}
+                    />
+                </center>
             </div>
         );
 
