@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { RaisedButton, CardActions, FlatButton, Card,
+import { CardActions, FlatButton, Card,
     CardHeader, CardText, CardMedia, CardTitle, List,
     Table, TableBody, TableRow, TableRowColumn } from 'material-ui';
 import { connect } from 'react-redux';

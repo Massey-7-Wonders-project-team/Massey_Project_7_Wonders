@@ -29,6 +29,7 @@ export class GameScreen extends Component {
         this.state = {
             polling: false,
             showPlayCardError: false,
+            pollId: null,
             playerCount: null,
             ready: false,
         };
@@ -52,8 +53,9 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-        poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
-        console.log("POLLING from gamescreen");
+        const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
+        this.props.setPollId(pollId);
+        console.log('POLLING from gamescreen');
     }
 
     startGame() {
@@ -270,6 +272,7 @@ GameScreen.propTypes = {
     playCard: PropTypes.func,
     cardPlayed: PropTypes.bool.isRequired,
     playerCount: PropTypes.number,
+    setPollId: PropTypes.func.isRequired,
 };
 
 GameScreen.defaultProps = {

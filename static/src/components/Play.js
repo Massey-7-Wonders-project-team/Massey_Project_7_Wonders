@@ -39,12 +39,14 @@ export class Play extends React.Component {
             playerId: null,
             endGame: false,
             playerCount: null,
+            pollId: null,
         };
         this.createGame = this.createGame.bind(this);
         this.gameStatusCheck = this.gameStatusCheck.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.endGame = this.endGame.bind(this);
         this.endGameDialog = this.endGameDialog.bind(this);
+        this.setPollId = this.setPollId.bind(this);
     }
 
     componentDidMount() {
@@ -133,10 +135,17 @@ export class Play extends React.Component {
 
     endGame() {
         this.props.endGame(this.state.playerId);
+        clearInterval(this.state.pollId);
         this.setState({
             endGame: false,
             playerId: null,
             game: false,
+        });
+    }
+
+    setPollId(id) {
+        this.setState({
+            pollId: id,
         });
     }
 
@@ -200,7 +209,7 @@ export class Play extends React.Component {
                 }
                 {game &&
                     <div style={{ clear: 'both' }}>
-                        <GameScreen playerId={playerId} />
+                        <GameScreen playerId={playerId} setPollId={this.setPollId} />
                     </div>
                 }
                 {endGame && game &&

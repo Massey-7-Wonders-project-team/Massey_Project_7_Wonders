@@ -18,4 +18,3 @@ class Cardhist(db.Model):
             'cardId':self.cardId,
             'discarded':self.discarded,
             'for_wonder': self.for_wonder
-        }
