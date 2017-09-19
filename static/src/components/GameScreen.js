@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
 import { poll } from '../utils/misc';
 import PlayerDisplay from './PlayerDisplay';
+import EndScreen from "./EndScreen";
 
 function mapStateToProps(state) {
     return {
@@ -31,6 +32,7 @@ export class GameScreen extends Component {
             showPlayCardError: false,
             playerCount: null,
             ready: false,
+            endOfRound: false,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
@@ -118,7 +120,7 @@ export class GameScreen extends Component {
     }
 
     render() {
-        const { error, game, started, loading, playerCount } = this.props;
+        const { error, game, started, loading, playerCount, endOfRound } = this.props;
         const { showPlayCardError } = this.state;
         let minumum = false;
         if (this.state.playerCount > 2) { minumum = true; }
@@ -140,6 +142,13 @@ export class GameScreen extends Component {
                     <div>
                         <div>
                             <PlayerDisplay playerId={this.props.playerId} />
+                        </div>
+                        <div>
+                            {endOfRound &&
+                                <div>
+                                    <EndScreen playerId={this.props.playerId}/>
+                                </div>
+                          }
                         </div>
                         <div>
                             {game.playedCards &&
@@ -265,6 +274,7 @@ GameScreen.propTypes = {
     error: PropTypes.bool.isRequired,
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
+    endOfRound: PropTypes.bool.isRequired,
     loading: PropTypes.bool.isRequired,
     playerId: PropTypes.number,
     playCard: PropTypes.func,
