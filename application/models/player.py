@@ -9,6 +9,7 @@ class Player(db.Model):
     gameId = db.Column(db.Integer, db.ForeignKey('game.id'))
     userId = db.Column(db.Integer, db.ForeignKey('user.id'))
     ready = db.Column(db.Boolean, default=False)
+    name = db.Column(db.String(255))
 
     left_id = db.Column(db.Integer)
     right_id = db.Column(db.Integer)
@@ -48,6 +49,7 @@ class Player(db.Model):
             'id':self.id,
             'gameId':self.gameId,
             'userId':self.userId,
+            'profile':self.name,
             'ready':self.ready,
             'left_id':self.left_id,
             'right_id':self.right_id,

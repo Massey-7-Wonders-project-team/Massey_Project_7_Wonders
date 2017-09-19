@@ -4,7 +4,7 @@ from .models.game import Game
 from .models.card import Card
 from .models.player import Player
 from .models.round import Round
-from .controllers.state import *
+from .controllers.state_printer import *
 from .controllers.logic import *
 from index import app, db
 from sqlalchemy.exc import IntegrityError
@@ -32,6 +32,7 @@ def create_user():
     incoming = request.get_json()
     user = User(
         email=incoming["email"],
+        name=incoming["profile"],
         password=incoming["password"]
     )
     db.session.add(user)
@@ -108,7 +109,7 @@ def create_game():
     players = Player.query.filter_by(gameId=game.id, userId=user.id).all()
 
     if not players:
-        player = Player(gameId=game.id, userId=user.id)
+        player = Player(gameId=game.id, userId=user.id, name=user.name)
         db.session.add(player)
     else:
         print("Player already exists in this game")
@@ -156,7 +157,7 @@ def game_status():
             cards = Card.query.filter(Card.id.in_(card_ids)).all()
             return jsonify(
                 status="Completed",
-                game=print_json(players, cards),
+                game=print_json(player, players, cards),
                 players=player_count
             )
         else:
@@ -232,7 +233,7 @@ def begin_game():
         game.started = True
 
         # Sets up neighbours and first round
-        set_neighbours(players)
+        set_player_neighbours(players)
         deal_wonders(players)
         age_calcs_and_dealing(players, game)
 
