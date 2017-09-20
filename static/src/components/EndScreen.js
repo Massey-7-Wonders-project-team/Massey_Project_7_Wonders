@@ -119,48 +119,50 @@ render() {
       })
       const PlayerRow = (game) => {
         return (
-          <TableRow>
-            <TableRowColumn> {game.player.id} </TableRowColumn>
-            <TableRowColumn> {game.player.points} </TableRowColumn>
-            <TableRowColumn> {game.player.money} </TableRowColumn>
-            <TableRowColumn> {game.player.military} </TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn> {game.allPlayers[0].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[0].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[0].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[0].military} </TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn> {game.allPlayers[1].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[1].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[1].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[1].military} </TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn> {game.allPlayers[2].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[2].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[2].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[2].military} </TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn> {game.allPlayers[3].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[3].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[3].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[3].military} </TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn> {game.allPlayers[4].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[4].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[4].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[4].military} </TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn> {game.allPlayers[5].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[5].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[5].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[5].military} </TableRowColumn>
-          </TableRow>
+          <div>
+              <TableRow>
+                <TableRowColumn> {game.player.id} </TableRowColumn>
+                <TableRowColumn> {game.player.points} </TableRowColumn>
+                <TableRowColumn> {game.player.money} </TableRowColumn>
+                <TableRowColumn> {game.player.military} </TableRowColumn>
+              </TableRow>
+              <TableRow>
+                <TableRowColumn> {game.allPlayers[0].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[0].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[0].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[0].military} </TableRowColumn>
+              </TableRow>
+              <TableRow>
+                <TableRowColumn> {game.allPlayers[1].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[1].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[1].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[1].military} </TableRowColumn>
+              </TableRow>
+              <TableRow>
+                <TableRowColumn> {game.allPlayers[2].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[2].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[2].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[2].military} </TableRowColumn>
+              </TableRow>
+              <TableRow>
+                <TableRowColumn> {game.allPlayers[3].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[3].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[3].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[3].military} </TableRowColumn>
+              </TableRow>
+              <TableRow>
+                <TableRowColumn> {game.allPlayers[4].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[4].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[4].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[4].military} </TableRowColumn>
+              </TableRow>
+              <TableRow>
+                <TableRowColumn> {game.allPlayers[5].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[5].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[5].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[5].military} </TableRowColumn>
+              </TableRow>
+        </div>
         );
       }
 
