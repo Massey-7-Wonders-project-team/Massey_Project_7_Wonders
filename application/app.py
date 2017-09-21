@@ -32,6 +32,7 @@ def create_user():
     incoming = request.get_json()
     user = User(
         email=incoming["email"],
+        name=incoming["profile"],
         password=incoming["password"]
     )
     db.session.add(user)
@@ -108,7 +109,7 @@ def create_game():
     players = Player.query.filter_by(gameId=game.id, userId=user.id).all()
 
     if not players:
-        player = Player(gameId=game.id, userId=user.id)
+        player = Player(gameId=game.id, userId=user.id, name=user.name)
         db.session.add(player)
     else:
         print("Player already exists in this game")
