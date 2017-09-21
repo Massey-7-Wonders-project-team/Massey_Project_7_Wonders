@@ -11,7 +11,6 @@ function Wonder(props) {
             rows.push(null);
         }
     }
-    console.log("WonderList: ", rows);
 
     return (
         <Table
@@ -23,7 +22,6 @@ function Wonder(props) {
                 <TableRow>
                     {
                         rows.map((wCard) => {
-                            console.log(wCard);
                     if (wCard) {
                       return (
                           <TableRowColumn style={{ padding: 0}}>

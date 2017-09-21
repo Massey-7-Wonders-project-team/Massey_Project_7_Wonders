@@ -53,9 +53,8 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-        const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
+        const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 1000);
         this.props.setPollId(pollId);
-        console.log('POLLING from gamescreen');
     }
 
     startGame() {
@@ -115,12 +114,11 @@ export class GameScreen extends Component {
                   playerCount: body.playerCount,
               });
           }
-          console.log("PlayersLogged: ", this.state.playerCount);
       });
     }
 
     render() {
-        const { error, game, started, loading, playerCount } = this.props;
+        const { error, game, started, loading } = this.props;
         const { showPlayCardError } = this.state;
         let minumum = false;
         if (this.state.playerCount > 2) { minumum = true; }

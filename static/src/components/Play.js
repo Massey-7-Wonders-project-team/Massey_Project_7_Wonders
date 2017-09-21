@@ -69,7 +69,6 @@ export class Play extends React.Component {
         .then(response => response.json())
         .then((body) => {
             // do something
-            console.log(body);
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -86,7 +85,6 @@ export class Play extends React.Component {
         })
         .catch((err) => {
             // catch error
-            console.log(err);
             this.setState({
                 game: false,
                 error: true,
@@ -109,7 +107,6 @@ export class Play extends React.Component {
         .then(response => response.json())
         .then((body) => {
             // do something
-            console.log(body);
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -125,7 +122,7 @@ export class Play extends React.Component {
         })
         .catch((err) => {
             // catch error
-            console.log(err);
+            console.error(err);
             this.setState({
                 game: false,
                 error: true,

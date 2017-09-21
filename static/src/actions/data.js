@@ -23,10 +23,11 @@ export function fetchProtectedData(token) {
         dispatch(fetchProtectedDataRequest());
         data_about_user(token)
             .then(parseJSON)
-            .then(response => {
+            .then((response) => {
                 dispatch(receiveProtectedData(response.result));
             })
-            .catch(error => {
+            .catch((error) => {
+                console.error(error);
                 if (error.status === 401) {
                     dispatch(logoutAndRedirect(error));
                 }
