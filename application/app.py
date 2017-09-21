@@ -1,12 +1,7 @@
-from flask import request, render_template, jsonify, url_for, redirect, g, flash, session
-from .models.user import User
-from .models.game import Game
-from .models.card import Card
-from .models.player import Player
-from .models.round import Round
-from .controllers.state import *
-from .controllers.logic import *
-from index import app, db
+from flask import request, render_template, jsonify, url_for, redirect, g, session
+from .controllers.state_printer import *
+from .controllers.card_logic import *
+from index import app
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
 
@@ -30,10 +25,18 @@ def get_user():
 @app.route("/api/create_user", methods=["POST"])
 def create_user():
     incoming = request.get_json()
-    user = User(
-        email=incoming["email"],
-        password=incoming["password"]
-    )
+    if incoming.get("profile"):
+        user = User(
+            email=incoming["email"],
+            name=incoming["profile"],
+            password=incoming["password"]
+        )
+    else:
+        user = User(
+            email=incoming["email"],
+            name="default user",
+            password=incoming["password"]
+        )
     db.session.add(user)
 
     try:
@@ -92,6 +95,11 @@ def create_game():
     """ Check if game exists and add user to it else create new game """
     user = User.query.filter_by(email=g.current_user["email"]).first()
     print("user: ", user.id)
+
+    single_pl = false_true(request.args.get('single_player'))
+    if single_pl:
+        return single_player(user)
+
     game = Game.query.filter_by(started=False).first()
 
     # Creates game if there is no active one waiting to begin
@@ -108,7 +116,7 @@ def create_game():
     players = Player.query.filter_by(gameId=game.id, userId=user.id).all()
 
     if not players:
-        player = Player(gameId=game.id, userId=user.id)
+        player = Player(gameId=game.id, userId=user.id, name=user.name)
         db.session.add(player)
     else:
         print("Player already exists in this game")
@@ -130,6 +138,32 @@ def create_game():
         playerCount=player_count
     )
 
+
+def single_player(user):
+    no_players = request.args.get('number_of_players')
+    if not no_players:
+        no_players = 7
+    game = Game()
+    game.single_player = True
+    db_committing_function(game)
+
+    player_human = Player(gameId=game.id, userId=user.id, name=user.name)
+
+    users_ai = User.query.filter(User.id.in_(range(1, 7))).all()
+    print(len(users_ai))
+    players_ai = []
+    for i in range(1, no_players):
+        user = users_ai.pop()
+        players_ai.append(Player(gameId=game.id, userId=user.id, name=user.name, ai=True))
+        players_ai[i - 1].ready = True
+
+    db_committing_function(player_human, players_ai)
+    return jsonify(
+        player_id=player_human.id,
+        playerCount=no_players
+    )
+
+
 @app.route("/api/game/status", methods=["GET"])
 @requires_auth
 def game_status():
@@ -140,41 +174,26 @@ def game_status():
         Game started - status comment, game (player, cards), playerCount """
     # firstly check game has started
     try:
-        player_id = request.args.get('player_id')
-        player = Player.query.filter_by(id=player_id).first()
-        game = Game.query.filter_by(id=player.gameId).first()
-        players = Player.query.filter_by(gameId=game.id).all()
+        player = get_player(request.args.get('player_id'))
+        game = get_game(player=player)
+        players = get_players(player=player)
         player_count = len(players)
+
         if not game.started:
             return jsonify(
                 status="Waiting",
                 playerCount=player_count
             )
         elif game.complete:
-            card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age,
-                                                                                     round=game.round).all()]
-            cards = Card.query.filter(Card.id.in_(card_ids)).all()
             return jsonify(
                 status="Completed",
-                game=print_json(players, cards),
+                game=print_json(player, players=players, game=game),
                 players=player_count
             )
         else:
-            card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age, round=game.round).all()]
-            cards = Card.query.filter(Card.id.in_(card_ids)).all()
-
-            # the following checks to see if the player has played a card in the next round
-            # which means it is waiting for other players to play this round
-            if Round.query.filter_by(playerId=player.id, round=game.round+1, age=game.age).first():
-                return jsonify(
-                    status="Card Played",
-                    game=print_json(player, players, cards),
-                    players=player_count,
-                    played_card=(Cardhist.query.filter(Cardhist.cardId.in_(card_ids)).filter_by(playerId=player.id).first()).serialise()
-                )
             return jsonify(
                 status="Started",
-                game=print_json(player, players, cards),
+                game=print_json(player, players=players, game=game),
                 players=player_count
             )
 
@@ -191,91 +210,67 @@ def begin_game():
     Outputs -
         Game not started - status comment
         Game started - status comment, game (player, cards)"""
-    player_id = request.args.get('player_id')
-    player = Player.query.filter_by(id=player_id).first()
+    player = get_player(request.args.get('player_id'))
 
     # Only continues if player was not already set as ready
     if player.ready is False:
         player.ready = True
     else:
-        print(player_id, "was already set as ready")
+        print(player.id, "was already set as ready")
         return game_status()
 
-    try:
-        db.session.add(player)
-        db.session.commit()
-    except Exception as e:
-        print(e)
-        return jsonify(message="There was an error"), 500
+    db_committing_function(player)
 
     ############################
     # Checks if game can begin #
     ############################
-    players = Player.query.filter_by(gameId=player.gameId).all()
+    players = get_players(player=player)
     player_count = len(players)
 
     if player_count > 2:
         if player_count < 7:
             for p in players:
-                counter = 0
-                for i in range(len(players)):
-                    if p.id is players[i].id:
-                        counter += 1
-                if counter > 1:
-                    continue
-
-                if p.ready == False:
-                    print("Players not ready")
+                if p.ready is False:
+                    print("Player "+ str(p.id) +" not ready")
                     return jsonify(status="Waiting")
+
         # Game can begin
-        game = Game.query.filter_by(id=player.gameId).first()
+        game = get_game(player=player)
         game.started = True
 
         # Sets up neighbours and first round
-        set_neighbours(players)
+        set_player_neighbours(players)
         deal_wonders(players)
         age_calcs_and_dealing(players, game)
 
         # DB update and begin game
-        cards = Round.query.filter_by(playerId=player.id).join(Card).all()
-        try:
-            db.session.add(game)
-            db.session.commit()
-        except Exception as e:
-            print(e)
-            return jsonify(message="There was an error"), 500
+        db_committing_function(game)
         return jsonify(
             status="Starting",
-            game=print_json(player, players, cards)
+            game=print_json(player, players=players)
         )
 
     else:
-        print ("not enough players")
+        print("not enough players")
         return jsonify(status="Waiting")
 
 @app.route("/api/game/play_card", methods=["GET"])
 @requires_auth
 def play_card():
     """Endpoint for all card playing actions
-    Inputs - player_id, card_id, discarded (bool), and (later on) for_wonder(bool)
+    Inputs - player_id, card_id, discarded (bool), and for_wonder(bool)
     Outputs - status comment"""
-    player_id = request.args.get('player_id')
-    card_id = request.args.get('card_id')
+    player = get_player(request.args.get('player_id'))
+    card = get_card(request.args.get('card_id'))
     discarded = false_true(request.args.get('discarded'))
     for_wonder = false_true(request.args.get('for_wonder'))
-
-    player = Player.query.filter_by(id=player_id).first()
-    card = Card.query.filter_by(id=card_id).first()
 
     if process_card(card, player, discarded, for_wonder):
         return jsonify(status="Card played")
     else:
-        game = Game.query.filter_by(id=player.gameId).first()
-        cards = Round.query.filter_by(playerId=player.id, age=game.age, round=game.round).all()
-        players = Player.query.filter_by(gameId=player.gameId).all()
         return jsonify(
             status="Invalid move",
-            game=print_json(player, players, cards)
+            game=print_json(player)
         )
 
 @app.route("/api/game/end", methods=["GET"])
@@ -284,9 +279,8 @@ def end_game():
     """Endpoint for ending a game mid game
     Inputs - player_id
     Outputs - status comment"""
-    player_id = request.args.get('player_id')
-    player = Player.query.filter_by(id=player_id).first()
-    game = Game.query.filter_by(id=player.gameId).first()
+    player = get_player(request.args.get('player_id'))
+    game = get_game(player=player)
     game.complete = True
     db.session.add(game)
 
