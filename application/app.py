@@ -4,7 +4,7 @@ from .models.game import Game
 from .models.card import Card
 from .models.player import Player
 from .models.round import Round
-from .controllers.state_printer import *
+from .controllers.state import *
 from .controllers.logic import *
 from index import app, db
 from sqlalchemy.exc import IntegrityError
@@ -156,17 +156,13 @@ def game_status():
             cards = Card.query.filter(Card.id.in_(card_ids)).all()
             return jsonify(
                 status="Completed",
-                game=print_json(player, players, cards),
+                game=print_json(players, cards),
                 players=player_count
             )
         else:
             card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age, round=game.round).all()]
             cards = Card.query.filter(Card.id.in_(card_ids)).all()
-            card_hist = (Cardhist.query.filter(Cardhist.cardId.in_(card_ids)).filter_by(playerId=player.id).first())
 
-            if card_hist is not None:
-                card_hist = card_hist.serialise()
-                
             # the following checks to see if the player has played a card in the next round
             # which means it is waiting for other players to play this round
             if Round.query.filter_by(playerId=player.id, round=game.round+1, age=game.age).first():
@@ -174,7 +170,7 @@ def game_status():
                     status="Card Played",
                     game=print_json(player, players, cards),
                     players=player_count,
-                    played_card=card_hist
+                    played_card=(Cardhist.query.filter(Cardhist.cardId.in_(card_ids)).filter_by(playerId=player.id).first()).serialise()
                 )
             return jsonify(
                 status="Started",
@@ -236,7 +232,7 @@ def begin_game():
         game.started = True
 
         # Sets up neighbours and first round
-        set_player_neighbours(players)
+        set_neighbours(players)
         deal_wonders(players)
         age_calcs_and_dealing(players, game)
 
