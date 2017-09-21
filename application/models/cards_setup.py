@@ -1,9 +1,24 @@
 from .card import Card
+from .user import User
+from ..controllers.card_logic import db_committing_function
 from .wonder import Wonder
 
 def db_populate_cards(app, db):
+
+    #########################################
+    ####~~~~~~~~~Computer Users~~~~~~~~~~####
+    #########################################
+    ai = []
+    for i in range(6):
+        name = 'Computer Player ' + str(i+1)
+        ai.append(User(
+            email=i,
+            name=name,
+            password=name+str(i)
+        ))
+    db_committing_function(ai)
+
     cardList = []
-    
     #########################################
     ####~~~~~~~~~~~~~~Age 1~~~~~~~~~~~~~~####
     #########################################
@@ -901,6 +916,7 @@ def db_populate_cards(app, db):
     scientistsGuild.set_cost_wood(2)
     scientistsGuild.set_cost_ore(2)
     scientistsGuild.set_cost_paper(1)
+    scientistsGuild.wildcard = 1
     cardList.append(scientistsGuild)
     
     spiesGuild = Card('Spies Guild', 0, 3, 'purple')
