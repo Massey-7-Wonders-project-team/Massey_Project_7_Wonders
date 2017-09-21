@@ -1,10 +1,9 @@
 import React from 'react';
-import { RaisedButton, Dialog, FlatButton } from 'material-ui';
+import { RaisedButton, Dialog, FlatButton, Paper } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
 import GameScreen from './GameScreen';
-import PlayerDisplay from './PlayerDisplay';
 
 function mapStateToProps(state) {
     return {
@@ -19,6 +18,14 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(actions, dispatch);
 }
 
+const style = {
+    marginTop: 50,
+    padding: 50,
+    marginLeft: 100,
+    width: 'auto',
+    textAlign: 'center',
+    display: 'inline-block',
+};
 
 // we must export the class for testing. Then also default export the class
 // at the end of the file which is used for the actual production render
@@ -32,17 +39,20 @@ export class Play extends React.Component {
             playerId: null,
             endGame: false,
             playerCount: null,
+            pollId: null,
         };
         this.createGame = this.createGame.bind(this);
         this.gameStatusCheck = this.gameStatusCheck.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.endGame = this.endGame.bind(this);
         this.endGameDialog = this.endGameDialog.bind(this);
+        this.setPollId = this.setPollId.bind(this);
     }
 
     componentDidMount() {
         // check if the user is already part of a game
         this.gameStatusCheck();
+
     }
 
     gameStatusCheck() {
@@ -125,10 +135,17 @@ export class Play extends React.Component {
 
     endGame() {
         this.props.endGame(this.state.playerId);
+        clearInterval(this.state.pollId);
         this.setState({
             endGame: false,
             playerId: null,
             game: false,
+        });
+    }
+
+    setPollId(id) {
+        this.setState({
+            pollId: id,
         });
     }
 
@@ -157,19 +174,26 @@ export class Play extends React.Component {
                 onClick={this.endGame}
             />,
         ];
+
         return (
             <div className="Game col-md-12">
-                <h1>Play</h1>
-
-                <hr />
                 {error &&
                     <p>There was an error</p>
                 }
                 {!game &&
-                    <RaisedButton
-                        label="Create/Join Game"
-                        onClick={() => this.createGame()}
-                    />
+                    <div>
+                    <h1>Lets find a game...</h1>
+                    <hr />
+                        <Paper style={style}>
+                            <h3>There are no active games for you</h3>
+                            <p>Click below to create of join a new game</p>
+                            <br />
+                            <RaisedButton
+                                label="Create/join Game"
+                                onClick={() => this.createGame()}
+                            />
+                        </Paper>
+                    </div>
                 }
                 {game &&
                     <RaisedButton
@@ -185,7 +209,7 @@ export class Play extends React.Component {
                 }
                 {game &&
                     <div style={{ clear: 'both' }}>
-                        <GameScreen playerId={playerId} />
+                        <GameScreen playerId={playerId} setPollId={this.setPollId} />
                     </div>
                 }
                 {endGame && game &&

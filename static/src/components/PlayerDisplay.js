@@ -167,7 +167,6 @@ export class PlayerDisplay extends Component {
                                                                     <br />
                                                                     <Inventory item="military" amount={boardData.military} />
                                                                     <Inventory item="victoryminus1" amount={boardData.military_loss} />
-
                                                                 </List>
                                                             </TableRowColumn>
                                                             <TableRowColumn
