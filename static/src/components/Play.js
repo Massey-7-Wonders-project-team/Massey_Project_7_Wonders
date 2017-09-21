@@ -1,5 +1,5 @@
 import React from 'react';
-import { RaisedButton, Dialog, FlatButton, Paper } from 'material-ui';
+import { RaisedButton, Dialog, FlatButton, Paper, Checkbox } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
@@ -40,6 +40,7 @@ export class Play extends React.Component {
             endGame: false,
             playerCount: null,
             pollId: null,
+            single: false,
         };
         this.createGame = this.createGame.bind(this);
         this.gameStatusCheck = this.gameStatusCheck.bind(this);
@@ -47,6 +48,7 @@ export class Play extends React.Component {
         this.endGame = this.endGame.bind(this);
         this.endGameDialog = this.endGameDialog.bind(this);
         this.setPollId = this.setPollId.bind(this);
+        this.updateCheck = this.updateCheck.bind(this);
     }
 
     componentDidMount() {
@@ -97,7 +99,7 @@ export class Play extends React.Component {
     createGame() {
         // send request to create game
         const token = localStorage.getItem('token');
-        fetch('/api/game/create', {
+        fetch(`/api/game/create?single_player=${this.state.single}`, {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -161,6 +163,15 @@ export class Play extends React.Component {
         });
     }
 
+    updateCheck() {
+        this.setState((oldState) => {
+          return {
+            single: !oldState.single,
+          };
+        });
+
+    }
+
     render() {
         const { game, error, playerId, endGame, playerCount } = this.state;
         const primary = true;
@@ -175,6 +186,8 @@ export class Play extends React.Component {
             />,
         ];
 
+        console.log("Single Play: ", this.state.single);
+
         return (
             <div className="Game col-md-12">
                 {error &&
@@ -184,6 +197,7 @@ export class Play extends React.Component {
                     <div>
                     <h1>Lets find a game...</h1>
                     <hr />
+                        <div>
                         <Paper style={style}>
                             <h3>There are no active games for you</h3>
                             <p>Click below to create of join a new game</p>
@@ -193,6 +207,11 @@ export class Play extends React.Component {
                                 onClick={() => this.createGame()}
                             />
                         </Paper>
+                        <Checkbox
+                            id="single"
+                            onCheck={this.updateCheck}
+                        />
+                        </div>
                     </div>
                 }
                 {game &&
