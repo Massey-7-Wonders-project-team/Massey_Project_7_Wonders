@@ -39,6 +39,7 @@ export default class RegisterView extends React.Component {
         this.state = {
             email: '',
             password: '',
+            profile: '',
             email_error_text: null,
             password_error_text: null,
             redirectTo: redirectRoute,
@@ -59,7 +60,6 @@ export default class RegisterView extends React.Component {
             this.setState({
                 email_error_text: null,
             });
-
         } else {
             this.setState({
                 email_error_text: 'Sorry, this is not a valid email',
@@ -79,7 +79,6 @@ export default class RegisterView extends React.Component {
             this.setState({
                 password_error_text: 'Your password must be at least 6 characters',
             });
-
         }
 
         if (email_is_valid && password_is_valid) {
@@ -108,8 +107,13 @@ export default class RegisterView extends React.Component {
     }
 
     login(e) {
+        console.log(this.state.profile);
         e.preventDefault();
-        this.props.registerUser(this.state.email, this.state.password, this.state.redirectTo);
+        this.props.registerUser(
+          this.state.profile,
+          this.state.email,
+          this.state.password,
+          this.state.redirectTo);
     }
 
     render() {
@@ -129,8 +133,10 @@ export default class RegisterView extends React.Component {
 
                           <div className="col-md-12">
                               <TextField
-                                hintText="Player1"
-                                floatingLabelText="Profile Name"
+                                hintText="Profile Name"
+                                floatingLabelText="Profile"
+                                type="profile"
+                                onChange={(e) => this.changeValue(e, 'profile')}
                               />
                           </div>
                           <div className="col-md-12">
