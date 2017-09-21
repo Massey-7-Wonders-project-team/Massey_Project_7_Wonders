@@ -94,6 +94,10 @@ export class PlayerDisplay extends Component {
             const city = longCityNameArray.length - 1;
             imageName = longCityNameArray[city].toLowerCase();
         }
+		let pName = `Player Name (id:${this.state.displayID})`;			// default profile title
+		if (boardData.profile) {
+			pName = boardData.profile;									// display profile name if present in returned data
+		}
 
         return (
             <div>
@@ -114,7 +118,7 @@ export class PlayerDisplay extends Component {
                                     >
                                         <CardHeader
                                             id="CardHeader"
-                                            title={`Player Name (id:${this.state.displayID})`}  // "(Add players Name here)"
+                                            title={pName}
                                             subtitle={boardData.wonder}
                                             avatar={`dist/images/cards/age${game.cards[0].age}.png`}               // ${game.cards[0].age}
                                             actAsExpander={true}
@@ -158,8 +162,7 @@ export class PlayerDisplay extends Component {
                                                                     <Inventory item="pyramid-stage0" amount={boardData.wonder_level} />
                                                                     <br />
                                                                     <Inventory item="military" amount={boardData.military} />
-                                                                    <Inventory item="victoryminus1" amount={0} />
-
+                                                                    <Inventory item="victoryminus1" amount={boardData.military_loss} />
                                                                 </List>
                                                             </TableRowColumn>
                                                             <TableRowColumn

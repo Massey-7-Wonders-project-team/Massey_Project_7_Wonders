@@ -7,6 +7,7 @@ class Game(db.Model):
     round = db.Column(db.Integer(), default=1)
     started = db.Column(db.Boolean(), default=False)
     complete = db.Column(db.Boolean(), default=False)
+    single_player = db.Column(db.Boolean(), default=False)
 
     def serialise(self):
         return {
