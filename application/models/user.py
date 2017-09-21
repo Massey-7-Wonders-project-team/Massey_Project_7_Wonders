@@ -8,10 +8,10 @@ class User(db.Model):
     name = db.Column(db.String(255))
     password = db.Column(db.String(255))
 
-    def __init__(self, email, name, password):
+    def __init__(self, name, email, password):
         self.email = email
-        self.name = name
         self.password = User.hashed_password(password)
+        self.name = name
 
     @staticmethod
     def hashed_password(password):
