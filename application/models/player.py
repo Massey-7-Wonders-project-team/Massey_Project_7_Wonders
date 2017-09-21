@@ -9,7 +9,8 @@ class Player(db.Model):
     gameId = db.Column(db.Integer, db.ForeignKey('game.id'))
     userId = db.Column(db.Integer, db.ForeignKey('user.id'))
     ready = db.Column(db.Boolean, default=False)
-    name = db.Column(db.String(255))
+    name = db.Column(db.String(255), default='')
+    ai = db.Column(db.Boolean, default=False)
 
     left_id = db.Column(db.Integer)
     right_id = db.Column(db.Integer)
@@ -44,12 +45,19 @@ class Player(db.Model):
     extra_paper = db.Column(db.Integer, default=0)
     extra_cloth = db.Column(db.Integer, default=0)
 
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return self.id == other.id
+        else:
+            return False
+
     def serialise(self):
         return {
             'id':self.id,
             'gameId':self.gameId,
             'userId':self.userId,
             'profile':self.name,
+            'ai':self.ai,
             'ready':self.ready,
             'left_id':self.left_id,
             'right_id':self.right_id,
