@@ -107,7 +107,6 @@ export default class RegisterView extends React.Component {
     }
 
     login(e) {
-        console.log(this.state.profile);
         e.preventDefault();
         this.props.registerUser(
           this.state.profile,
