@@ -45,7 +45,6 @@ export class PlayerDisplay extends Component {
     }
 
     lookLeft() {
-        console.log('** CLICKED LEFT **');
         const newDisplayID = this.search().left_id;
         this.setState({
             displayID: newDisplayID,
@@ -53,14 +52,12 @@ export class PlayerDisplay extends Component {
     }
 
     lookRight() {
-        console.log('** CLICKED RIGHT **');
         this.setState({
             displayID: this.search().right_id,
         });
     }
 
     lookUser() {
-        console.log('** CLICKED View User **');
         this.setState({
             displayID: this.state.userID,
         });
@@ -84,7 +81,6 @@ export class PlayerDisplay extends Component {
 
     render() {
         const boardData = this.search();
-        console.log("boardData", boardData);
         const { error, game, started } = this.props;
         const ListStyle = {
             width: 100,
@@ -102,7 +98,7 @@ export class PlayerDisplay extends Component {
 		if (boardData.profile) {
 			pName = boardData.profile;									// display profile name if present in returned data
 		}
-		
+
         return (
             <div>
                 {game && !error && started && boardData &&

@@ -72,7 +72,7 @@ export function loginUser(email, password) {
                     dispatch(loginUserSuccess(response.token));
                     browserHistory.push('/main');
                 } catch (e) {
-                    alert(e);
+                    console.error(e);
                     dispatch(loginUserFailure({
                         response: {
                             status: 403,
@@ -81,7 +81,8 @@ export function loginUser(email, password) {
                     }));
                 }
             })
-            .catch(error => {
+            .catch((error) => {
+                console.error(error);
                 dispatch(loginUserFailure({
                     response: {
                         status: 403,
@@ -125,7 +126,7 @@ export function registerUser(email, password) {
         dispatch(registerUserRequest());
         return create_user(email, password)
             .then(parseJSON)
-            .then(response => {
+            .then((response) => {
                 try {
                     dispatch(registerUserSuccess(response.token));
                     browserHistory.push('/main');
@@ -138,13 +139,14 @@ export function registerUser(email, password) {
                     }));
                 }
             })
-            .catch(error => {
+            .catch((error) => {
+                console.error(error);
                 dispatch(registerUserFailure({
                     response: {
                         status: 403,
                         statusText: 'User with that email already exists',
                     },
-                }
+                },
                 ));
             });
     };

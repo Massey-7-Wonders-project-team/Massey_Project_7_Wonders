@@ -71,7 +71,6 @@ export class Play extends React.Component {
         .then(response => response.json())
         .then((body) => {
             // do something
-            console.log(body);
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -88,7 +87,7 @@ export class Play extends React.Component {
         })
         .catch((err) => {
             // catch error
-            console.log(err);
+            console.error(err);
             this.setState({
                 game: false,
                 error: true,
@@ -110,8 +109,6 @@ export class Play extends React.Component {
         })
         .then(response => response.json())
         .then((body) => {
-            // do something
-            console.log(body);
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -127,7 +124,7 @@ export class Play extends React.Component {
         })
         .catch((err) => {
             // catch error
-            console.log(err);
+            console.error(err);
             this.setState({
                 game: false,
                 error: true,
@@ -186,8 +183,6 @@ export class Play extends React.Component {
             />,
         ];
 
-        console.log("Single Play: ", this.state.single);
-
         return (
             <div className="Game col-md-12">
                 {error &&
@@ -203,7 +198,7 @@ export class Play extends React.Component {
                             <p>Click below to create of join a new game</p>
                             <br />
                             <RaisedButton
-                                label="Create/join Game"
+                                label="Create/Join Game"
                                 onClick={() => this.createGame()}
                             />
                         </Paper>
