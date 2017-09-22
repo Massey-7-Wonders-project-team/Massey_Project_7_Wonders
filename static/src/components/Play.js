@@ -1,5 +1,5 @@
 import React from 'react';
-import { RaisedButton, Dialog, FlatButton, Paper, Checkbox } from 'material-ui';
+import { RaisedButton, Dialog, FlatButton, Paper } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
@@ -11,6 +11,7 @@ function mapStateToProps(state) {
         started: state.game.started,
         error: state.game.error,
         loading: state.game.loading,
+        clearInterval: state.game.clearInterval,
     };
 }
 
@@ -40,7 +41,6 @@ export class Play extends React.Component {
             endGame: false,
             playerCount: null,
             pollId: null,
-            single: false,
         };
         this.createGame = this.createGame.bind(this);
         this.gameStatusCheck = this.gameStatusCheck.bind(this);
@@ -48,13 +48,17 @@ export class Play extends React.Component {
         this.endGame = this.endGame.bind(this);
         this.endGameDialog = this.endGameDialog.bind(this);
         this.setPollId = this.setPollId.bind(this);
-        this.updateCheck = this.updateCheck.bind(this);
     }
 
     componentDidMount() {
         // check if the user is already part of a game
         this.gameStatusCheck();
+    }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.clearInterval === true) {
+            this.endGame();
+        }
     }
 
     gameStatusCheck() {
@@ -71,6 +75,7 @@ export class Play extends React.Component {
         .then(response => response.json())
         .then((body) => {
             // do something
+            console.log(body);
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -87,7 +92,7 @@ export class Play extends React.Component {
         })
         .catch((err) => {
             // catch error
-            console.error(err);
+            console.log(err);
             this.setState({
                 game: false,
                 error: true,
@@ -98,7 +103,7 @@ export class Play extends React.Component {
     createGame() {
         // send request to create game
         const token = localStorage.getItem('token');
-        fetch(`/api/game/create?single_player=${this.state.single}`, {
+        fetch('/api/game/create', {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -109,6 +114,8 @@ export class Play extends React.Component {
         })
         .then(response => response.json())
         .then((body) => {
+            // do something
+            console.log(body);
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -124,7 +131,7 @@ export class Play extends React.Component {
         })
         .catch((err) => {
             // catch error
-            console.error(err);
+            console.log(err);
             this.setState({
                 game: false,
                 error: true,
@@ -137,7 +144,6 @@ export class Play extends React.Component {
         clearInterval(this.state.pollId);
         this.setState({
             endGame: false,
-            playerId: null,
             game: false,
         });
     }
@@ -158,15 +164,6 @@ export class Play extends React.Component {
         this.setState({
             endGame: true,
         });
-    }
-
-    updateCheck() {
-        this.setState((oldState) => {
-          return {
-            single: !oldState.single,
-          };
-        });
-
     }
 
     render() {
@@ -192,21 +189,15 @@ export class Play extends React.Component {
                     <div>
                     <h1>Lets find a game...</h1>
                     <hr />
-                        <div>
                         <Paper style={style}>
                             <h3>There are no active games for you</h3>
                             <p>Click below to create of join a new game</p>
                             <br />
                             <RaisedButton
-                                label="Create/Join Game"
+                                label="Create/join Game"
                                 onClick={() => this.createGame()}
                             />
                         </Paper>
-                        <Checkbox
-                            id="single"
-                            onCheck={this.updateCheck}
-                        />
-                        </div>
                     </div>
                 }
                 {game &&
