@@ -133,13 +133,13 @@ export class PlayerDisplay extends Component {
                                                                 style={inventorycustomColumnStyle}
                                                             >
                                                                 <List style={ListStyle}>
-                                                                    <Inventory item="wood" amount={boardData.wood} />
-                                                                    <Inventory item="brick" amount={boardData.brick} />
-                                                                    <Inventory item="ore" amount={boardData.ore} />
-                                                                    <Inventory item="stone" amount={boardData.stone} />
-                                                                    <Inventory item="glass" amount={boardData.glass} />
-                                                                    <Inventory item="paper" amount={boardData.paper} />
-                                                                    <Inventory item="cloth" amount={boardData.cloth} />
+                                                                    <Inventory item="wood" amount={boardData.wood + boardData.extra_wood} />
+                                                                    <Inventory item="brick" amount={boardData.brick + boardData.extra_brick} />
+                                                                    <Inventory item="ore" amount={boardData.ore + boardData.extra_ore} />
+                                                                    <Inventory item="stone" amount={boardData.stone + boardData.extra_ore} />
+                                                                    <Inventory item="glass" amount={boardData.glass + boardData.extra_glass} />
+                                                                    <Inventory item="paper" amount={boardData.paper + boardData.extra_paper} />
+                                                                    <Inventory item="cloth" amount={boardData.cloth + boardData.extra_cloth} />
                                                                 </List>
                                                             </TableRowColumn>
                                                             <TableRowColumn>
