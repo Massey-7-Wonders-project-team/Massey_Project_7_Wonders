@@ -41,6 +41,7 @@ export class Play extends React.Component {
             endGame: false,
             playerCount: null,
             pollId: null,
+            single: false,
         };
         this.createGame = this.createGame.bind(this);
         this.gameStatusCheck = this.gameStatusCheck.bind(this);
@@ -75,7 +76,6 @@ export class Play extends React.Component {
         .then(response => response.json())
         .then((body) => {
             // do something
-            console.log(body);
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -92,7 +92,7 @@ export class Play extends React.Component {
         })
         .catch((err) => {
             // catch error
-            console.log(err);
+            console.error(err);
             this.setState({
                 game: false,
                 error: true,
@@ -115,7 +115,6 @@ export class Play extends React.Component {
         .then(response => response.json())
         .then((body) => {
             // do something
-            console.log(body);
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -131,7 +130,7 @@ export class Play extends React.Component {
         })
         .catch((err) => {
             // catch error
-            console.log(err);
+            console.error(err);
             this.setState({
                 game: false,
                 error: true,
@@ -187,17 +186,32 @@ export class Play extends React.Component {
                 }
                 {!game &&
                     <div>
-                    <h1>Lets find a game...</h1>
-                    <hr />
-                        <Paper style={style}>
-                            <h3>There are no active games for you</h3>
-                            <p>Click below to create of join a new game</p>
-                            <br />
-                            <RaisedButton
-                                label="Create/join Game"
-                                onClick={() => this.createGame()}
-                            />
-                        </Paper>
+                        <h1>Lets find a game...</h1>
+                        <hr />
+                        <div>
+                            <Paper style={style}>
+                                <h3>There are no active games for you</h3>
+                                <p>Click below to create of join a new game</p>
+                                <br />
+                                <RaisedButton
+                                    label="Create/Join Game"
+                                    onClick={() => this.createGame()}
+                                />
+                            </Paper>
+                            <div
+                                style={{
+                                    padding: '30px',
+                                    marginLeft: '80px',
+                                    textAlign: 'left',
+                                }}
+                            >
+                                <Checkbox
+                                    id="single"
+                                    onCheck={this.updateCheck}
+                                    label="Check for single player mode"
+                                />
+                            </div>
+                        </div>
                     </div>
                 }
                 {game &&
