@@ -65,7 +65,7 @@ export class Play extends React.Component {
 
     gameStatusCheck() {
         const token = localStorage.getItem('token');
-        fetch(`/api/game/create?single_player=${this.state.single}`, {
+        fetch(`/api/game/check`, {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -104,7 +104,7 @@ export class Play extends React.Component {
     createGame() {
         // send request to create game
         const token = localStorage.getItem('token');
-        fetch('/api/game/create', {
+        fetch(`/api/game/create?single_player=${this.state.single}`, {
             method: 'get',
             credentials: 'include',
             headers: {
