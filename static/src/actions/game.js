@@ -191,7 +191,7 @@ export function endGame(playerId) {
         })
         .catch((err) => {
             // catch error
-            console.log(err);
+            console.error(err);
             dispatch(errorEndGame());
         });
     };
