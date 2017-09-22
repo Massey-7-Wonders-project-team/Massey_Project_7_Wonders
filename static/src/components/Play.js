@@ -190,22 +190,31 @@ export class Play extends React.Component {
                 }
                 {!game &&
                     <div>
-                    <h1>Lets find a game...</h1>
-                    <hr />
+                        <h1>Lets find a game...</h1>
+                        <hr />
                         <div>
-                        <Paper style={style}>
-                            <h3>There are no active games for you</h3>
-                            <p>Click below to create of join a new game</p>
-                            <br />
-                            <RaisedButton
-                                label="Create/Join Game"
-                                onClick={() => this.createGame()}
-                            />
-                        </Paper>
-                        <Checkbox
-                            id="single"
-                            onCheck={this.updateCheck}
-                        />
+                            <Paper style={style}>
+                                <h3>There are no active games for you</h3>
+                                <p>Click below to create of join a new game</p>
+                                <br />
+                                <RaisedButton
+                                    label="Create/Join Game"
+                                    onClick={() => this.createGame()}
+                                />
+                            </Paper>
+                            <div
+                                style={{
+                                    padding: '30px',
+                                    marginLeft: '80px',
+                                    textAlign: 'left',
+                                }}
+                            >
+                                <Checkbox
+                                    id="single"
+                                    onCheck={this.updateCheck}
+                                    label="Check for single player mode"
+                                />
+                            </div>
                         </div>
                     </div>
                 }
