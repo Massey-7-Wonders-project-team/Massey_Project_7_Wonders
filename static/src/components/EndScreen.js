@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { FlatButton, Dialog, Table, TableBody,
+import { RaisedButton, FlatButton, Dialog, Table, TableBody,
          TableRow, TableRowColumn, TableHeader, tableHeaderColumn } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,7 +20,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 export class EndScreen extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -30,7 +29,6 @@ export class EndScreen extends Component {
             open: false,
         };
         if (this.props.game) {
-            this.state.userID = this.props.player.id;
             this.state.userData = this.props.game.player;
             this.state.allPlayers = this.props.game.allPlayers;
             this.getData();
@@ -56,7 +54,6 @@ export class EndScreen extends Component {
             .then(response => response.json())
             .then((body) => {
                 console.log('getData(body): ', body);
-
                 if (body.game) {
                     this.setState({
                         displayData: body.game.player,
@@ -68,7 +65,6 @@ export class EndScreen extends Component {
             });
         }
     }
-
     handleOpen = () => {
         this.setState({ open: true });
     }
@@ -76,22 +72,21 @@ export class EndScreen extends Component {
     handleClose = () => {
         this.setState({ open: false });
     }
-
     render() {
-        const { error, game, started } = this.props;
         const primary = true;
         const scoreBoardActions = [
             <FlatButton
-                label="Close"
-                primary={primary}
+                label='Close'
+                primary={true}
                 onClick={this.handleClose}
             />,
         ];
-        const rows = this.state.data.map(player => <PlayerRow key={player} data={player} />);
+        const rows = this.state.data.map(player =>
+            <PlayerRow key={player.id} data={player} />);
         return (
             <div>
                 <Dialog
-                    title="Score Board"
+                    title='Score Board'
                     actions={scoreBoardActions}
                     modal={false}
                     open={this.state.open}
@@ -106,67 +101,70 @@ export class EndScreen extends Component {
                                 <tableHeaderColumn> Military </tableHeaderColumn>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>{rows}</TableBody>
+                        <TableBody>
+                            {rows}
+                        </TableBody>
                     </Table>
                 </Dialog>
             </div>
         );
     }
 }
-
-const PlayerRow = game =>
+const PlayerRow = (game) => {
     <div>
-        <TableRow>
-            <TableRowColumn> {game.player.id} </TableRowColumn>
-            <TableRowColumn> {game.player.points} </TableRowColumn>
-            <TableRowColumn> {game.player.money} </TableRowColumn>
-            <TableRowColumn> {game.player.military} </TableRowColumn>
-        </TableRow>
-        <TableRow>
-            <TableRowColumn> {game.allPlayers[0].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[0].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[0].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[0].military} </TableRowColumn>
-        </TableRow>
-        <TableRow>
-            <TableRowColumn> {game.allPlayers[1].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[1].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[1].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[1].military} </TableRowColumn>
-        </TableRow>
-        <TableRow>
-            <TableRowColumn> {game.allPlayers[2].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[2].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[2].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[2].military} </TableRowColumn>
-        </TableRow>
-        <TableRow>
-            <TableRowColumn> {game.allPlayers[3].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[3].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[3].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[3].military} </TableRowColumn>
-        </TableRow>
-        <TableRow>
-            <TableRowColumn> {game.allPlayers[4].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[4].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[4].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[4].military} </TableRowColumn>
-        </TableRow>
-        <TableRow>
-            <TableRowColumn> {game.allPlayers[5].id} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[5].points} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[5].money} </TableRowColumn>
-            <TableRowColumn> {game.allPlayers[5].military} </TableRowColumn>
-        </TableRow>
-    </div>;
-
-
+        {game &&
+        <div>
+            <TableRow>
+                <TableRowColumn> {game.player.id} </TableRowColumn>
+                <TableRowColumn> {game.player.points} </TableRowColumn>
+                <TableRowColumn> {game.player.money} </TableRowColumn>
+                <TableRowColumn> {game.player.military} </TableRowColumn>
+            </TableRow>
+            <TableRow>
+                <TableRowColumn> {game.allPlayers[0].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[0].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[0].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[0].military} </TableRowColumn>
+            </TableRow>
+            <TableRow>
+                <TableRowColumn> {game.allPlayers[1].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[1].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[1].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[1].military} </TableRowColumn>
+            </TableRow>
+            <TableRow>
+                <TableRowColumn> {game.allPlayers[2].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[2].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[2].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[2].military} </TableRowColumn>
+            </TableRow>
+            <TableRow>
+                <TableRowColumn> {game.allPlayers[3].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[3].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[3].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[3].military} </TableRowColumn>
+            </TableRow>
+            <TableRow>
+                <TableRowColumn> {game.allPlayers[4].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[4].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[4].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[4].military} </TableRowColumn>
+            </TableRow>
+            <TableRow>
+                <TableRowColumn> {game.allPlayers[5].id} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[5].points} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[5].money} </TableRowColumn>
+                <TableRowColumn> {game.allPlayers[5].military} </TableRowColumn>
+            </TableRow>
+        </div>
+      }
+    </div>
+};
 EndScreen.propTypes = {
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
     playerid: PropTypes.number.isRequired,
 };
-
 EndScreen.defaultProps = {
     game: null,
     playercount: null,

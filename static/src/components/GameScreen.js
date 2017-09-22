@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
 import { poll } from '../utils/misc';
 import PlayerDisplay from './PlayerDisplay';
-import EndScreen from "./EndScreen";
+import EndScreen from './EndScreen';
 
 function mapStateToProps(state) {
     return {
@@ -32,7 +32,6 @@ export class GameScreen extends Component {
             showPlayCardError: false,
             playerCount: null,
             ready: false,
-            endOfRound: false,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
@@ -55,7 +54,7 @@ export class GameScreen extends Component {
 
     pollGameStatus() {
         poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
-        console.log("POLLING from gamescreen");
+        console.log('POLLING from gamescreen');
     }
 
     startGame() {
@@ -98,16 +97,16 @@ export class GameScreen extends Component {
       // the currently created game
       // Replication of what Game.js does
       // Just not sure how to retrieve info from Game.js
-      const token = localStorage.getItem('token');
-      fetch(`/api/game/status?player_id=${this.props.playerId}`, {
-          method: 'get',
-          credentials: 'include',
-          headers: {
-              'Accept': 'application/json', // eslint-disable-line quote-props
-              'Content-Type': 'application/json',
-              Authorization: token,
-          },
-      })
+        const token = localStorage.getItem('token');
+        fetch(`/api/game/status?player_id=${this.props.playerId}`, {
+            method: 'get',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json', // eslint-disable-line quote-props
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+        })
       .then(response => response.json())
       .then((body) => {
           if (this.state.playerCount < body.playerCount) {
@@ -115,15 +114,17 @@ export class GameScreen extends Component {
                   playerCount: body.playerCount,
               });
           }
-          console.log("PlayersLogged: ", this.state.playerCount);
+          console.log('PlayersLogged: ', this.state.playerCount);
       });
     }
 
     render() {
-        const { error, game, started, loading, playerCount, endOfRound } = this.props;
+        const { error, game, started, loading, playerCount } = this.props;
         const { showPlayCardError } = this.state;
         let minumum = false;
+        let endOfRound = false;
         if (this.state.playerCount > 2) { minumum = true; }
+        if (this.state.started && game.playedCards.length < 2) { endOfRound = true; }
 
         const showPlayCardActions = [
             <FlatButton
@@ -146,7 +147,7 @@ export class GameScreen extends Component {
                         <div>
                             {endOfRound &&
                                 <div>
-                                    <EndScreen playerId={this.props.playerId}/>
+                                    <EndScreen playerId={this.props.playerId} />
                                 </div>
                           }
                         </div>
@@ -172,7 +173,9 @@ export class GameScreen extends Component {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
                                         <Card key={card.id} style={{ width: 150, display: 'inline-block', paddingBottom: 0 }}>
-                                            <CardTitle title={card.name} titleStyle={{ fontSize: 18 }} />
+                                            <CardTitle
+                                                title={card.name} titleStyle={{ fontSize: 18 }}
+                                            />
                                             <CardMedia>
                                                 <img
                                                     alt={`${card.name} image`}
@@ -274,7 +277,6 @@ GameScreen.propTypes = {
     error: PropTypes.bool.isRequired,
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
-    endOfRound: PropTypes.bool.isRequired,
     loading: PropTypes.bool.isRequired,
     playerId: PropTypes.number,
     playCard: PropTypes.func,
