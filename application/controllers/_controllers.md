@@ -36,6 +36,7 @@ functions. Understanding this function is enough to understand the entire card p
 
 ## ai.py
 This file contains AI logic to make their card choices smarter. Currently it is only a stub awaiting further development.
+
 TODO - create scoring for cards so the best card can be chosen for a given turn
 
 ## game_state_functions.py
