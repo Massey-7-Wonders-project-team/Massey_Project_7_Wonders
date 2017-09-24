@@ -1,5 +1,5 @@
 import React from 'react';
-import { RaisedButton, Dialog, FlatButton, Paper } from 'material-ui';
+import { RaisedButton, Dialog, FlatButton, Paper, Checkbox } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
@@ -11,6 +11,7 @@ function mapStateToProps(state) {
         started: state.game.started,
         error: state.game.error,
         loading: state.game.loading,
+        clearInterval: state.game.clearInterval,
     };
 }
 
@@ -39,23 +40,32 @@ export class Play extends React.Component {
             playerId: null,
             endGame: false,
             playerCount: null,
+            pollId: null,
+            single: false,
         };
         this.createGame = this.createGame.bind(this);
         this.gameStatusCheck = this.gameStatusCheck.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.endGame = this.endGame.bind(this);
         this.endGameDialog = this.endGameDialog.bind(this);
+        this.setPollId = this.setPollId.bind(this);
+        this.updateCheck = this.updateCheck.bind(this);
     }
 
     componentDidMount() {
         // check if the user is already part of a game
         this.gameStatusCheck();
+    }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.clearInterval === true) {
+            this.endGame();
+        }
     }
 
     gameStatusCheck() {
         const token = localStorage.getItem('token');
-        fetch('/api/game/check', {
+        fetch(`/api/game/check`, {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -67,7 +77,6 @@ export class Play extends React.Component {
         .then(response => response.json())
         .then((body) => {
             // do something
-            console.log(body);
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -84,7 +93,7 @@ export class Play extends React.Component {
         })
         .catch((err) => {
             // catch error
-            console.log(err);
+            console.error(err);
             this.setState({
                 game: false,
                 error: true,
@@ -95,7 +104,7 @@ export class Play extends React.Component {
     createGame() {
         // send request to create game
         const token = localStorage.getItem('token');
-        fetch('/api/game/create', {
+        fetch(`/api/game/create?single_player=${this.state.single}`, {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -107,7 +116,6 @@ export class Play extends React.Component {
         .then(response => response.json())
         .then((body) => {
             // do something
-            console.log(body);
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -123,7 +131,7 @@ export class Play extends React.Component {
         })
         .catch((err) => {
             // catch error
-            console.log(err);
+            console.error(err);
             this.setState({
                 game: false,
                 error: true,
@@ -133,10 +141,16 @@ export class Play extends React.Component {
 
     endGame() {
         this.props.endGame(this.state.playerId);
+        clearInterval(this.state.pollId);
         this.setState({
             endGame: false,
-            playerId: null,
             game: false,
+        });
+    }
+
+    setPollId(id) {
+        this.setState({
+            pollId: id,
         });
     }
 
@@ -151,6 +165,14 @@ export class Play extends React.Component {
             endGame: true,
         });
     }
+    
+    updateCheck() {
+        this.setState((oldState) => {
+          return {
+            single: !oldState.single,
+          };
+        });
+     }
 
     render() {
         const { game, error, playerId, endGame, playerCount } = this.state;
@@ -173,17 +195,32 @@ export class Play extends React.Component {
                 }
                 {!game &&
                     <div>
-                    <h1>Lets find a game...</h1>
-                    <hr />
-                        <Paper style={style}>
-                            <h3>There are no active games for you</h3>
-                            <p>Click below to create of join a new game</p>
-                            <br />
-                            <RaisedButton
-                                label="Create/join Game"
-                                onClick={() => this.createGame()}
-                            />
-                        </Paper>
+                        <h1>Lets find a game...</h1>
+                        <hr />
+                        <div>
+                            <Paper style={style}>
+                                <h3>There are no active games for you</h3>
+                                <p>Click below to create of join a new game</p>
+                                <br />
+                                <RaisedButton
+                                    label="Create/Join Game"
+                                    onClick={() => this.createGame()}
+                                />
+                            </Paper>
+                            <div
+                                style={{
+                                    padding: '30px',
+                                    marginLeft: '80px',
+                                    textAlign: 'left',
+                                }}
+                            >
+                                <Checkbox
+                                    id="single"
+                                    onCheck={this.updateCheck}
+                                    label="Check for single player mode"
+                                />
+                            </div>
+                        </div>
                     </div>
                 }
                 {game &&
@@ -200,7 +237,7 @@ export class Play extends React.Component {
                 }
                 {game &&
                     <div style={{ clear: 'both' }}>
-                        <GameScreen playerId={playerId} />
+                        <GameScreen playerId={playerId} setPollId={this.setPollId} />
                     </div>
                 }
                 {endGame && game &&

@@ -31,7 +31,6 @@ export function playCardFailed() {
 }
 
 export function receiveGameStatus(payload) {
-    console.log(payload)
     return {
         type: RECEIVE_GAME_STATUS,
         payload,
@@ -59,19 +58,25 @@ export function checkGameStatus(playerId) {
         })
         .then(response => response.json())
         .then((body) => {
-            console.log(body);
             if (body.status === 'Started') {
-                dispatch(receiveGameStatus({ game: body.game, started: true, cardPlayed: false }));
+                dispatch(receiveGameStatus({
+                    game: body.game, started: true, cardPlayed: false, clearInterval: false }));
             } else if (body.status === 'Card Played') {
-                dispatch(receiveGameStatus({ game: body.game, started: true, cardPlayed: true }));
+                dispatch(receiveGameStatus({
+                    game: body.game, started: true, cardPlayed: true, clearInterval: false }));
+            } else if (body.status === 'Completed') {
+                dispatch(receiveGameStatus({
+                    game: body.game, started: true, cardPlayed: true, clearInterval: true }));
             } else {
-                dispatch(receiveGameStatus({ game: body.game, started: false, cardPlayed: false }));
+                dispatch(receiveGameStatus({
+                    game: body.game, started: false, cardPlayed: false, clearInterval: false }));
             }
         })
         .catch((err) => {
             // catch error
-            console.log(err);
-            dispatch(gameStatusFailed({ game: null, started: false, error: true }));
+            console.error(err);
+            dispatch(gameStatusFailed({
+                game: null, started: false, error: true, clearInterval: false }));
         });
     };
 }
@@ -90,7 +95,6 @@ export function playCard(playerId, cardId, discarded) {
         })
         .then(response => response.json())
         .then((body) => {
-            console.log(body);
             if (body.cardplayed) {
                 dispatch(playCardFailed({ game: body.game, cardplayed: true }));
             } else {
@@ -98,7 +102,7 @@ export function playCard(playerId, cardId, discarded) {
             }
         })
         .catch((err) => {
-            console.log(err);
+            console.error(err);
             dispatch(playCardFailed({ game: null, error: true }));
         });
     };
@@ -138,12 +142,11 @@ export function startGame(playerId) {
         })
         .then(response => response.json())
         .then((body) => {
-            console.log(body);
             dispatch(receiveStartGame({ game: body.game, started: true, players: body.players }));
         })
         .catch((err) => {
             // catch error
-            console.log(err);
+            console.error(err);
             dispatch(errorStartGame({ game: null, started: false, error: true }));
         });
     };
@@ -183,12 +186,12 @@ export function endGame(playerId) {
         })
         .then(response => response.json())
         .then((body) => {
-            console.log(body);
-            dispatch(receiveEndGame());
+            console.error(body);
+            dispatch(receiveEndGame({ clearInterval: false }));
         })
         .catch((err) => {
             // catch error
-            console.log(err);
+            console.error(err);
             dispatch(errorEndGame());
         });
     };

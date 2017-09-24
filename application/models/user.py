@@ -5,11 +5,13 @@ class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer(), primary_key=True)
     email = db.Column(db.String(255), unique=True)
+    name = db.Column(db.String(255))
     password = db.Column(db.String(255))
 
-    def __init__(self, email, password):
+    def __init__(self, name, email, password):
         self.email = email
         self.password = User.hashed_password(password)
+        self.name = name
 
     @staticmethod
     def hashed_password(password):

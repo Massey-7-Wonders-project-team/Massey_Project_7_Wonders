@@ -30,6 +30,7 @@ export class GameScreen extends Component {
         this.state = {
             polling: false,
             showPlayCardError: false,
+            pollId: null,
             playerCount: null,
             ready: false,
         };
@@ -53,8 +54,11 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-        poll(() => this.props.checkGameStatus(this.props.playerId), 5000);
-        console.log('POLLING from gamescreen');
+
+
+        const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 1000);
+        this.props.setPollId(pollId);
+
     }
 
     startGame() {
@@ -114,12 +118,12 @@ export class GameScreen extends Component {
                   playerCount: body.playerCount,
               });
           }
-          console.log('PlayersLogged: ', this.state.playerCount);
+
       });
     }
 
     render() {
-        const { error, game, started, loading, playerCount } = this.props;
+        const { error, game, started, loading } = this.props;
         const { showPlayCardError } = this.state;
         let minumum = false;
         let endOfRound = false;
@@ -282,6 +286,7 @@ GameScreen.propTypes = {
     playCard: PropTypes.func,
     cardPlayed: PropTypes.bool.isRequired,
     playerCount: PropTypes.number,
+    setPollId: PropTypes.func.isRequired,
 };
 
 GameScreen.defaultProps = {

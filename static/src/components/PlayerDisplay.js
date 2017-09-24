@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
-import { RaisedButton, CardActions, FlatButton, Card,
+import { CardActions, FlatButton, Card,
     CardHeader, CardText, CardMedia, CardTitle, List,
-    Table, TableBody, TableRow, TableRowColumn } from 'material-ui';
+    Table, TableBody, TableRow, TableRowColumn, Avatar } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
@@ -44,8 +44,15 @@ export class PlayerDisplay extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.game.player !== this.state.userData) {
+            this.setState({
+              userData: nextProps.game.player
+            })
+        }
+    }
+
     lookLeft() {
-        console.log('** CLICKED LEFT **');
         const newDisplayID = this.search().left_id;
         this.setState({
             displayID: newDisplayID,
@@ -53,14 +60,12 @@ export class PlayerDisplay extends Component {
     }
 
     lookRight() {
-        console.log('** CLICKED RIGHT **');
         this.setState({
             displayID: this.search().right_id,
         });
     }
 
     lookUser() {
-        console.log('** CLICKED View User **');
         this.setState({
             displayID: this.state.userID,
         });
@@ -84,7 +89,6 @@ export class PlayerDisplay extends Component {
 
     render() {
         const boardData = this.search();
-        console.log("boardData", boardData);
         const { error, game, started } = this.props;
         const ListStyle = {
             width: 100,
@@ -98,6 +102,10 @@ export class PlayerDisplay extends Component {
             const city = longCityNameArray.length - 1;
             imageName = longCityNameArray[city].toLowerCase();
         }
+    		let pName = `Player Name (id:${this.state.displayID})`;			// default profile title
+    		if (boardData.profile) {
+    			pName = boardData.profile;									// display profile name if present in returned data
+    		}
 
         return (
             <div>
@@ -118,9 +126,9 @@ export class PlayerDisplay extends Component {
                                     >
                                         <CardHeader
                                             id="CardHeader"
-                                            title={`Player Name (id:${this.state.displayID})`}  // "(Add players Name here)"
+                                            title={pName}
                                             subtitle={boardData.wonder}
-                                            avatar={`dist/images/cards/age${game.cards[0].age}.png`}               // ${game.cards[0].age}
+                                            avatar={<Avatar src={`dist/images/cards/age${game.cards[0].age}.png`} size={55} />}
                                             actAsExpander={true}
                                             showExpandableButton={true}
                                         />
@@ -133,13 +141,13 @@ export class PlayerDisplay extends Component {
                                                                 style={inventorycustomColumnStyle}
                                                             >
                                                                 <List style={ListStyle}>
-                                                                    <Inventory item="wood" amount={boardData.wood} />
-                                                                    <Inventory item="brick" amount={boardData.brick} />
-                                                                    <Inventory item="ore" amount={boardData.ore} />
-                                                                    <Inventory item="stone" amount={boardData.stone} />
-                                                                    <Inventory item="glass" amount={boardData.glass} />
-                                                                    <Inventory item="paper" amount={boardData.paper} />
-                                                                    <Inventory item="cloth" amount={boardData.cloth} />
+                                                                    <Inventory item="wood" amount={boardData.wood + boardData.extra_wood} />
+                                                                    <Inventory item="brick" amount={boardData.brick + boardData.extra_brick} />
+                                                                    <Inventory item="ore" amount={boardData.ore + boardData.extra_ore} />
+                                                                    <Inventory item="stone" amount={boardData.stone + boardData.extra_ore} />
+                                                                    <Inventory item="glass" amount={boardData.glass + boardData.extra_glass} />
+                                                                    <Inventory item="paper" amount={boardData.paper + boardData.extra_paper} />
+                                                                    <Inventory item="cloth" amount={boardData.cloth + boardData.extra_cloth} />
                                                                 </List>
                                                             </TableRowColumn>
                                                             <TableRowColumn>
@@ -162,8 +170,7 @@ export class PlayerDisplay extends Component {
                                                                     <Inventory item="pyramid-stage0" amount={boardData.wonder_level} />
                                                                     <br />
                                                                     <Inventory item="military" amount={boardData.military} />
-                                                                    <Inventory item="victoryminus1" amount={0} />
-
+                                                                    <Inventory item="victoryminus1" amount={boardData.military_loss} />
                                                                 </List>
                                                             </TableRowColumn>
                                                             <TableRowColumn

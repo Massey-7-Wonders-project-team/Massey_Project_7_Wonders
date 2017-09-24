@@ -33,12 +33,17 @@ class Card(db.Model):
     giveMoney = db.Column(db.Integer, default=0)
     giveResearch = db.Column(db.String(10), default='')
 
-    
     def __init__(self, name, noPlayers, age, colour):
         self.name = name
         self.noPlayers = noPlayers
         self.age = age
         self.colour = colour
+
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return self.id == other.id
+        else:
+            return False
 
     def serialise(self):
         return {

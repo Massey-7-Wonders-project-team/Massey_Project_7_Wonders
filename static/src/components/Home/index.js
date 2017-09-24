@@ -22,8 +22,14 @@ export class Home extends React.Component {
 
     render() {
         return (
-            <section>
-                <div className="container text-center">
+            <section >
+                <div id="imgContainer" height="5%">
+                    <center>
+                        <img alt="7 wonders logo" src={`dist/images/background/7w_logo.png`} />
+                        <h5 style={{ float: 'right' }}>Capstone Edition 2017</h5>
+                    </center>
+                </div>
+                <div className="container text-center" >
                     <h1>Welcome</h1>
                     <p>Sign in or Register to begin</p>
                     <RaisedButton
@@ -41,6 +47,7 @@ export class Home extends React.Component {
                         }}
                     />
                 </div>
+
             </section>
         );
     }
