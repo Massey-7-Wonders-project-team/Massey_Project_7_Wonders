@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
-import { RaisedButton, FlatButton, Dialog, Table, TableBody,
-         TableRow, TableRowColumn, TableHeader, tableHeaderColumn } from 'material-ui';
+import { FlatButton, Dialog, Table, TableBody,
+         TableRow, TableRowColumn, TableHeaderColumn, TableHeader } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
@@ -26,17 +26,13 @@ export class EndScreen extends Component {
             userID: null,
             displayData: null,
             fetch: true,
-            open: false,
+            open: true,
+            selectable: false,
         };
         if (this.props.game) {
             this.state.userData = this.props.game.player;
-            this.state.allPlayers = this.props.game.allPlayers;
-            this.getData();
+            this.state.displayData = this.props.game.allPlayers;
         }
-    }
-
-    componentDidMount() {
-        console.log('componentDidMount');
     }
 
     getData() {
@@ -56,9 +52,7 @@ export class EndScreen extends Component {
                 console.log('getData(body): ', body);
                 if (body.game) {
                     this.setState({
-                        displayData: body.game.player,
-                        Players: body.players,
-                        allPlayers: body.game.allPlayers,
+                        displayData: body.game.allPlayers,
                         fetch: false,
                     });
                 }
@@ -74,15 +68,18 @@ export class EndScreen extends Component {
     }
     render() {
         const primary = true;
+        const tableFalse = false;
+        const tableTrue = true;
+        let user = this.state.userData;
+        let players = this.state.displayData;
+        let items = players.concat(user);
         const scoreBoardActions = [
             <FlatButton
-                label='Close'
+                label="Close"
                 primary={true}
                 onClick={this.handleClose}
             />,
         ];
-        const rows = this.state.data.map(player =>
-            <PlayerRow key={player.id} data={player} />);
         return (
             <div>
                 <Dialog
@@ -93,16 +90,31 @@ export class EndScreen extends Component {
                     onRequestClose={this.handleClose}
                 >
                     <Table>
-                        <TableHeader>
+                        <TableHeader
+                            displaySelectALl={tableFalse}
+                            endableSelectAll={tableFalse}
+                            displayRowCheckbox={tableFalse}
+                        >
                             <TableRow>
-                                <tableHeaderColumn> ID </tableHeaderColumn>
-                                <tableHeaderColumn> Points </tableHeaderColumn>
-                                <tableHeaderColumn> Coin </tableHeaderColumn>
-                                <tableHeaderColumn> Military </tableHeaderColumn>
+                                <TableHeaderColumn>ID</TableHeaderColumn>
+                                <TableHeaderColumn>Points</TableHeaderColumn>
+                                <TableHeaderColumn>Coin</TableHeaderColumn>
+                                <TableHeaderColumn>Military</TableHeaderColumn>
                             </TableRow>
                         </TableHeader>
-                        <TableBody>
-                            {rows}
+                        <TableBody
+                            displayRowCheckbox={tableFalse}
+                            showRowHover={tableFalse}
+                            stripedRows={tableTrue}
+                        >
+                            {items.map(player =>
+                                <TableRow key={player.id}>
+                                    <TableRowColumn> {player.id} </TableRowColumn>
+                                    <TableRowColumn> {player.points} </TableRowColumn>
+                                    <TableRowColumn> {player.money} </TableRowColumn>
+                                    <TableRowColumn> {player.military} </TableRowColumn>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </Dialog>
@@ -110,60 +122,9 @@ export class EndScreen extends Component {
         );
     }
 }
-const PlayerRow = (game) => {
-    <div>
-        {game &&
-        <div>
-            <TableRow>
-                <TableRowColumn> {game.player.id} </TableRowColumn>
-                <TableRowColumn> {game.player.points} </TableRowColumn>
-                <TableRowColumn> {game.player.money} </TableRowColumn>
-                <TableRowColumn> {game.player.military} </TableRowColumn>
-            </TableRow>
-            <TableRow>
-                <TableRowColumn> {game.allPlayers[0].id} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[0].points} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[0].money} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[0].military} </TableRowColumn>
-            </TableRow>
-            <TableRow>
-                <TableRowColumn> {game.allPlayers[1].id} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[1].points} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[1].money} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[1].military} </TableRowColumn>
-            </TableRow>
-            <TableRow>
-                <TableRowColumn> {game.allPlayers[2].id} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[2].points} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[2].money} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[2].military} </TableRowColumn>
-            </TableRow>
-            <TableRow>
-                <TableRowColumn> {game.allPlayers[3].id} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[3].points} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[3].money} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[3].military} </TableRowColumn>
-            </TableRow>
-            <TableRow>
-                <TableRowColumn> {game.allPlayers[4].id} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[4].points} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[4].money} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[4].military} </TableRowColumn>
-            </TableRow>
-            <TableRow>
-                <TableRowColumn> {game.allPlayers[5].id} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[5].points} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[5].money} </TableRowColumn>
-                <TableRowColumn> {game.allPlayers[5].military} </TableRowColumn>
-            </TableRow>
-        </div>
-      }
-    </div>
-};
+
 EndScreen.propTypes = {
     game: PropTypes.object,
-    started: PropTypes.bool.isRequired,
-    playerid: PropTypes.number.isRequired,
 };
 EndScreen.defaultProps = {
     game: null,

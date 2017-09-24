@@ -126,7 +126,7 @@ export class GameScreen extends Component {
         const { error, game, started, loading } = this.props;
         const { showPlayCardError } = this.state;
         let minumum = false;
-        let endOfRound = false;
+        let endOfRound = true;
         if (this.state.playerCount > 2) { minumum = true; }
         if (this.state.started && game.playedCards.length < 2) { endOfRound = true; }
 
@@ -149,13 +149,6 @@ export class GameScreen extends Component {
                             <PlayerDisplay playerId={this.props.playerId} />
                         </div>
                         <div>
-                            {endOfRound &&
-                                <div>
-                                    <EndScreen playerId={this.props.playerId} />
-                                </div>
-                          }
-                        </div>
-                        <div>
                             {game.playedCards &&
                                 game.playedCards.map((pcard) => {
                                     const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
@@ -172,6 +165,13 @@ export class GameScreen extends Component {
                                     );
                                 })
                             }
+                            <div>
+                                {endOfRound &&
+                                    <div>
+                                        <EndScreen playerId={this.props.playerId} />
+                                    </div>
+                              }
+                            </div>
                             {game.cards && game.cards[0].name &&
                                 game.cards.map((card) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
