@@ -33,6 +33,7 @@ export class GameScreen extends Component {
             pollId: null,
             playerCount: null,
             ready: false,
+            endOfRound: false,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
@@ -118,7 +119,6 @@ export class GameScreen extends Component {
                   playerCount: body.playerCount,
               });
           }
-
       });
     }
 
@@ -126,9 +126,9 @@ export class GameScreen extends Component {
         const { error, game, started, loading } = this.props;
         const { showPlayCardError } = this.state;
         let minumum = false;
-        let endOfRound = true;
         if (this.state.playerCount > 2) { minumum = true; }
-        if (this.state.started && game.playedCards.length < 2) { endOfRound = true; }
+        // unsure how to check when it is the end of a round.
+        if (this.state.started && game.playedCards.length < 2) { this.state.endOfRound = true; }
 
         const showPlayCardActions = [
             <FlatButton
@@ -166,7 +166,7 @@ export class GameScreen extends Component {
                                 })
                             }
                             <div>
-                                {endOfRound &&
+                                {this.state.endOfRound &&
                                     <div>
                                         <EndScreen playerId={this.props.playerId} />
                                     </div>
@@ -282,6 +282,7 @@ GameScreen.propTypes = {
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
     loading: PropTypes.bool.isRequired,
+    endOfRound: PropTypes.bool.isRequired,
     playerId: PropTypes.number,
     playCard: PropTypes.func,
     cardPlayed: PropTypes.bool.isRequired,
