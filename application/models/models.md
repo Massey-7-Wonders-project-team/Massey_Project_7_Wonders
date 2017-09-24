@@ -12,7 +12,9 @@ incremented from 1 with each additional object of the type created. As Alchemy r
 otherwise would only need foreign keys to be semantically correct use the id as the primary key.
 
 
+
 # Details
+
 
 ## Read-only models
 - **Card:**
@@ -29,11 +31,11 @@ names.
 
 
 ## Setup models
-- **User**
+- **User:**
 The user object is created by Flask's authentication process, and allows for a user to play in many games. 
 It has been adjusted to include usernames for display purposes. After creation, it does not change any more.
 
-- **Game**
+- **Game:**
 The game object is created to connect multiple players together in one game. It also tracks the overall state
 information of the game, such as whether the game has begun and/or finished, and the current age and round. It 
 gets updated periodically at game milestones, such as starting and ending the game, and incrementing rounds and ages.
@@ -41,7 +43,7 @@ It is created by the create_game API in app.py.
 
 
 ## Models for controlling game status
-- **Player**
+- **Player:**
 A unique player object binds a user to a specific game. This player object's job is to track the 
 state of the player within the game, and thus includes information like resources and wonder information. The only
 gotcha for this object is that there are extra_resources which arise because of resourcing alternating cards, where
@@ -49,12 +51,12 @@ you can only use some cards or the other. If these resources are required to pla
 resource alternating cards in the cardhist model and then card model to get the specific resources provided, as 
 Alchemy doesn't allow lists to easily be stored.
 
-- **Round**
+- **Round:**
 The round model specifies a player's hand in a given round. As it has a 1 to many relationship with card, multiple 
 round objects will be created for every hand, so querying with an .all() function is necessary. With the round object,
 the card ids can be taken, and then used to collect card objects.
 
-- **Cardhist**
+- **Cardhist:**
 The cardhist model tracks played cards, and so links players to cards and attaches information about how they were
 played such as if they were discarded (important for card resurrection) or for wonders. One gotcha for this object is
 that when a card is played for a wonder, the wonder card replaces it, so the original card is not included in the
