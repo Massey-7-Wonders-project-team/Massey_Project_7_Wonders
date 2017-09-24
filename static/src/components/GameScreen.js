@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
 import { poll } from '../utils/misc';
 import PlayerDisplay from './PlayerDisplay';
+import EndScreen from './EndScreen';
 
 function mapStateToProps(state) {
     return {
@@ -53,8 +54,11 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
+
+
         const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 1000);
         this.props.setPollId(pollId);
+
     }
 
     startGame() {
@@ -97,16 +101,16 @@ export class GameScreen extends Component {
       // the currently created game
       // Replication of what Game.js does
       // Just not sure how to retrieve info from Game.js
-      const token = localStorage.getItem('token');
-      fetch(`/api/game/status?player_id=${this.props.playerId}`, {
-          method: 'get',
-          credentials: 'include',
-          headers: {
-              'Accept': 'application/json', // eslint-disable-line quote-props
-              'Content-Type': 'application/json',
-              Authorization: token,
-          },
-      })
+        const token = localStorage.getItem('token');
+        fetch(`/api/game/status?player_id=${this.props.playerId}`, {
+            method: 'get',
+            credentials: 'include',
+            headers: {
+                'Accept': 'application/json', // eslint-disable-line quote-props
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+        })
       .then(response => response.json())
       .then((body) => {
           if (this.state.playerCount < body.playerCount) {
@@ -114,6 +118,7 @@ export class GameScreen extends Component {
                   playerCount: body.playerCount,
               });
           }
+
       });
     }
 
@@ -121,7 +126,9 @@ export class GameScreen extends Component {
         const { error, game, started, loading } = this.props;
         const { showPlayCardError } = this.state;
         let minumum = false;
+        let endOfRound = true;
         if (this.state.playerCount > 2) { minumum = true; }
+        if (this.state.started && game.playedCards.length < 2) { endOfRound = true; }
 
         const showPlayCardActions = [
             <FlatButton
@@ -158,12 +165,21 @@ export class GameScreen extends Component {
                                     );
                                 })
                             }
+                            <div>
+                                {endOfRound &&
+                                    <div>
+                                        <EndScreen playerId={this.props.playerId} />
+                                    </div>
+                              }
+                            </div>
                             {game.cards && game.cards[0].name &&
                                 game.cards.map((card) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
                                         <Card key={card.id} style={{ width: 150, display: 'inline-block', paddingBottom: 0 }}>
-                                            <CardTitle title={card.name} titleStyle={{ fontSize: 18 }} />
+                                            <CardTitle
+                                                title={card.name} titleStyle={{ fontSize: 18 }}
+                                            />
                                             <CardMedia>
                                                 <img
                                                     alt={`${card.name} image`}
