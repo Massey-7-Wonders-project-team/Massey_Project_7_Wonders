@@ -154,7 +154,6 @@ export class GameScreen extends Component {
     render() {
         const { error, game, started, loading } = this.props;
         const { showPlayCardError, showScoreBoard } = this.state;
-
         const showPlayCardActions = [
             <FlatButton
                 label="Ok"
@@ -200,6 +199,7 @@ export class GameScreen extends Component {
                                         hideScoreboard={this.hideScoreboard}
                                         endGameScoreboard={this.state.endGameScoreboard}
                                     />
+
                               }
                             </div>
                             {game.cards && game.cards[0].name &&
@@ -312,6 +312,7 @@ GameScreen.propTypes = {
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
     loading: PropTypes.bool.isRequired,
+    endOfRound: PropTypes.bool.isRequired,
     playerId: PropTypes.number,
     playCard: PropTypes.func,
     cardPlayed: PropTypes.bool.isRequired,
