@@ -15,5 +15,6 @@ class Game(db.Model):
             'age':self.age,
             'round':self.round,
             'started':self.started,
-            'complete':self.complete
+            'complete':self.complete,
+            'single_player':self.single_player
         }
