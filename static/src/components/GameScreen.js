@@ -126,9 +126,13 @@ export class GameScreen extends Component {
         const { error, game, started, loading } = this.props;
         const { showPlayCardError } = this.state;
         let minumum = false;
-        let endOfRound = true;
+        let endOfRound = false;
         if (this.state.playerCount > 2) { minumum = true; }
-        if (this.state.started && game.playedCards.length < 2) { endOfRound = true; }
+        // if (this.props.started) {
+        //     if (game.playedCards.length < 2) {
+        //         endOfRound = true;
+        //     }
+        // }
 
         const showPlayCardActions = [
             <FlatButton
@@ -170,13 +174,13 @@ export class GameScreen extends Component {
                                     <div>
                                         <EndScreen playerId={this.props.playerId} />
                                     </div>
-                              }
+                                }
                             </div>
                             {game.cards && game.cards[0].name &&
-                                game.cards.map((card) => {
+                                game.cards.map((card, index) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card key={card.id} style={{ width: 150, display: 'inline-block', paddingBottom: 0 }}>
+                                        <Card className="Card" data-card-number={index} key={card.id} style={{ width: 150, display: 'inline-block', paddingBottom: 0 }}>
                                             <CardTitle
                                                 title={card.name} titleStyle={{ fontSize: 18 }}
                                             />
@@ -192,10 +196,12 @@ export class GameScreen extends Component {
                                             <CardActions>
                                                 <FlatButton
                                                     label="Play Card"
+                                                    className="PlayCardButton"
                                                     onClick={() => this.playCard(card.id)}
                                                 />
                                                 <FlatButton
                                                     label="Discard"
+                                                    className="DiscardCardButton"
                                                     onClick={() => this.discard(card.id)}
                                                 />
                                             </CardActions>
@@ -246,6 +252,7 @@ export class GameScreen extends Component {
                             <center>
                                 {!this.state.ready
                                   ? <RaisedButton
+                                        id="ReadyButton"
                                       label="I am ready"
                                       onClick={() => this.startGame()}
                                   />
