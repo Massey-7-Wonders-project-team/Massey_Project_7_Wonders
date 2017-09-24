@@ -98,7 +98,10 @@ export class Header extends Component {
                                     <i>Signed in ({this.props.userName})</i>
                                 </MenuItem>
                                 <Divider />
-                                <MenuItem onClick={() => this.dispatchNewRoute('/play')}>
+                                <MenuItem
+                                    id="PlayButton"
+                                    onClick={() => this.dispatchNewRoute('/play')}
+                                >
                                     <b>Play</b>
                                 </MenuItem>
                                 <Divider />
