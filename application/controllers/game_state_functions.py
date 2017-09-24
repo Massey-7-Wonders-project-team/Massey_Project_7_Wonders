@@ -33,6 +33,7 @@ def age_calcs_and_dealing(players, game):
             p.points += p.money // 3
 
         db_committing_function(p=players, g=game)
+        [print(p.name, p.points) for p in players]
         print("Game Over")
     else:
         game.round = 1
