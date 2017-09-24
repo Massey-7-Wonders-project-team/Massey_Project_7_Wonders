@@ -11,6 +11,7 @@ function mapStateToProps(state) {
         started: state.game.started,
         error: state.game.error,
         loading: state.game.loading,
+        clearInterval: state.game.clearInterval,
     };
 }
 
@@ -54,12 +55,17 @@ export class Play extends React.Component {
     componentDidMount() {
         // check if the user is already part of a game
         this.gameStatusCheck();
+    }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.clearInterval === true) {
+            this.endGame();
+        }
     }
 
     gameStatusCheck() {
         const token = localStorage.getItem('token');
-        fetch('/api/game/check', {
+        fetch(`/api/game/check`, {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -109,6 +115,7 @@ export class Play extends React.Component {
         })
         .then(response => response.json())
         .then((body) => {
+            // do something
             if (body.player_id) {
                 this.setState({
                     game: true,
@@ -137,7 +144,6 @@ export class Play extends React.Component {
         clearInterval(this.state.pollId);
         this.setState({
             endGame: false,
-            playerId: null,
             game: false,
         });
     }
@@ -159,15 +165,14 @@ export class Play extends React.Component {
             endGame: true,
         });
     }
-
+    
     updateCheck() {
         this.setState((oldState) => {
           return {
             single: !oldState.single,
           };
         });
-
-    }
+     }
 
     render() {
         const { game, error, playerId, endGame, playerCount } = this.state;
