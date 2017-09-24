@@ -64,7 +64,7 @@ export class Header extends Component {
     render() {
         return (
             <header>
-                <LeftNav open={this.state.open}>
+                <LeftNav className="Nav-Drawer" containerClassName={this.state.open ? 'open' : ''} open={this.state.open}>
                     {
                         !this.props.isAuthenticated ?
                             <div>
@@ -110,7 +110,10 @@ export class Header extends Component {
                                     Home
                                 </MenuItem>
                                 <Divider />
-                                <MenuItem onClick={(e) => this.logout(e)}>
+                                <MenuItem
+                                    id="LogoutButton"
+                                    onClick={(e) => this.logout(e)}
+                                >
                                     <i>Logout</i>
                                 </MenuItem>
                             </div>
@@ -118,6 +121,7 @@ export class Header extends Component {
                 </LeftNav>
                 <AppBar
                   title="7 Wonders"
+                  className="Nav"
                   onLeftIconButtonTouchTap={() => this.openNav()}
                   iconElementRight={
                       !this.props.userName ?

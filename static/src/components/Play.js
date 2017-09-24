@@ -165,7 +165,7 @@ export class Play extends React.Component {
             endGame: true,
         });
     }
-    
+
     updateCheck() {
         this.setState((oldState) => {
           return {
@@ -204,6 +204,7 @@ export class Play extends React.Component {
                                 <br />
                                 <RaisedButton
                                     label="Create/Join Game"
+                                    id="Play-CreateGame"
                                     onClick={() => this.createGame()}
                                 />
                             </Paper>
