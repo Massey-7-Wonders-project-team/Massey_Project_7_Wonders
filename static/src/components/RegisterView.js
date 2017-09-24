@@ -131,6 +131,7 @@ export default class RegisterView extends React.Component {
                               <TextField
                                 hintText="Player1"
                                 floatingLabelText="Profile Name"
+                                type="name"
                               />
                           </div>
                           <div className="col-md-12">
@@ -155,6 +156,7 @@ export default class RegisterView extends React.Component {
                           <RaisedButton
                             disabled={this.state.disabled}
                             style={{ marginTop: 50 }}
+                            id="RegisterButton"
                             label="Submit"
                             onClick={(e) => this.login(e)}
                           />
