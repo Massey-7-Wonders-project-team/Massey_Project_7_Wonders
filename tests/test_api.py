@@ -1,7 +1,8 @@
 from testing_config import BaseTestConfig
-from application.models.user import User
 import json
 from application.utils import auth
+from application.controllers.database_functions import *
+from tests.test_models import Defaults
 
 
 class TestAPI(BaseTestConfig):
@@ -86,3 +87,32 @@ class TestAPI(BaseTestConfig):
         self.assertEqual(response2.status_code, 401)
         response3 = self.app.get('/api/user', headers=bad_headers)
         self.assertEqual(response3.status_code, 401)
+
+    def test_check_game(self):
+        db_committing_function(Defaults.default_user, Defaults.default_game)
+        res = self.app.get(
+            "/api/game/check",
+            headers={
+                'Authorization': auth.generate_token(Defaults.default_user),
+            }
+        )
+
+        print(res.status_code)
+        print(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertTrue(json.loads(res.data.decode("utf-8")), ['Need to join game'])
+
+        db_committing_function(Defaults.default_player)
+        res2 = self.app.get(
+            "/api/game/check",
+            headers={
+                'Authorization': auth.generate_token(Defaults.default_user),
+            }
+        )
+        print(self.token)
+        print(json.loads(res2.data.decode("utf-8")))
+
+        self.assertTrue(False)
+        self.assertEqual(res2.status_code, 200)
+        self.assertTrue(json.loads(res2.data.decode("utf-8")), [1])
