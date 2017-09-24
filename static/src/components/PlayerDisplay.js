@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { CardActions, FlatButton, Card,
     CardHeader, CardText, CardMedia, CardTitle, List,
-    Table, TableBody, TableRow, TableRowColumn } from 'material-ui';
+    Table, TableBody, TableRow, TableRowColumn, Avatar } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
@@ -41,6 +41,14 @@ export class PlayerDisplay extends Component {
             this.lookRight = this.lookRight.bind(this);
             this.lookUser = this.lookUser.bind(this);
             this.search = this.search.bind(this);
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.game.player !== this.state.userData) {
+            this.setState({
+              userData: nextProps.game.player
+            })
         }
     }
 
@@ -94,10 +102,10 @@ export class PlayerDisplay extends Component {
             const city = longCityNameArray.length - 1;
             imageName = longCityNameArray[city].toLowerCase();
         }
-		let pName = `Player Name (id:${this.state.displayID})`;			// default profile title
-		if (boardData.profile) {
-			pName = boardData.profile;									// display profile name if present in returned data
-		}
+    		let pName = `Player Name (id:${this.state.displayID})`;			// default profile title
+    		if (boardData.profile) {
+    			pName = boardData.profile;									// display profile name if present in returned data
+    		}
 
         return (
             <div>
@@ -120,7 +128,7 @@ export class PlayerDisplay extends Component {
                                             id="CardHeader"
                                             title={pName}
                                             subtitle={boardData.wonder}
-                                            avatar={`dist/images/cards/age${game.cards[0].age}.png`}               // ${game.cards[0].age}
+                                            avatar={<Avatar src={`dist/images/cards/age${game.cards[0].age}.png`} size={55} />}
                                             actAsExpander={true}
                                             showExpandableButton={true}
                                         />
@@ -133,13 +141,13 @@ export class PlayerDisplay extends Component {
                                                                 style={inventorycustomColumnStyle}
                                                             >
                                                                 <List style={ListStyle}>
-                                                                    <Inventory item="wood" amount={boardData.wood} />
-                                                                    <Inventory item="brick" amount={boardData.brick} />
-                                                                    <Inventory item="ore" amount={boardData.ore} />
-                                                                    <Inventory item="stone" amount={boardData.stone} />
-                                                                    <Inventory item="glass" amount={boardData.glass} />
-                                                                    <Inventory item="paper" amount={boardData.paper} />
-                                                                    <Inventory item="cloth" amount={boardData.cloth} />
+                                                                <Inventory item="wood" amount={boardData.wood + boardData.extra_wood} />
+                                                                <Inventory item="brick" amount={boardData.brick + boardData.extra_brick} />
+                                                                <Inventory item="ore" amount={boardData.ore + boardData.extra_ore} />
+                                                                <Inventory item="stone" amount={boardData.stone + boardData.extra_ore} />
+                                                                <Inventory item="glass" amount={boardData.glass + boardData.extra_glass} />
+                                                                <Inventory item="paper" amount={boardData.paper + boardData.extra_paper} />
+                                                                <Inventory item="cloth" amount={boardData.cloth + boardData.extra_cloth} />
                                                                 </List>
                                                             </TableRowColumn>
                                                             <TableRowColumn>

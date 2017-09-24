@@ -3,7 +3,7 @@ module.exports = {
         client
         .url(client.launchUrl + '/register')
         .waitForElementPresent('body', 3000)
-        .setValue('input[type=name]', 'test')
+        .setValue('input[type=profile]', 'test')
         .setValue('input[type=email]', client.globals.test_email)
         .setValue('input[type=password]', 'password')
         .click('button#RegisterButton')

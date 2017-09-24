@@ -29,6 +29,7 @@ export default createReducer(initialState, {
             started: payload.started,
             loading: false,
             cardPlayed: payload.cardPlayed,
+            clearInterval: payload.clearInterval,
         }),
     [REQUEST_GAME_STATUS]: state =>
         Object.assign({}, state, {
@@ -45,6 +46,7 @@ export default createReducer(initialState, {
             error: false,
             started: true,
             loading: false,
+            clearInterval: payload.clearInterval,
         }),
     [REQUEST_START_GAME]: state =>
         Object.assign({}, state, {
@@ -59,11 +61,12 @@ export default createReducer(initialState, {
         Object.assign({}, state, {
             loading: true,
         }),
-    [RECEIVE_END_GAME]: state =>
+    [RECEIVE_END_GAME]: (state, payload) =>
         Object.assign({}, state, {
             loading: false,
             error: false,
             game: null,
+            clearInterval: payload.clearInterval,
         }),
     [ERROR_END_GAME]: state =>
         Object.assign({}, state, {

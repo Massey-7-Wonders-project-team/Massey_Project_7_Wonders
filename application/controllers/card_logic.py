@@ -45,7 +45,7 @@ def check_valid_move(card, player):
     history = get_cards(player=player, history=True)
 
     # Checks there is not already one of this card played yet
-    if [x for x in history if x == card]:
+    if [x for x in history if x.name == card.name]:
         return False
 
     # Checks if card can be played using prerequisites
