@@ -12,6 +12,7 @@ import ProtectedView from './components/ProtectedView';
 import Play from './components/Play';
 import Instructions from './components/Instructions';
 import NotFound from './components/NotFound';
+import Results from './components/Results';
 
 import { DetermineAuth } from './components/DetermineAuth';
 import { requireAuthentication } from './components/AuthenticatedComponent';
@@ -25,6 +26,7 @@ export default (
         <Route path="home" component={requireNoAuthentication(HomeContainer)} />
         <Route path="instructions" component={Instructions} />
         <Route path="play" component={requireAuthentication(Play)} />
+        <Route path="results" component={requireAuthentication(Results)} />
         <Route path="*" component={DetermineAuth(NotFound)} />
     </Route>
 );
