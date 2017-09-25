@@ -7,10 +7,6 @@ import {
 
 
 describe('Actions: Login', () => {
-    let dummyData;
-    const email = 'p1@gmail.com';
-    const password = '7wonders';
-
     test('registerUserRequest returns REGISTER_USER_REQUEST', () => {
         const returnData = login.registerUserRequest();
         const expectedReturnData = {
