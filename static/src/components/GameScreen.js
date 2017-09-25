@@ -33,11 +33,17 @@ export class GameScreen extends Component {
             pollId: null,
             playerCount: null,
             ready: false,
+            endOfRound: false,
+            age: 1,
+            showScoreBoard: false,
+            shownForRound: false,
+            endGameScoreboard: false,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
         this.hidePlayCardError = this.hidePlayCardError.bind(this);
         this.playersLogged = this.playersLogged.bind(this);
+        this.hideScoreboard = this.hideScoreboard.bind(this);
     }
 
     componentDidMount() {
@@ -45,6 +51,27 @@ export class GameScreen extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        if (nextProps.completed) {
+            this.setState({
+                showScoreBoard: true,
+                shownForRound: true,
+            });
+        }
+        if (nextProps.game) {
+            if (!this.state.shownForRound &&
+                nextProps.game.game.round === 1 && nextProps.game.game.age !== 1) {
+                this.setState({
+                    showScoreBoard: true,
+                    shownForRound: true,
+                });
+            }
+            if (nextProps.game.game.round === 2) {
+                this.setState({
+                    shownForRound: false,
+                });
+            }
+        }
+
         if (nextProps.started && !this.state.polling) {
             this.setState({
                 polling: true,
@@ -103,6 +130,12 @@ export class GameScreen extends Component {
         });
     }
 
+    hideScoreboard() {
+        this.setState({
+            showScoreBoard: false,
+        });
+    }
+
     playersLogged() {
       // this function is just to find how many players are logged into
       // the currently created game
@@ -125,21 +158,12 @@ export class GameScreen extends Component {
                   playerCount: body.playerCount,
               });
           }
-
       });
     }
 
     render() {
         const { error, game, started, loading } = this.props;
-        const { showPlayCardError } = this.state;
-        let minumum = false;
-        let endOfRound = false;
-        if (this.state.playerCount > 2) { minumum = true; }
-        // if (this.props.started) {
-        //     if (game.playedCards.length < 2) {
-        //         endOfRound = true;
-        //     }
-        // }
+        const { showPlayCardError, showScoreBoard } = this.state;
 
         const showPlayCardActions = [
             <FlatButton
@@ -156,6 +180,9 @@ export class GameScreen extends Component {
             <div>
                 {game && !error && started &&
                     <div>
+                        <div style={{ padding: '20px 0' }}>
+                            <h2>Age {game.game.age}, Round {game.game.round}</h2>
+                        </div>
                         <div>
                             <PlayerDisplay playerId={this.props.playerId} />
                         </div>
@@ -168,7 +195,7 @@ export class GameScreen extends Component {
                                             <CardTitle title={pcard.card.name} />
                                             <CardMedia>
                                                 <img
-                                                    alt={`${pcard.card.name} image`}
+                                                    alt={`${pcard.card.name}`}
                                                     src={`dist/images/cards/${imageName}.png`}
                                                 />
                                             </CardMedia>
@@ -177,10 +204,11 @@ export class GameScreen extends Component {
                                 })
                             }
                             <div>
-                                {endOfRound &&
-                                    <div>
-                                        <EndScreen playerId={this.props.playerId} />
-                                    </div>
+                                {showScoreBoard &&
+                                    <EndScreen
+                                        hideScoreboard={this.hideScoreboard}
+                                        endGameScoreboard={this.state.endGameScoreboard}
+                                    />
                                 }
                             </div>
                             {game.cards && game.cards[0].name &&
