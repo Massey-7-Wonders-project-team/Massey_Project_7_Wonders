@@ -105,6 +105,3 @@ def db_committing_function(*args, **kwargs):
     except Exception as e:
         print('Error committing database update')
         print(e)
-
-
-
