@@ -120,7 +120,7 @@ def process_card(card, player, is_discarded, for_wonder):
             print(str(card.name) + " is used for wonder")
             card = get_wonder_card(player)
         if not card or check_valid_move(card, player) is False:
-            print(str(card.name) + " doesn't have the necessary resources/pre-requisites")
+            print(str(card.name) + " is not a valid move (insufficient resources/prerequisites or already played card with same name)")
             return False
         print(str(card.name) + " is used for wonder or is processed")
         update_player_object(card, player, for_wonder)
