@@ -12,36 +12,51 @@ import {
 
 describe('Auth reducer', () => {
   const initialState = {
-    token: null,
-    userName: null,
-    isAuthenticated: false,
-    isAuthenticating: false,
-    statusText: null,
-    isRegistering: false,
-    isRegistered: false,
-    registerStatusText: null,
+      token: null,
+      userName: null,
+      isAuthenticated: false,
+      isAuthenticating: false,
+      statusText: null,
+      isRegistering: false,
+      isRegistered: false,
+      registerStatusText: null,
   };
-  it('should return the initial state', () => {
-      const returnedData = createReducer(undefined, {});
-      const expectedReturnData = initialState
+  it('should return the data sent without type', () => {
+      const startData = {
+          data: 'Sent Data',
+      }
+      const returnedData = createReducer(startData, {});
+      const expectedReturnData = {
+          data: 'Sent Data',
+      }
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('LOGIN_USER_REQUEST should return isAuthenticating=true+statusText=null', () => {
       const returnedData = createReducer(undefined, { type: LOGIN_USER_REQUEST });
       const expectedReturnData = {
-        token: null,
-        userName: null,
-        isAuthenticated: false,
-        isAuthenticating: true,
-        statusText: null,
-        isRegistering: false,
-        isRegistered: false,
-        registerStatusText: null,
+          token: null,
+          userName: null,
+          isAuthenticated: false,
+          isAuthenticating: true,
+          statusText: null,
+          isRegistering: false,
+          isRegistered: false,
+          registerStatusText: null,
       }
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('LOGIN_USER_FAILURE should return statusText=Auth Error...', () => {
-      const returnedData = createReducer(undefined, {
+      const startData = {
+          token: null,
+          userName: 'player1',
+          isAuthenticated: true,
+          isAuthenticating: true,
+          statusText: null,
+          isRegistering: false,
+          isRegistered: false,
+          registerStatusText: null,
+      }
+      const returnedData = createReducer(startData, {
           type: LOGIN_USER_FAILURE,
           payload: {
               status: 'Status example',
