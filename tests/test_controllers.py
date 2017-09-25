@@ -5,35 +5,6 @@ from application.controllers.card_logic import *
 from manage import *
 from index import app
 
-
-
-class Defaults():
-    default_user = User(email='a@a.com', name='test', password='testcase')
-    default_user2 = User(email='b@b.com', name='test', password='testcase')
-    default_game = Game(age=1, round=1)
-    default_card = Card('test', 3, 1, 'brown')
-    
-    #alternating cards
-    timberYard = Card('Timber Yard', 3, 1, 'brown')
-    timberYard.set_benefit_wood(1)
-    timberYard.set_benefit_stone(1)
-    timberYard.set_resource_alternating(True)
-    
-    clayPit = Card('Clay Pit', 3, 1, 'brown')
-    clayPit.set_benefit_brick(1)
-    clayPit.set_benefit_ore(1)
-    clayPit.set_resource_alternating(True)
-    
-    caravansery = Card('Caravansery', 3, 2, 'yellow')
-    caravansery.set_benefit_wood(1)
-    caravansery.set_benefit_ore(1)
-    caravansery.set_benefit_brick(1)
-    caravansery.set_benefit_stone(1)
-    caravansery.set_resource_alternating(True)
-    caravansery.set_cost_wood(2)
-    caravansery.set_prerequisite_1('Marketplace')
-
-
 class TestControllersWithAlchemy(TestCase):
 
     def create_app(self):
@@ -46,7 +17,8 @@ class TestControllersWithAlchemy(TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
-        
+    
+    #test process_card
     def test_process_card_not_in_hand(self):
         game = Game(age=1, round=1)
         user = User(email='a@a.com', name='test', password='testcase')
@@ -54,15 +26,9 @@ class TestControllersWithAlchemy(TestCase):
         db_committing_function(user,game,card)
         player = Player(userId=user.id, gameId=game.id, name=user.name)
         db_committing_function(player)
-        card_hist = Cardhist()
-        db_committing_function(card_hist)
         
         self.assertFalse(process_card(card,player,False,False))
-    
-    #test check_valid_move
-    
-    
-    #test process_card
+
     def test_process_card_single_card(self):
         game = Game(age=1, round=1)
         user = User(email='a@a.com', name='test', password='testcase')
@@ -71,8 +37,7 @@ class TestControllersWithAlchemy(TestCase):
         player = Player(userId=user.id, gameId=game.id, name=user.name)
         db_committing_function(player)
         round = Round(cardId=card.id, playerId=player.id)
-        card_hist = Cardhist()
-        db_committing_function(round,card_hist)
+        db_committing_function(round)
         
         self.assertTrue(process_card(card,player,False,False))
     
@@ -86,8 +51,7 @@ class TestControllersWithAlchemy(TestCase):
         db_committing_function(player)
         round = Round(cardId=card.id, playerId=player.id)
         round2 = Round(cardId=card2.id, playerId=player.id, round=2)
-        card_hist = Cardhist()
-        db_committing_function(round,round2,card_hist)
+        db_committing_function(round,round2)
         
         process_card(card,player,False,False)
         
@@ -103,8 +67,7 @@ class TestControllersWithAlchemy(TestCase):
         db_committing_function(player)
         round = Round(cardId=card.id, playerId=player.id)
         round2 = Round(cardId=card2.id, playerId=player.id, round=2)
-        card_hist = Cardhist()
-        db_committing_function(round,round2,card_hist)
+        db_committing_function(round,round2)
         
         process_card(card,player,False,False)
         
@@ -129,8 +92,7 @@ class TestControllersWithAlchemy(TestCase):
         round = Round(cardId=lumberYard.id, playerId=player.id)
         round2a = Round(cardId=baths.id, playerId=player.id, round=2)
         round2b = Round(cardId=stockade.id, playerId=player.id, round=2)
-        card_hist = Cardhist()
-        db_committing_function(round,round2a,round2b,card_hist)
+        db_committing_function(round,round2a,round2b)
         
         process_card(lumberYard,player,False,False)
         
@@ -160,15 +122,18 @@ class TestControllersWithAlchemy(TestCase):
         round1 = Round(cardId=lumberYard.id, playerId=player.id)
         round2 = Round(cardId=baths.id, playerId=player.id, round=2)
         round3 = Round(cardId=stockade.id, playerId=player.id, round=3)
-        card_hist = Cardhist()
-        db_committing_function(round1,round2,round3,card_hist)
+        db_committing_function(round1,round2,round3)
         
         process_card(lumberYard,player,False,False)
         
         #can play any cards regardless of whether they meet the resource cost
+        previous_money = player.money
         self.assertTrue(process_card(baths,player,True,False))
+        self.assertEqual(previous_money+3, player.money)
         
         round3 = Round(cardId=stockade.id, playerId=player.id, round=3)
         db_committing_function(round3)
+        previous_money = player.money
         self.assertTrue(process_card(stockade,player,True,False))
+        self.assertEqual(previous_money+3, player.money)
 
