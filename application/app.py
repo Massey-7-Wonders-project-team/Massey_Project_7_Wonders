@@ -290,6 +290,24 @@ def end_game():
         db.session.commit()
         return jsonify(message="Success")
 
+@app.route("/api/game/result", methods=["GET"])
+@requires_auth
+def game_result():
+    """Endpoint for ending a game mid game
+    Inputs - player_id
+    Outputs - status comment"""
+    player = Player.query.join(User).filter_by(email=g.current_user["email"]).join(Game).filter_by(complete=True).first()
+    game = get_game(player=player)
+    players = get_players(player=player)
+    player_count = len(players)
+
+    try:
+        return jsonify(
+            status="Completed",
+            game=print_json(player, players=players, game=game),
+            players=player_count
+        )
+
     except Exception as e:
         print(e)
         return jsonify(message="There was an error"), 500

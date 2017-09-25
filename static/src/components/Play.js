@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { RaisedButton, Dialog, FlatButton, Paper, Checkbox } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { browserHistory } from 'react-router';
 import * as actions from '../actions/game';
 import GameScreen from './GameScreen';
 
@@ -146,6 +147,7 @@ export class Play extends React.Component {
             endGame: false,
             game: false,
         });
+        browserHistory.push('/results');
     }
 
     setPollId(id) {
@@ -165,7 +167,7 @@ export class Play extends React.Component {
             endGame: true,
         });
     }
-    
+
     updateCheck() {
         this.setState((oldState) => {
           return {
@@ -204,6 +206,7 @@ export class Play extends React.Component {
                                 <br />
                                 <RaisedButton
                                     label="Create/Join Game"
+                                    id="Play-CreateGame"
                                     onClick={() => this.createGame()}
                                 />
                             </Paper>
@@ -254,6 +257,10 @@ export class Play extends React.Component {
         );
     }
 }
+
+Play.propTypes = {
+    endGame: PropTypes.func.isRequired,
+};
 
 export default connect(
     mapStateToProps,

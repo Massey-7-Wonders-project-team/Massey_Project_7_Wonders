@@ -51,18 +51,20 @@ def get_cards(player=None, game=None, card_ids=None, history=False):
     if history:
         card_ids = [x.cardId for x in get_card_history(player) if not x.discarded]
         if not card_ids:
-            return []
+            return [] #empty query #Card.query.filter(Card.id.in_(card_ids)).all() 
 
     if card_ids:
         return Card.query.filter(Card.id.in_(card_ids)).all()
-
     elif player:
         if not game:
             game = get_game(player=player)
 
         card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age,
                                                                                  round=game.round).all()]
-        return Card.query.filter(Card.id.in_(card_ids)).all()
+        if not card_ids:
+            return []#Card.query.filter(Card.id.in_(card_ids)).all() #empty query
+        else:
+            return Card.query.filter(Card.id.in_(card_ids)).all()
 
 
 def get_card_history(player):
@@ -103,6 +105,3 @@ def db_committing_function(*args, **kwargs):
     except Exception as e:
         print('Error committing database update')
         print(e)
-
-
-

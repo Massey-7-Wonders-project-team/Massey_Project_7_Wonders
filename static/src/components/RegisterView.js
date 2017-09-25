@@ -135,8 +135,7 @@ export default class RegisterView extends React.Component {
                                 hintText="Profile Name"
                                 floatingLabelText="Profile"
                                 type="profile"
-                                onChange={(e) => this.changeValue(e, 'profile')}
-                              />
+                                onChange={(e) => this.changeValue(e, 'profile')}                              />
                           </div>
                           <div className="col-md-12">
                               <TextField
@@ -160,6 +159,7 @@ export default class RegisterView extends React.Component {
                           <RaisedButton
                             disabled={this.state.disabled}
                             style={{ marginTop: 50 }}
+                            id="RegisterButton"
                             label="Submit"
                             onClick={(e) => this.login(e)}
                           />
