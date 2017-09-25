@@ -12,12 +12,12 @@ describe('Data reducer', () => {
       loaded: false,
   };
   it('should return the initial state', () => {
-      const returnedData = createReducer(undefined, {});
+      const returnedData = createReducer(initialState, {});
       const expectedReturnData = initialState
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('RECEIVE_PROTECTED_DATA should return payload +loading=true', () => {
-      const returnedData = createReducer(undefined, {
+      const returnedData = createReducer(initialState, {
           type: RECEIVE_PROTECTED_DATA,
           payload: {
               data: "Simple Data",
@@ -30,7 +30,7 @@ describe('Data reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('FETCH_PROTECTED_DATA_REQUEST should return isFetching=true', () => {
-      const returnedData = createReducer(undefined, { type: FETCH_PROTECTED_DATA_REQUEST });
+      const returnedData = createReducer(initialState, { type: FETCH_PROTECTED_DATA_REQUEST });
       const expectedReturnData = {
         data: null,
         isFetching: true,

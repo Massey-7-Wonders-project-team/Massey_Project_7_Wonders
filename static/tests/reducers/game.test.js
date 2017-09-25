@@ -25,12 +25,12 @@ describe('Game reducer', () => {
       text: 'FAKE',
   }
   it('should return the initial state', () => {
-      const returnedData = createReducer(undefined, {});
+      const returnedData = createReducer(initialState, {});
       const expectedReturnData = initialState
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('RECEIVE_GAME_STATUS should return initial + payloadData', () => {
-      const returnedData = createReducer(undefined, {
+      const returnedData = createReducer(initialState, {
           type: RECEIVE_GAME_STATUS,
           payload: {
               game: 'game1',
@@ -52,7 +52,7 @@ describe('Game reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('REQUEST_GAME_STATUS should return initial data + loading=True + error=false', () => {
-      const returnedData = createReducer(undefined, { type: REQUEST_GAME_STATUS });
+      const returnedData = createReducer(initialState, { type: REQUEST_GAME_STATUS });
       const expectedReturnData = {
           game: null,
           error: false,
@@ -64,7 +64,7 @@ describe('Game reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('should return initial data + Error Status=True', () => {
-      const returnedData = createReducer(undefined, { type: ERROR_GAME_STATUS });
+      const returnedData = createReducer(initialState, { type: ERROR_GAME_STATUS });
       const expectedReturnData = {
           game: null,
           error: true,
@@ -76,7 +76,7 @@ describe('Game reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('RECEIVE_START_GAME should return data + started=true + loading=false', () => {
-      const returnedData = createReducer(undefined, {
+      const returnedData = createReducer(initialState, {
         type: RECEIVE_START_GAME,
         payload: {
           game: "GAME",
@@ -94,7 +94,7 @@ describe('Game reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('REQUEST_START_GAME should return error=false + loading=true', () => {
-      const returnedData = createReducer(undefined, {
+      const returnedData = createReducer(initialState, {
           type: REQUEST_START_GAME,
           });
       const expectedReturnData = {
@@ -108,7 +108,7 @@ describe('Game reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('ERROR_START_GAME should return initial + error=true', () => {
-      const returnedData = createReducer(undefined, { type: ERROR_START_GAME });
+      const returnedData = createReducer(initialState, { type: ERROR_START_GAME });
       const expectedReturnData = {
           game: null,
           error: true,
@@ -120,7 +120,7 @@ describe('Game reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('REQUEST_END_GAME should return initial + loading=true', () => {
-      const returnedData = createReducer(undefined, { type: REQUEST_END_GAME });
+      const returnedData = createReducer(initialState, { type: REQUEST_END_GAME });
       const expectedReturnData = {
           game: null,
           error: false,
@@ -132,7 +132,7 @@ describe('Game reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('RECEIVE_END_GAME should return initial + loading=true', () => {
-      const returnedData = createReducer(undefined, {
+      const returnedData = createReducer(initialState, {
           type: RECEIVE_END_GAME,
           payload: {
             clearInterval: true,
@@ -149,7 +149,7 @@ describe('Game reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('ERROR_END_GAME should return initial + error=true', () => {
-      const returnedData = createReducer(undefined, { type: ERROR_END_GAME });
+      const returnedData = createReducer(initialState, { type: ERROR_END_GAME });
       const expectedReturnData = {
         game: null,
         error: true,

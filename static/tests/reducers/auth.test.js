@@ -22,17 +22,12 @@ describe('Auth reducer', () => {
       registerStatusText: null,
   };
   it('should return the data sent without type', () => {
-      const startData = {
-          data: 'Sent Data',
-      }
-      const returnedData = createReducer(startData, {});
-      const expectedReturnData = {
-          data: 'Sent Data',
-      }
+      const returnedData = createReducer(initialState, {});
+      const expectedReturnData = initialState;
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('LOGIN_USER_REQUEST should return isAuthenticating=true+statusText=null', () => {
-      const returnedData = createReducer(undefined, { type: LOGIN_USER_REQUEST });
+      const returnedData = createReducer(initialState, { type: LOGIN_USER_REQUEST });
       const expectedReturnData = {
           token: null,
           userName: null,
@@ -76,7 +71,7 @@ describe('Auth reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('REGISTER_USER_FAILURE should return statusText=Register Err...', () => {
-      const returnedData = createReducer(undefined, {
+      const returnedData = createReducer(initialState, {
           type: REGISTER_USER_FAILURE,
           payload: {
               status: 'Status example2',
@@ -96,7 +91,7 @@ describe('Auth reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('LOGOUT_USER should return statusText=You have...', () => {
-      const returnedData = createReducer(undefined, {type: LOGOUT_USER });
+      const returnedData = createReducer(initialState, { type: LOGOUT_USER });
       const expectedReturnData = {
         token: null,
         userName: null,
@@ -111,7 +106,7 @@ describe('Auth reducer', () => {
       expect(returnedData).toEqual(expectedReturnData);
   });
   it('REGISTER_USER_REQUEST should return isRegistering=true', () => {
-      const returnedData = createReducer(undefined, { type: REGISTER_USER_REQUEST });
+      const returnedData = createReducer(initialState, { type: REGISTER_USER_REQUEST });
       const expectedReturnData = {
         token: null,
         userName: null,
