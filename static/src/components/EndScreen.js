@@ -28,37 +28,15 @@ export class EndScreen extends Component {
             fetch: true,
             open: true,
             selectable: false,
+            endOfRound: false,
         };
         if (this.props.game) {
             this.state.userData = this.props.game.player;
             this.state.displayData = this.props.game.allPlayers;
+            this.state.endOfRound = this.props.endOfRound;
         }
     }
 
-    getData() {
-        if (this.state.fetch) {
-            const token = localStorage.getItem('token');
-            fetch(`/api/game/status?player_id=${this.state.displayID}`, {
-                method: 'get',
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json', // eslint-disable-line quote-props
-                    'Content-Type': 'application/json',
-                    Authorization: token,
-                },
-            })
-            .then(response => response.json())
-            .then((body) => {
-                console.log('getData(body): ', body);
-                if (body.game) {
-                    this.setState({
-                        displayData: body.game.allPlayers,
-                        fetch: false,
-                    });
-                }
-            });
-        }
-    }
     handleOpen = () => {
         this.setState({ open: true });
     }
@@ -67,12 +45,14 @@ export class EndScreen extends Component {
         this.setState({ open: false });
     }
     render() {
-        const primary = true;
         const tableFalse = false;
         const tableTrue = true;
-        let user = this.state.userData;
-        let players = this.state.displayData;
-        let items = players.concat(user);
+        const user = this.state.userData;
+        const players = this.state.displayData;
+        const items = players.concat(user);
+        if (this.props.endOfRound) {
+            this.handleOpen();
+        }
         const scoreBoardActions = [
             <FlatButton
                 label="Close"
@@ -83,7 +63,7 @@ export class EndScreen extends Component {
         return (
             <div>
                 <Dialog
-                    title='Score Board'
+                    title="Score Board"
                     actions={scoreBoardActions}
                     modal={false}
                     open={this.state.open}
@@ -96,7 +76,7 @@ export class EndScreen extends Component {
                             displayRowCheckbox={tableFalse}
                         >
                             <TableRow>
-                                <TableHeaderColumn>ID</TableHeaderColumn>
+                                <TableHeaderColumn>Name</TableHeaderColumn>
                                 <TableHeaderColumn>Points</TableHeaderColumn>
                                 <TableHeaderColumn>Coin</TableHeaderColumn>
                                 <TableHeaderColumn>Military</TableHeaderColumn>
@@ -109,7 +89,7 @@ export class EndScreen extends Component {
                         >
                             {items.map(player =>
                                 <TableRow key={player.id}>
-                                    <TableRowColumn> {player.id} </TableRowColumn>
+                                    <TableRowColumn> {player.profile} </TableRowColumn>
                                     <TableRowColumn> {player.points} </TableRowColumn>
                                     <TableRowColumn> {player.money} </TableRowColumn>
                                     <TableRowColumn> {player.military} </TableRowColumn>
@@ -125,6 +105,7 @@ export class EndScreen extends Component {
 
 EndScreen.propTypes = {
     game: PropTypes.object,
+    endOfRound: PropTypes.bool.isRequired,
 };
 EndScreen.defaultProps = {
     game: null,

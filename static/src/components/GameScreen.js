@@ -34,6 +34,7 @@ export class GameScreen extends Component {
             playerCount: null,
             ready: false,
             endOfRound: false,
+            age: 1,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
@@ -55,11 +56,8 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-
-
         const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 1000);
         this.props.setPollId(pollId);
-
     }
 
     startGame() {
@@ -96,6 +94,11 @@ export class GameScreen extends Component {
             showPlayCardError: false,
         });
     }
+    showScoreBoard() {
+        this.setState({
+            endOfRound: true,
+        });
+    }
 
     playersLogged() {
       // this function is just to find how many players are logged into
@@ -123,13 +126,20 @@ export class GameScreen extends Component {
     }
 
     render() {
-        const { error, game, started, loading } = this.props;
+        const { error, game, started, loading, endOfRound } = this.props;
         const { showPlayCardError } = this.state;
         let minumum = false;
+        console.log(this.props.endOfRound);// for debugging
+        if (game) {
+            if (game.cards[0].age > this.state.age) {
+                this.showScoreBoard();
+                this.props.endOfRound = true;
+                this.state.age = game.cards[0].age;
+            } else if (this.state.started && this.state.game.complete) {
+                this.showScoreBoard();
+            } else if (endOfRound) { this.props.endOfRound = false; }
+        }
         if (this.state.playerCount > 2) { minumum = true; }
-        // unsure how to check when it is the end of a round.
-        if (this.state.started && game.playedCards.length < 2) { this.state.endOfRound = true; }
-
         const showPlayCardActions = [
             <FlatButton
                 label="Ok"
@@ -168,7 +178,10 @@ export class GameScreen extends Component {
                             <div>
                                 {this.state.endOfRound &&
                                     <div>
-                                        <EndScreen playerId={this.props.playerId} />
+                                        <EndScreen
+                                            playerId={this.props.playerId}
+                                            endOfRound={this.props.endOfRound}
+                                        />
                                     </div>
                               }
                             </div>
@@ -295,6 +308,7 @@ GameScreen.defaultProps = {
     playerId: null,
     playerCount: null,
     playCard: null,
+    endOfRound: false,
 };
 
 export default connect(
