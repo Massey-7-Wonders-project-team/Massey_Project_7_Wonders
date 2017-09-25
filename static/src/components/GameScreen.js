@@ -54,11 +54,8 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-
-
         const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 1000);
         this.props.setPollId(pollId);
-
     }
 
     startGame() {
@@ -72,7 +69,17 @@ export class GameScreen extends Component {
 
     playCard(cardId) {
         if (!this.props.cardPlayed) {
-            this.props.playCard(this.props.playerId, cardId, false);
+            this.props.playCard(this.props.playerId, cardId, false, false);
+        } else {
+            this.setState({
+                showPlayCardError: true,
+            });
+        }
+    }
+    
+    wonderCard(cardId) {
+        if (!this.props.cardPlayed) {
+            this.props.playCard(this.props.playerId, cardId, false, true);
         } else {
             this.setState({
                 showPlayCardError: true,
@@ -82,7 +89,7 @@ export class GameScreen extends Component {
 
     discard(cardId) {
         if (!this.props.cardPlayed) {
-            this.props.playCard(this.props.playerId, cardId, true);
+            this.props.playCard(this.props.playerId, cardId, true, false);
         } else {
             this.setState({
                 showPlayCardError: true,
@@ -157,7 +164,7 @@ export class GameScreen extends Component {
                                 game.playedCards.map((pcard) => {
                                     const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card key={pcard.id} style={{ width: 150, display: 'inline-block' }}>
+                                        <Card key={pcard.id} style={{ width: 130, display: 'inline-block' }}>
                                             <CardTitle title={pcard.card.name} />
                                             <CardMedia>
                                                 <img
@@ -180,7 +187,7 @@ export class GameScreen extends Component {
                                 game.cards.map((card, index) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card className="Card" data-card-number={index} key={card.id} style={{ width: 150, display: 'inline-block', paddingBottom: 0 }}>
+                                        <Card className="Card" data-card-number={index} key={card.id} style={{ width: 130, display: 'inline-block', paddingBottom: 0 }}>
                                             <CardTitle
                                                 title={card.name} titleStyle={{ fontSize: 18 }}
                                             />
@@ -198,6 +205,10 @@ export class GameScreen extends Component {
                                                     label="Play Card"
                                                     className="PlayCardButton"
                                                     onClick={() => this.playCard(card.id)}
+                                                />
+                                                <FlatButton
+                                                    label="Wonder"
+                                                    onClick={() => this.wonderCard(card.id)}
                                                 />
                                                 <FlatButton
                                                     label="Discard"
