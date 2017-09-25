@@ -60,23 +60,47 @@ export function checkGameStatus(playerId) {
         .then((body) => {
             if (body.status === 'Started') {
                 dispatch(receiveGameStatus({
-                    game: body.game, started: true, cardPlayed: false, clearInterval: false }));
+                    game: body.game,
+                    started: true,
+                    completed: false,
+                    cardPlayed: false,
+                    clearInterval: false,
+                }));
             } else if (body.status === 'Card Played') {
                 dispatch(receiveGameStatus({
-                    game: body.game, started: true, cardPlayed: true, clearInterval: false }));
+                    game: body.game,
+                    started: true,
+                    completed: false,
+                    cardPlayed: true,
+                    clearInterval: false,
+                }));
             } else if (body.status === 'Completed') {
                 dispatch(receiveGameStatus({
-                    game: body.game, started: true, cardPlayed: true, clearInterval: true }));
+                    game: body.game,
+                    started: true,
+                    completed: true,
+                    cardPlayed: true,
+                    clearInterval: true,
+                }));
             } else {
                 dispatch(receiveGameStatus({
-                    game: body.game, started: false, cardPlayed: false, clearInterval: false }));
+                    game: body.game,
+                    started: false,
+                    cardPlayed: false,
+                    clearInterval: false,
+                }));
             }
         })
         .catch((err) => {
             // catch error
             console.error(err);
             dispatch(gameStatusFailed({
-                game: null, started: false, error: true, clearInterval: false }));
+                game: null,
+                started: false,
+                completed: false,
+                error: true,
+                clearInterval: false,
+            }));
         });
     };
 }
@@ -186,8 +210,10 @@ export function endGame(playerId) {
         })
         .then(response => response.json())
         .then((body) => {
-            console.error(body);
-            dispatch(receiveEndGame({ clearInterval: false }));
+            dispatch(receiveEndGame({
+                completed: true,
+                clearInterval: false,
+            }));
         })
         .catch((err) => {
             // catch error

@@ -112,7 +112,7 @@ export class PlayerDisplay extends Component {
                 {game && !error && started && boardData &&
                     <div>
                         {
-                          <div className="PlayerDisplayBoard">
+                          <div>
                             <Table>
                               <TableBody displayRowCheckbox={false} >
                                 <TableRow selectable={false}>
