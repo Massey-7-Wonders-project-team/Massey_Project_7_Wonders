@@ -97,10 +97,14 @@ class TestControllersWithAlchemy(TestCase):
         process_card(lumberYard,player,False,False)
         
         #can't play this card
+        previous_points = player.points
         self.assertFalse(process_card(baths,player,False,False))
+        self.assertEqual(previous_points, player.points)
         
         #can play this one
+        previous_military = player.military
         self.assertTrue(process_card(stockade,player,False,False))
+        self.assertEqual(previous_military+1, player.military)
     
     def test_process_card_discard(self):
         game = Game(age=1, round=1)
