@@ -54,6 +54,7 @@ def check_valid_move(card, player):
 
     # Check money
     if card.costMoney > player.money:
+        print("not enough money")
         return False
 
     balance = [card.costStone - player.stone, card.costBrick - player.brick, card.costOre - player.ore,

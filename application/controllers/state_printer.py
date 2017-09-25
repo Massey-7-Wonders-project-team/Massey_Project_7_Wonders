@@ -28,6 +28,9 @@ def false_true (string):
         return True
     elif string is True or string is False:
         return string
-    print(string + " given into false_true function")
 
+    if not string:
+        print(string + " given into false_true function")
+    else:
+        print(string)
 

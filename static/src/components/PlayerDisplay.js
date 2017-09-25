@@ -144,7 +144,7 @@ export class PlayerDisplay extends Component {
                                                                     <Inventory item="wood" amount={boardData.wood + boardData.extra_wood} />
                                                                     <Inventory item="brick" amount={boardData.brick + boardData.extra_brick} />
                                                                     <Inventory item="ore" amount={boardData.ore + boardData.extra_ore} />
-                                                                    <Inventory item="stone" amount={boardData.stone + boardData.extra_ore} />
+                                                                    <Inventory item="stone" amount={boardData.stone + boardData.extra_stone} />
                                                                     <Inventory item="glass" amount={boardData.glass + boardData.extra_glass} />
                                                                     <Inventory item="paper" amount={boardData.paper + boardData.extra_paper} />
                                                                     <Inventory item="cloth" amount={boardData.cloth + boardData.extra_cloth} />
@@ -181,7 +181,7 @@ export class PlayerDisplay extends Component {
                                                                     <Inventory item="tablet" amount={boardData.tablet} />
                                                                     <Inventory item="compass" amount={boardData.compass} />
                                                                     <Inventory item="commercial" amount={0} />
-                                                                    <Inventory item="civillian" amount={0} />
+                                                                    <Inventory item="civilian" amount={0} />
                                                                 </List>
                                                             </TableRowColumn>
                                                         </TableRow>
