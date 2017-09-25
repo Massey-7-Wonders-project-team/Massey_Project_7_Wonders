@@ -28,7 +28,6 @@ export class EndScreen extends Component {
             displayData: null,
             fetch: true,
             selectable: false,
-            endOfRound: false,
         };
     }
 
@@ -41,9 +40,7 @@ export class EndScreen extends Component {
         const open = true;
         const { game } = this.props;
         const totalPlayers = this.props.game.allPlayers;
-        totalPlayers.push(game.player);        if (this.props.endOfRound) {
-            this.handleOpen();
-        }
+        totalPlayers.push(game.player);
         const scoreBoardActions = [
             <FlatButton
                 label="Close"
@@ -77,11 +74,9 @@ export class EndScreen extends Component {
 
 EndScreen.propTypes = {
     game: PropTypes.object,
-    endOfRound: PropTypes.bool.isRequired,
-    age: PropTypes.string.isRequired,
     hideScoreboard: PropTypes.func.isRequired,
-    endGame: PropTypes.func.isRequired,
 };
+
 EndScreen.defaultProps = {
     game: null,
     playercount: null,
