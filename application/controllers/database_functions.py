@@ -50,10 +50,11 @@ def get_cards(player=None, game=None, card_ids=None, history=False):
 
     if history:
         card_ids = [x.cardId for x in get_card_history(player) if not x.discarded]
+        if not card_ids:
+            return [] #empty query #Card.query.filter(Card.id.in_(card_ids)).all() 
 
     if card_ids:
         return Card.query.filter(Card.id.in_(card_ids)).all()
-
     elif player:
         if not game:
             game = get_game(player=player)
