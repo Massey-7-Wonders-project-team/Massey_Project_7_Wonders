@@ -289,6 +289,10 @@ def end_game():
         print('Ending game')
         db.session.commit()
         return jsonify(message="Success")
+    
+    except Exception as e:
+        print(e)
+        return jsonify(message="There was an error"), 500
 
 @app.route("/api/game/result", methods=["GET"])
 @requires_auth
