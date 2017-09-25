@@ -1,9 +1,9 @@
 import React, { PropTypes, Component } from 'react';
-import { FlatButton, Dialog, Table, TableBody,
-         TableRow, TableRowColumn, TableHeaderColumn, TableHeader } from 'material-ui';
+import { FlatButton, Dialog } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
+import EndGameMarkup from './EndGameMarkup';
 
 function mapStateToProps(state) {
     return {
@@ -12,6 +12,7 @@ function mapStateToProps(state) {
         error: state.game.error,
         loading: state.game.loading,
         playerCount: state.game.playerCount,
+        completed: state.game.completed,
     };
 }
 
@@ -26,77 +27,49 @@ export class EndScreen extends Component {
             userID: null,
             displayData: null,
             fetch: true,
-            open: true,
             selectable: false,
-            endOfRound: false,
         };
-        if (this.props.game) {
-            this.state.userData = this.props.game.player;
-            this.state.displayData = this.props.game.allPlayers;
-            this.state.endOfRound = this.props.endOfRound;
-        }
-    }
-
-    handleOpen = () => {
-        this.setState({ open: true });
     }
 
     handleClose = () => {
-        this.setState({ open: false });
+        this.props.hideScoreboard();
     }
+
     render() {
-        const tableFalse = false;
-        const tableTrue = true;
-        const user = this.state.userData;
-        const players = this.state.displayData;
-        const items = players.concat(user);
+        const primaryButton = true;
+        const open = true;
+        const { game } = this.props;
+        const totalPlayers = this.props.game.allPlayers;
+        totalPlayers.push(game.player);
+
         if (this.props.endOfRound) {
             this.handleOpen();
         }
         const scoreBoardActions = [
             <FlatButton
                 label="Close"
-                primary={true}
+                primary={primaryButton}
                 onClick={this.handleClose}
             />,
         ];
+
+        let title = 'Final Results';
+        console.log(game.game)
+        if (game.game.age === 2) {
+            title = 'Results from Round 1';
+        } else if (game.game.age === 3) {
+            title = 'Results from Round 2';
+        }
         return (
             <div>
                 <Dialog
-                    title="Score Board"
+                    title={title}
                     actions={scoreBoardActions}
                     modal={false}
-                    open={this.state.open}
+                    open={open}
                     onRequestClose={this.handleClose}
                 >
-                    <Table>
-                        <TableHeader
-                            displaySelectALl={tableFalse}
-                            endableSelectAll={tableFalse}
-                            displayRowCheckbox={tableFalse}
-                        >
-                            <TableRow>
-                                <TableHeaderColumn>Name</TableHeaderColumn>
-                                <TableHeaderColumn>Points</TableHeaderColumn>
-                                <TableHeaderColumn>Coin</TableHeaderColumn>
-                                <TableHeaderColumn>Military</TableHeaderColumn>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody
-                            displayRowCheckbox={tableFalse}
-                            showRowHover={tableFalse}
-                            stripedRows={tableTrue}
-                        >
-                            {items.map(player =>
-                                <TableRow key={player.id}>
-                                    <TableRowColumn> {player.profile} </TableRowColumn>
-                                    <TableRowColumn> {player.points} </TableRowColumn>
-                                    <TableRowColumn> {player.money} </TableRowColumn>
-                                    <TableRowColumn> {player.military} </TableRowColumn>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
+                    <EndGameMarkup players={totalPlayers} />
                 </Dialog>
             </div>
         );
@@ -106,6 +79,9 @@ export class EndScreen extends Component {
 EndScreen.propTypes = {
     game: PropTypes.object,
     endOfRound: PropTypes.bool.isRequired,
+    age: PropTypes.string.isRequired,
+    hideScoreboard: PropTypes.func.isRequired,
+    endGame: PropTypes.func.isRequired,
 };
 EndScreen.defaultProps = {
     game: null,

@@ -18,6 +18,7 @@ const initialState = {
     loading: true,
     players: null,
     cardPlayed: false,
+    completed: false,
 };
 
 export default createReducer(initialState, {
@@ -27,6 +28,7 @@ export default createReducer(initialState, {
             playerCount: payload.players,
             error: false,
             started: payload.started,
+            completed: payload.completed,
             loading: false,
             cardPlayed: payload.cardPlayed,
             clearInterval: payload.clearInterval,
@@ -67,6 +69,8 @@ export default createReducer(initialState, {
             error: false,
             game: null,
             clearInterval: payload.clearInterval,
+            completed: payload.completed,
+            started: false,
         }),
     [ERROR_END_GAME]: state =>
         Object.assign({}, state, {
