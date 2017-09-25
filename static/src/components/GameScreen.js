@@ -33,6 +33,11 @@ export class GameScreen extends Component {
             pollId: null,
             playerCount: null,
             ready: false,
+            endOfRound: false,
+            age: 1,
+            showScoreBoard: false,
+            shownForRound: false,
+            endGameScoreboard: false,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
@@ -88,11 +93,8 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-
-
         const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 1000);
         this.props.setPollId(pollId);
-
     }
 
     startGame() {
@@ -146,7 +148,6 @@ export class GameScreen extends Component {
                   playerCount: body.playerCount,
               });
           }
-
       });
     }
 
@@ -202,10 +203,10 @@ export class GameScreen extends Component {
                               }
                             </div>
                             {game.cards && game.cards[0].name &&
-                                game.cards.map((card, index) => {
+                                game.cards.map((card) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card className="Card" data-card-number={index} key={card.id} style={{ width: 150, display: 'inline-block', paddingBottom: 0 }}>
+                                        <Card key={card.id} style={{ width: 150, display: 'inline-block', paddingBottom: 0 }}>
                                             <CardTitle
                                                 title={card.name} titleStyle={{ fontSize: 18 }}
                                             />
@@ -221,12 +222,10 @@ export class GameScreen extends Component {
                                             <CardActions>
                                                 <FlatButton
                                                     label="Play Card"
-                                                    className="PlayCardButton"
                                                     onClick={() => this.playCard(card.id)}
                                                 />
                                                 <FlatButton
                                                     label="Discard"
-                                                    className="DiscardCardButton"
                                                     onClick={() => this.discard(card.id)}
                                                 />
                                             </CardActions>
@@ -277,7 +276,6 @@ export class GameScreen extends Component {
                             <center>
                                 {!this.state.ready
                                   ? <RaisedButton
-                                        id="ReadyButton"
                                       label="I am ready"
                                       onClick={() => this.startGame()}
                                   />
@@ -325,6 +323,8 @@ GameScreen.defaultProps = {
     playerId: null,
     playerCount: null,
     playCard: null,
+    endOfRound: false,
+    completed: false,
 };
 
 export default connect(

@@ -52,7 +52,6 @@ class Card(db.Model):
             'noPlayers': self.noPlayers,
             'age': self.age,
             'colour': self.colour,
-            'costMoney': self.costMoney,
             'costWood': self.costWood,
             'costBrick': self.costBrick,
             'costOre': self.costOre,
