@@ -126,6 +126,17 @@ export class GameScreen extends Component {
         }
     }
 
+    hidePlayCardError() {
+        this.setState({
+            showPlayCardError: false,
+        });
+    }
+    showScoreBoard() {
+        this.setState({
+            endOfRound: true,
+        });
+    }
+
     playersLogged() {
       // this function is just to find how many players are logged into
       // the currently created game
@@ -199,7 +210,6 @@ export class GameScreen extends Component {
                                         hideScoreboard={this.hideScoreboard}
                                         endGameScoreboard={this.state.endGameScoreboard}
                                     />
-
                               }
                             </div>
                             {game.cards && game.cards[0].name &&
@@ -324,8 +334,7 @@ GameScreen.defaultProps = {
     playerId: null,
     playerCount: null,
     playCard: null,
-    endOfRound: false,
-    completed: false,
+    endOfRound: false, false,
 };
 
 export default connect(

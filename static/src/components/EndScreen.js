@@ -28,6 +28,7 @@ export class EndScreen extends Component {
             displayData: null,
             fetch: true,
             selectable: false,
+            endOfRound: false,
         };
     }
 
@@ -40,9 +41,7 @@ export class EndScreen extends Component {
         const open = true;
         const { game } = this.props;
         const totalPlayers = this.props.game.allPlayers;
-        totalPlayers.push(game.player);
-
-        if (this.props.endOfRound) {
+        totalPlayers.push(game.player);        if (this.props.endOfRound) {
             this.handleOpen();
         }
         const scoreBoardActions = [
