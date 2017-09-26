@@ -6,10 +6,13 @@ import { shallow } from 'enzyme';
 import { AuthenticatedComponent } from '../../src/components/AuthenticatedComponent';
 
 describe('<AuthenticatedComponent />', () => {
+    const minProps = {
+        token: 'a',
+        userName: 'a',
+        isAuthenticated: true,
+    };
     test('renders <AuthenticatedComponent />', () => {
-        const wrapper = shallow(<AuthenticatedComponent />);
-        this.state.isAuthenticated = true;
-        this.state.loaded_if_needed = true;
-        expect(typeof wrapper.find(<AuthenticatedComponent {...this.props} />));
+        const wrapper = shallow(<AuthenticatedComponent />); // not rendering??
+        expect(typeof wrapper.find(<AuthenticatedComponent />).length()).toEqual(1);
     });
 });

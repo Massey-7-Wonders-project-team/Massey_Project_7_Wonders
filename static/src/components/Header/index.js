@@ -123,17 +123,17 @@ export class Header extends Component {
                     }
                 </LeftNav>
                 <AppBar
-                  title="7 Wonders"
-                  className="Nav"
-                  onLeftIconButtonTouchTap={() => this.openNav()}
-                  iconElementRight={
+                    title="7 Wonders"
+                    className="Nav"
+                    onLeftIconButtonTouchTap={() => this.openNav()}
+                    iconElementRight={
                       !this.props.userName ?
-                        <FlatButton label="Home" onClick={() => this.dispatchNewRoute('/')} />
+                          <FlatButton label="Home" onClick={() => this.dispatchNewRoute('/')} />
                         :
-                        <div>
-                          <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onClick={() => this.dispatchNewRoute('/home')} />
-                          <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onClick={() => this.dispatchNewRoute('/')} />
-                        </div>
+                          <div>
+                              <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onClick={() => this.dispatchNewRoute('/home')} />
+                              <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onClick={() => this.dispatchNewRoute('/')} />
+                          </div>
 
                     }
                 />

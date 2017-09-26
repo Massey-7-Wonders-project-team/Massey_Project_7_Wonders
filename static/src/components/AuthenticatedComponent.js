@@ -51,13 +51,10 @@ export function requireAuthentication(Component) {
                                 this.setState({
                                     loaded_if_needed: true,
                                 });
-
                             } else {
                                 browserHistory.push('/home');
-
                             }
                         });
-
                 }
             } else {
                 this.setState({
