@@ -150,7 +150,6 @@ def single_player(user):
     player_human = Player(gameId=game.id, userId=user.id, name=user.name)
 
     users_ai = User.query.filter(User.id.in_(range(1, 7))).all()
-    print(len(users_ai))
     players_ai = []
     for i in range(1, no_players):
         user = users_ai.pop()
@@ -168,7 +167,7 @@ def single_player(user):
 @requires_auth
 def game_status():
     """ Send the status of a game
-     Inputs - player_id, (later) is_owned_by_player (bool)
+     Inputs - player_id
      Output
         Game not started - status comment, playerCount
         Game started - status comment, game (player, cards), playerCount """
@@ -208,6 +207,7 @@ def begin_game():
     are ready or there are 7 players
     Inputs - player_id
     Outputs -
+        If player was already ready - status comment
         Game not started - status comment
         Game started - status comment, game (player, cards)"""
     player = get_player(request.args.get('player_id'))
@@ -240,8 +240,9 @@ def begin_game():
 
         # Sets up neighbours and first round
         set_player_neighbours(players)
-        deal_wonders(players)
-        age_calcs_and_dealing(players, game)
+        if not request.args.get('test'):
+            deal_wonders(players)
+            age_calcs_and_dealing(players, game)
 
         # DB update and begin game
         db_committing_function(game)
@@ -288,6 +289,28 @@ def end_game():
         print('Ending game')
         db.session.commit()
         return jsonify(message="Success")
+    
+    except Exception as e:
+        print(e)
+        return jsonify(message="There was an error"), 500
+
+@app.route("/api/game/result", methods=["GET"])
+@requires_auth
+def game_result():
+    """Endpoint for ending a game mid game
+    Inputs - player_id
+    Outputs - status comment"""
+    player = Player.query.join(User).filter_by(email=g.current_user["email"]).join(Game).filter_by(complete=True).first()
+    game = get_game(player=player)
+    players = get_players(player=player)
+    player_count = len(players)
+
+    try:
+        return jsonify(
+            status="Completed",
+            game=print_json(player, players=players, game=game),
+            players=player_count
+        )
 
     except Exception as e:
         print(e)

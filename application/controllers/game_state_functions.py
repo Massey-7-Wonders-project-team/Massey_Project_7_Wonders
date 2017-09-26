@@ -88,9 +88,10 @@ def update_player_object(card, player, for_wonder=False):
         player.paper += card.givePaper
         player.cloth += card.giveCloth
         player.glass += card.giveGlass
-        player.military += card.giveMilitary
-        player.money += card.giveMoney - card.costMoney
-        player.points += card.givePoints
+
+    player.military += card.giveMilitary
+    player.points += card.givePoints
+    player.money += card.giveMoney - card.costMoney
 
     if for_wonder:
         player.wonder_level += 1

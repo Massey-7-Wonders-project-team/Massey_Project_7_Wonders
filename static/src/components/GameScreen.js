@@ -33,11 +33,17 @@ export class GameScreen extends Component {
             pollId: null,
             playerCount: null,
             ready: false,
+            endOfRound: false,
+            age: 1,
+            showScoreBoard: false,
+            shownForRound: false,
+            endGameScoreboard: false,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
         this.hidePlayCardError = this.hidePlayCardError.bind(this);
         this.playersLogged = this.playersLogged.bind(this);
+        this.hideScoreboard = this.hideScoreboard.bind(this);
     }
 
     componentDidMount() {
@@ -45,6 +51,27 @@ export class GameScreen extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        if (nextProps.completed) {
+            this.setState({
+                showScoreBoard: true,
+                shownForRound: true,
+            });
+        }
+        if (nextProps.game) {
+            if (!this.state.shownForRound &&
+                nextProps.game.game.round === 1 && nextProps.game.game.age !== 1) {
+                this.setState({
+                    showScoreBoard: true,
+                    shownForRound: true,
+                });
+            }
+            if (nextProps.game.game.round === 2) {
+                this.setState({
+                    shownForRound: false,
+                });
+            }
+        }
+
         if (nextProps.started && !this.state.polling) {
             this.setState({
                 polling: true,
@@ -54,11 +81,8 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-
-
         const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 1000);
         this.props.setPollId(pollId);
-
     }
 
     startGame() {
@@ -72,7 +96,17 @@ export class GameScreen extends Component {
 
     playCard(cardId) {
         if (!this.props.cardPlayed) {
-            this.props.playCard(this.props.playerId, cardId, false);
+            this.props.playCard(this.props.playerId, cardId, false, false);
+        } else {
+            this.setState({
+                showPlayCardError: true,
+            });
+        }
+    }
+    
+    wonderCard(cardId) {
+        if (!this.props.cardPlayed) {
+            this.props.playCard(this.props.playerId, cardId, false, true);
         } else {
             this.setState({
                 showPlayCardError: true,
@@ -82,7 +116,7 @@ export class GameScreen extends Component {
 
     discard(cardId) {
         if (!this.props.cardPlayed) {
-            this.props.playCard(this.props.playerId, cardId, true);
+            this.props.playCard(this.props.playerId, cardId, true, false);
         } else {
             this.setState({
                 showPlayCardError: true,
@@ -93,6 +127,12 @@ export class GameScreen extends Component {
     hidePlayCardError() {
         this.setState({
             showPlayCardError: false,
+        });
+    }
+
+    hideScoreboard() {
+        this.setState({
+            showScoreBoard: false,
         });
     }
 
@@ -118,21 +158,12 @@ export class GameScreen extends Component {
                   playerCount: body.playerCount,
               });
           }
-
       });
     }
 
     render() {
         const { error, game, started, loading } = this.props;
-        const { showPlayCardError } = this.state;
-        let minumum = false;
-        let endOfRound = false;
-        if (this.state.playerCount > 2) { minumum = true; }
-        // if (this.props.started) {
-        //     if (game.playedCards.length < 2) {
-        //         endOfRound = true;
-        //     }
-        // }
+        const { showPlayCardError, showScoreBoard } = this.state;
 
         const showPlayCardActions = [
             <FlatButton
@@ -149,6 +180,9 @@ export class GameScreen extends Component {
             <div>
                 {game && !error && started &&
                     <div>
+                        <div style={{ padding: '20px 0' }}>
+                            <h2>Age {game.game.age}, Round {game.game.round}</h2>
+                        </div>
                         <div>
                             <PlayerDisplay playerId={this.props.playerId} />
                         </div>
@@ -157,11 +191,11 @@ export class GameScreen extends Component {
                                 game.playedCards.map((pcard) => {
                                     const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card key={pcard.id} style={{ width: 150, display: 'inline-block' }}>
+                                        <Card key={pcard.id} style={{ width: 130, display: 'inline-block' }}>
                                             <CardTitle title={pcard.card.name} />
                                             <CardMedia>
                                                 <img
-                                                    alt={`${pcard.card.name} image`}
+                                                    alt={`${pcard.card.name}`}
                                                     src={`dist/images/cards/${imageName}.png`}
                                                 />
                                             </CardMedia>
@@ -170,17 +204,18 @@ export class GameScreen extends Component {
                                 })
                             }
                             <div>
-                                {endOfRound &&
-                                    <div>
-                                        <EndScreen playerId={this.props.playerId} />
-                                    </div>
+                                {showScoreBoard &&
+                                    <EndScreen
+                                        hideScoreboard={this.hideScoreboard}
+                                        endGameScoreboard={this.state.endGameScoreboard}
+                                    />
                                 }
                             </div>
                             {game.cards && game.cards[0].name &&
                                 game.cards.map((card, index) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card className="Card" data-card-number={index} key={card.id} style={{ width: 150, display: 'inline-block', paddingBottom: 0 }}>
+                                        <Card className="Card" data-card-number={index} key={card.id} style={{ width: 130, display: 'inline-block', paddingBottom: 0 }}>
                                             <CardTitle
                                                 title={card.name} titleStyle={{ fontSize: 18 }}
                                             />
@@ -198,6 +233,10 @@ export class GameScreen extends Component {
                                                     label="Play Card"
                                                     className="PlayCardButton"
                                                     onClick={() => this.playCard(card.id)}
+                                                />
+                                                <FlatButton
+                                                    label="Wonder"
+                                                    onClick={() => this.wonderCard(card.id)}
                                                 />
                                                 <FlatButton
                                                     label="Discard"
