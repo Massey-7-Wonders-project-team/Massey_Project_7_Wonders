@@ -10,30 +10,30 @@ from ..models.wonder import Wonder
 
 def get_wonder_card(player):
     """Logic for processing a turn where a wonder is built"""
-    wonder = Wonder.query.filter_by(id=player.wonder).first()
+    wonder = Wonder.query.filter_by(name=player.wonder).first()
 
     # Makes sure a wonder is not played when it is already maxed out
     if wonder.slots is player.wonder_level:
         return False
 
     # Finds wonder card and returns it
-    if player.wonder_level == 1:
-        card = Card.query.filter_by(id=wonder.card_1).first()
+    if player.wonder_level == 0:
+        card = Card.query.filter_by(name=wonder.card_1).first()
+    elif player.wonder_level == 1:
+        card = Card.query.filter_by(name=wonder.card_2).first()
     elif player.wonder_level == 2:
-        card = Card.query.filter_by(id=wonder.card_2).first()
-    elif player.wonder_level == 3:
-        card = Card.query.filter_by(id=wonder.card_3).first()
+        card = Card.query.filter_by(name=wonder.card_3).first()
     else:
-        card = Card.query.filter_by(id=wonder.card_4).first()
+        card = Card.query.filter_by(name=wonder.card_4).first()
 
     return card
 
 
 def get_all_wonder_cards(player):
     """Used for AI decision making. Returns all wonder cards"""
-    wonder = Wonder.query.filter_by(id=player.wonder).first()
-    ids = [wonder.card_1, wonder.card_2, wonder.card_3, wonder.card_4]
-    return db.session.filter(Card.id.in_(ids)).all()
+    wonder = Wonder.query.filter_by(name=player.wonder).first()
+    names = [wonder.card_1, wonder.card_2, wonder.card_3, wonder.card_4]
+    return db.session.filter(Card.name.in_(names)).all()
 
 
 def get_card(card_id):
