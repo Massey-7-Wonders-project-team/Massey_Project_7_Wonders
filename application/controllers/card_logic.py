@@ -80,11 +80,11 @@ def check_valid_move(card, player):
         return True
 
 
-def prepare_db_changes_after_turn(card, player, is_discarded, for_wonder, game_info):
+def prepare_db_changes_after_turn(card, player, is_discarded, for_wonder, game_info, old_id):
 
     old_round_cardId = [c.id for c in get_cards(player)]
     print("Cards in hand", old_round_cardId, "    Card trying to remove:", card.id)
-    old_round_cardId.remove(card.id)
+    old_round_cardId.remove(old_id)
 
     history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder, card_name=card.name)
 
@@ -112,22 +112,24 @@ def process_card(card, player, is_discarded, for_wonder):
         return False
 
     # Play card
+    old_id = card.id
     if is_discarded:
-        print(str(card.name) + " is discarded")
+        print(card.name + " is discarded")
         player.money += 3
     else:
         if for_wonder:
             # use wonder card instead of played card
-            print(str(card.name) + " is used for wonder")
+            print(card.name + " is used for wonder")
+            old_id = card.id
             card = get_wonder_card(player)
         if not card or check_valid_move(card, player) is False:
-            print(str(card.name) + " is not a valid move (insufficient resources/prerequisites or already played card with same name)")
+            print(card.name + " is not a valid move (insufficient resources/prerequisites or already played card with same name)")
             return False
-        print(str(card.name) + " is used for wonder or is processed")
+        print(card.name + " is used for wonder or is processed")
         update_player_object(card, player, for_wonder)
 
     # UPDATE DB
-    prepare_db_changes_after_turn(card, player, is_discarded, for_wonder, game_info)
+    prepare_db_changes_after_turn(card, player, is_discarded, for_wonder, game_info, old_id)
 
     # TURN COMPLETION LOGIC
     players = (Player.query.filter_by(gameId=player.gameId)).all()
