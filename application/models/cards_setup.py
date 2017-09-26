@@ -45,12 +45,14 @@ def db_populate_cards(app, db):
     timberYard.set_benefit_wood(1)
     timberYard.set_benefit_stone(1)
     timberYard.set_resource_alternating(True)
+    timberYard.set_cost_money(1)
     cardList.append(timberYard)
     
     clayPit = Card('Clay Pit', 3, 1, 'brown')
     clayPit.set_benefit_brick(1)
     clayPit.set_benefit_ore(1)
     clayPit.set_resource_alternating(True)
+    clayPit.set_cost_money(1)
     cardList.append(clayPit)
     
     loom = Card('Loom', 3, 1, 'grey')
@@ -131,6 +133,7 @@ def db_populate_cards(app, db):
     excavation.set_benefit_stone(1)
     excavation.set_benefit_brick(1)
     excavation.set_resource_alternating(True)
+    excavation.set_cost_money(1)
     cardList.append(excavation)
     
     pawnshop = Card('Pawnshop', 4, 1, 'blue')
@@ -165,6 +168,7 @@ def db_populate_cards(app, db):
     forestCave.set_benefit_wood(1)
     forestCave.set_benefit_ore(1)
     forestCave.set_resource_alternating(True)
+    forestCave.set_cost_money(1)
     cardList.append(forestCave)
     
     altar = Card('Altar', 5, 1, 'blue')
@@ -191,12 +195,14 @@ def db_populate_cards(app, db):
     treeFarm.set_benefit_wood(1)
     treeFarm.set_benefit_brick(1)
     treeFarm.set_resource_alternating(True)
+    treeFarm.set_cost_money(1)
     cardList.append(treeFarm)
     
     mine = Card('Mine', 6, 1, 'brown')
     mine.set_benefit_stone(1)
     mine.set_benefit_ore(1)
     mine.set_resource_alternating(True)
+    mine.set_cost_money(1)
     cardList.append(mine)
     
     loom = Card('Loom', 6, 1, 'grey')
@@ -257,18 +263,22 @@ def db_populate_cards(app, db):
     
     sawmill = Card('Sawmill', 3, 2, 'brown')
     sawmill.set_benefit_wood(2)
+    sawmill.set_cost_money(1)
     cardList.append(sawmill)
     
     foundry = Card('Foundry', 3, 2, 'brown')
     foundry.set_benefit_ore(2)
+    foundry.set_cost_money(1)
     cardList.append(foundry)
     
     brickYard = Card('Brick Yard', 3, 2, 'brown')
     brickYard.set_benefit_brick(2)
+    brickYard.set_cost_money(1)
     cardList.append(brickYard)
     
     quarry = Card('Quarry', 3, 2, 'brown')
     quarry.set_benefit_stone(2)
+    quarry.set_cost_money(1)
     cardList.append(quarry)
     
     loom = Card('Loom', 3, 2, 'grey')
@@ -385,18 +395,22 @@ def db_populate_cards(app, db):
     
     sawmill = Card('Sawmill', 4, 2, 'brown')
     sawmill.set_benefit_wood(2)
+    sawmill.set_cost_money(1)
     cardList.append(sawmill)
     
     foundry = Card('Foundry', 4, 2, 'brown')
     foundry.set_benefit_ore(2)
+    foundry.set_cost_money(1)
     cardList.append(foundry)
     
     brickYard = Card('Brick Yard', 4, 2, 'brown')
     brickYard.set_benefit_brick(2)
+    brickYard.set_cost_money(1)
     cardList.append(brickYard)
     
     quarry = Card('Quarry', 4, 2, 'brown')
     quarry.set_benefit_stone(2)
+    quarry.set_cost_money(1)
     cardList.append(quarry)
     
     bazaar = Card('Bazaar', 4, 2, 'yellow')
