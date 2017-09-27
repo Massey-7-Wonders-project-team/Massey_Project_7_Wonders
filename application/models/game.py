@@ -8,6 +8,7 @@ class Game(db.Model):
     started = db.Column(db.Boolean(), default=False)
     complete = db.Column(db.Boolean(), default=False)
     single_player = db.Column(db.Boolean(), default=False)
+    waiting_for_discard = db.Column(db.Boolean(), default=False)
 
     def serialise(self):
         return {
@@ -16,5 +17,6 @@ class Game(db.Model):
             'round':self.round,
             'started':self.started,
             'complete':self.complete,
-            'single_player':self.single_player
+            'single_player':self.single_player,
+            'waiting_for_discard': self.waiting_for_discard
         }

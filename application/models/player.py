@@ -15,6 +15,11 @@ class Player(db.Model):
     left_id = db.Column(db.Integer)
     right_id = db.Column(db.Integer)
 
+    left_cheap_trade = db.Column(db.Boolean, default=False)
+    right_cheap_trade = db.Column(db.Boolean, default=False)
+    advanced_cheap_trade = db.Column(db.Boolean, default=False)
+    play_twice = db.Column(db.Boolean, default=False)
+
     wonder = db.Column(db.String(50), default='')
     wonder_level = db.Column(db.Integer, default=0)
     max_wonder = db.Column(db.Integer, default=0)
@@ -64,6 +69,10 @@ class Player(db.Model):
             'wonder':self.wonder,
             'wonder_level':self.wonder_level,
             'max_wonder':self.max_wonder,
+            'left_cheap_trade': self.left_cheap_trade,
+            'right_cheap_trade': self.right_cheap_trade,
+            'advanced_cheap_trade': self.advanced_cheap_trade,
+            'play_twice': self.play_twice,
             'wood':self.wood,
             'brick':self.brick,
             'ore':self.ore,

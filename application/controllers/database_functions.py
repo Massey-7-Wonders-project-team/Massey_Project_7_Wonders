@@ -40,18 +40,38 @@ def get_card(card_id):
     return Card.query.filter_by(id=card_id).first()
 
 
-def get_cards(player=None, game=None, card_ids=None, history=False):
+def get_cards(player=None, game=None, card_ids=None, history=False, discarded=False):
     """
     For historical cards played, provide player and history=True - filters out discarded cards
     If card_ids already available, supply only that
     If game available, supply that in addition to player (optional)
     Returns all cards in current hand, or cards played in the past
+    
+    If discarded=True and player supplied, return all discarded cards minus any that have been later played
     """
+
+    if discarded:
+        players = get_players(player=player)
+
+        # Get round 7 cards
+        card_ids = []
+
+        # Get all discarded cards
+        for p in players:
+            card_ids += [x.cardId for x in get_card_history(p) if x.discarded]
+            card_ids += [x.cardId for x in Round.query.filter_by(playerId=p.id, round=7).all()]
+
+        # Take out any discarded cards that have already been played
+        for p in players:
+            if p.wonder == 'The Hanging Gardens of Babylon' or p.wonder == 'The Mausoleum of Halicarnassus':
+                hist = [x.cardId for x in get_card_history(p) if not x.discarded and x.cardId in card_ids]
+                for remove_id in hist:
+                    card_ids.remove(remove_id)
 
     if history:
         card_ids = [x.cardId for x in get_card_history(player) if not x.discarded]
         if not card_ids:
-            return [] #empty query #Card.query.filter(Card.id.in_(card_ids)).all() 
+            return []
 
     if card_ids:
         return Card.query.filter(Card.id.in_(card_ids)).all()
@@ -62,7 +82,7 @@ def get_cards(player=None, game=None, card_ids=None, history=False):
         card_ids = [card[0] for card in db.session.query(Round.cardId).filter_by(playerId=player.id, age=game.age,
                                                                                  round=game.round).all()]
         if not card_ids:
-            return []#Card.query.filter(Card.id.in_(card_ids)).all() #empty query
+            return []
         else:
             return Card.query.filter(Card.id.in_(card_ids)).all()
 
