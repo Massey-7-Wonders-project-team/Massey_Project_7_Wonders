@@ -18,5 +18,5 @@ class Game(db.Model):
             'started':self.started,
             'complete':self.complete,
             'single_player':self.single_player,
-            'waiting_for_discard': self.waiting_for_discard
+            'waiting_for_discard':self.waiting_for_discard
         }
