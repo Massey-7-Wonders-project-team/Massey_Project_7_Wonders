@@ -5,13 +5,13 @@ from .game_state_functions import *
 from .ai import *
 
 
-def process_card(card, player, is_discarded, for_wonder, play_discard=None):
+def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None):
     """Called from play_card API endpoint, plays card, updates DB, and checks if able to go to next turn
     Returns false if card unable to be played, otherwise true"""
     game_info = get_game(player=player)
     players = (Player.query.filter_by(gameId=player.gameId)).all()
 
-    if play_discard:
+    if from_discard_pile:
         play_card(card, player, False, False, no_prereq=True)
         game_info.waiting_for_discard = False
         db_committing_function(game_info)
