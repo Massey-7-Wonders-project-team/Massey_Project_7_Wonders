@@ -16,6 +16,7 @@ function mapStateToProps(state) {
         loading: state.game.loading,
         playerCount: state.game.playerCount,
         cardPlayed: state.game.cardPlayed,
+        cardValid: state.game.cardValid,
     };
 }
 
@@ -38,12 +39,14 @@ export class GameScreen extends Component {
             showScoreBoard: false,
             shownForRound: false,
             endGameScoreboard: false,
+            showInvalidMoveError: false,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
         this.hidePlayCardError = this.hidePlayCardError.bind(this);
         this.playersLogged = this.playersLogged.bind(this);
         this.hideScoreboard = this.hideScoreboard.bind(this);
+        this.hideInvalidMoveError = this.hideInvalidMoveError.bind(this);
     }
 
     componentDidMount() {
@@ -51,12 +54,13 @@ export class GameScreen extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.completed) {
+        if (nextProps.cardValid === false) {
+            console.log('INVALID')
             this.setState({
-                showScoreBoard: true,
-                shownForRound: true,
+                showInvalidMoveError: true,
             });
         }
+
         if (nextProps.game) {
             if (!this.state.shownForRound &&
                 nextProps.game.game.round === 1 && nextProps.game.game.age !== 1) {
@@ -136,6 +140,13 @@ export class GameScreen extends Component {
         });
     }
 
+    hideInvalidMoveError() {
+        this.props.clearInvalidCardError();
+        this.setState({
+            showInvalidMoveError: false,
+        });
+    }
+
     playersLogged() {
       // this function is just to find how many players are logged into
       // the currently created game
@@ -163,12 +174,18 @@ export class GameScreen extends Component {
 
     render() {
         const { error, game, started, loading } = this.props;
-        const { showPlayCardError, showScoreBoard } = this.state;
+        const { showPlayCardError, showScoreBoard, showInvalidMoveError } = this.state;
 
         const showPlayCardActions = [
             <FlatButton
                 label="Ok"
                 onClick={this.hidePlayCardError}
+            />,
+        ];
+        const showInvalidMoveActions = [
+            <FlatButton
+                label="Ok"
+                onClick={this.hideInvalidMoveError}
             />,
         ];
         // update total numbers of players logged in
@@ -256,7 +273,17 @@ export class GameScreen extends Component {
                                 open={showPlayCardError}
                                 onRequestClose={this.hidePlayCardError}
                             >
-                              Please what for other players to play their card
+                              Please wait for other players to play their card
+                            </Dialog>
+                        }
+                        {showInvalidMoveError &&
+                            <Dialog
+                                title="Sorry this card is not valid"
+                                actions={showInvalidMoveActions}
+                                open={showInvalidMoveError}
+                                onRequestClose={this.hideInvalidMoveError}
+                            >
+                              Please play the card differrently or choose another card
                             </Dialog>
                         }
                     </div>
@@ -333,6 +360,8 @@ GameScreen.propTypes = {
     cardPlayed: PropTypes.bool.isRequired,
     playerCount: PropTypes.number,
     setPollId: PropTypes.func.isRequired,
+    cardValid: PropTypes.bool.isRequired,
+    clearInvalidCardError: PropTypes.func.isRequired,
 };
 
 GameScreen.defaultProps = {
