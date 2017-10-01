@@ -13,7 +13,7 @@ def print_json(player, players=None, cards=None, history=None, game=None):
         game = get_game(player=player)
 
     if game.waiting_for_discard and player.wonder == "The Mausoleum of Halicarnassus":
-        discarded_cards = get_cards(player=player, discarded=True)
+        discarded_cards = get_all_discarded_cards(player)
         return {
             'game': game.serialise(),
             'player': player.serialise(),
