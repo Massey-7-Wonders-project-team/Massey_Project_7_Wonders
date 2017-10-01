@@ -120,7 +120,8 @@ def how_much_deficit(card, player):
         return True, None
 
     # Consider resource alternating cards
-    RA_cards = [x for x in get_cards(player=player, history=True) if x.resourceAlternating is True]
+    RA_cards = [[x.giveStone, x.giveBrick, x.giveOre, x.giveWood, x.giveGlass, x.givePaper, x.giveCloth]
+                for x in get_cards(player=player, history=True) if x.resourceAlternating is True]
     if RA_cards:
         combinations = []
         for RA_card in RA_cards:
@@ -137,7 +138,7 @@ def how_much_deficit(card, player):
 
         # Compare RA combinations with what's needed and return results
         final_balances = [[a-b for (a,b) in zip(balance, permutation)] for permutation in combinations]
-        no_deficit = any([all([y for y in x if not y > 0]) for x in final_balances])
+        no_deficit = any([all([False if resource > 0 else True for resource in resources]) for resources in final_balances])
         return no_deficit, final_balances
     else:
         return False, [balance]

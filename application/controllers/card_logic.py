@@ -5,7 +5,7 @@ from .game_state_functions import *
 from .ai import *
 
 
-def process_card(card, player, is_discarded, for_wonder, play_discard=None):
+def process_card(card, player, is_discarded, for_wonder, play_discard=None, trade=True):
     """Called from play_card API endpoint, plays card, updates DB, and checks if able to go to next turn
     Returns false if card unable to be played, otherwise true"""
     game_info = get_game(player=player)
@@ -29,7 +29,24 @@ def process_card(card, player, is_discarded, for_wonder, play_discard=None):
 
         # Attempts to play the card
         if not play_card(card, player, is_discarded, for_wonder):
-            return False
+            if trade:
+                success, info = calculate_trades(card, player)
+                if not success or info['total_cost'] > player.money:
+                    return False
+
+                play_card(card, player, False, for_wonder, no_prereq=True)
+                player.money -= info['total_cost']
+                player_left = get_player(player.left_id).money
+                player_left += info['left_cost']
+                player_right = get_player(player.right_id).money
+                player_right += info['right_cost']
+                db_committing_function(player, player_left, player_right)
+
+                print("Trade used for card: ", card.name)
+                print("Costs", info)
+
+            else:
+                return False
 
         # Gives hand to next player
         swap_hands(card, player, game_info)
@@ -180,7 +197,6 @@ def search_trade_options(player, c, left_balance, right_balance, left_ra_cards, 
     if not combo['possible'] and not [x for x in c if x > 0]:
         combo['possible'] = True
     combo['total_cost'] = combo['left_cost'] + combo['right_cost']
-    print(combo)
     return combo
 
 
