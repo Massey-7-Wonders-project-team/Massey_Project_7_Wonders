@@ -102,6 +102,47 @@ def set_player_neighbours(players):
     db_committing_function(p=players)
 
 
+def how_much_deficit(card, player):
+    """
+    Replaces the main logic section of check_valid_move and its helper with a bit cleaner code.
+    Only used by trade functions awaiting refactor. Only considers resources (not money or other concerns)
+    :param card: Card object to be played
+    :param player: Player object playing the card
+    :return: Tuple of boolean (whether the card is playable using the player's resources)
+                and a None type if true, or a list of lists specifying what resources the player is short on
+    """
+    # Account for normal player resources
+    balance = [card.costStone - player.stone, card.costBrick - player.brick, card.costOre - player.ore,
+               card.costWood - player.wood, card.costGlass - player.glass, card.costPaper - player.paper,
+               card.costCloth - player.cloth]
+
+    if not any([x for x in balance if x > 0]):  # All resources are available with normal cards
+        return True, None
+
+    # Consider resource alternating cards
+    RA_cards = [x for x in get_cards(player=player, history=True) if x.resourceAlternating is True]
+    if RA_cards:
+        combinations = []
+        for RA_card in RA_cards:
+            group = []
+            for i in range(len(RA_card)):
+                if RA_card[i] != 0:
+                    temp = [0] * 7
+                    temp[i] = RA_card[i]
+                    group.append(temp)
+            if combinations:
+                combinations = [[a + b for (a, b) in zip(x, y)] for x in combinations for y in group]
+            else:
+                combinations = group
+
+        # Compare RA combinations with what's needed and return results
+        final_balances = [[a-b for (a,b) in zip(balance, permutation)] for permutation in combinations]
+        no_deficit = any([all([y for y in x if not y > 0]) for x in final_balances])
+        return no_deficit, final_balances
+    else:
+        return False, [balance]
+
+
 def resource_alternating_rec_search(balance, cards):
     """Helper function for check_move. Checks resource permutations for alternating resource cards
      Returns False if not possible, True if possible"""
