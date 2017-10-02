@@ -193,7 +193,7 @@ export class PlayerDisplay extends Component {
                                                 </Table>
                                             </div>
                                         </CardText>
-                                        <CardText id="played cards" expandable={true}>
+                                        <CardText id="played_cards" expandable={true}>
                                             <CardHist historyData={game.history} />
                                         </CardText>
                                     </Card>
