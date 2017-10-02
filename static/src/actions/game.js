@@ -7,9 +7,11 @@ import {
     ERROR_START_GAME,
     REQUEST_PLAY_CARD,
     ERROR_PLAY_CARD,
+    RECEIVE_PLAY_CARD,
     REQUEST_END_GAME,
     RECEIVE_END_GAME,
     ERROR_END_GAME,
+    CLEAR_INVALID_CARD_ERROR,
 } from '../constants/index';
 
 export function requestGameStatus() {
@@ -27,6 +29,13 @@ export function requestPlayCard() {
 export function playCardFailed() {
     return {
         type: ERROR_PLAY_CARD,
+    };
+}
+
+export function receivePlayCard(payload) {
+    return {
+        type: RECEIVE_PLAY_CARD,
+        payload,
     };
 }
 
@@ -95,15 +104,15 @@ export function playCard(playerId, cardId, discarded, wonder, trade) {
         })
         .then(response => response.json())
         .then((body) => {
-            if (body.cardplayed) {
-                dispatch(playCardFailed({ game: body.game, cardplayed: true }));
+            if (body.status === 'Card played') {
+                dispatch(receivePlayCard({ cardValid: true }));
             } else {
-                dispatch(requestPlayCard({ game: body.game, cardplayed: false }));
+                dispatch(receivePlayCard({ cardValid: false }));
             }
         })
         .catch((err) => {
             console.error(err);
-            dispatch(playCardFailed({ game: null, error: true }));
+            dispatch(playCardFailed());
         });
     };
 }
@@ -185,8 +194,7 @@ export function endGame(playerId) {
             },
         })
         .then(response => response.json())
-        .then((body) => {
-            console.error(body);
+        .then(() => {
             dispatch(receiveEndGame({ clearInterval: false }));
         })
         .catch((err) => {
@@ -194,5 +202,11 @@ export function endGame(playerId) {
             console.error(err);
             dispatch(errorEndGame());
         });
+    };
+}
+
+export function clearInvalidCardError() {
+    return {
+        type: CLEAR_INVALID_CARD_ERROR,
     };
 }
