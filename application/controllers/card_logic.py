@@ -31,7 +31,7 @@ def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None,
         if not play_card(card, player, is_discarded, for_wonder):
             if trade:
                 success, info = calculate_trades(card, player)
-                if not success or info['total_cost'] > player.money:
+                if not success or info is None or info['total_cost'] > player.money:
                     return False
 
                 play_card(card, player, False, for_wonder, no_prereq=True)
