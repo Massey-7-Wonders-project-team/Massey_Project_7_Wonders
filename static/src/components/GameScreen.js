@@ -100,7 +100,7 @@ export class GameScreen extends Component {
 
     playCard(cardId) {
         if (!this.props.cardPlayed) {
-            this.props.playCard(this.props.playerId, cardId, false, false);
+            this.props.playCard(this.props.playerId, cardId, false, false, true);
         } else {
             this.setState({
                 showPlayCardError: true,
@@ -110,7 +110,7 @@ export class GameScreen extends Component {
     
     wonderCard(cardId) {
         if (!this.props.cardPlayed) {
-            this.props.playCard(this.props.playerId, cardId, false, true);
+            this.props.playCard(this.props.playerId, cardId, false, true, true);
         } else {
             this.setState({
                 showPlayCardError: true,
@@ -120,7 +120,7 @@ export class GameScreen extends Component {
 
     discard(cardId) {
         if (!this.props.cardPlayed) {
-            this.props.playCard(this.props.playerId, cardId, true, false);
+            this.props.playCard(this.props.playerId, cardId, true, false, false);
         } else {
             this.setState({
                 showPlayCardError: true,

@@ -266,8 +266,9 @@ def play_card():
     discarded = false_true(request.args.get('discarded'))
     for_wonder = false_true(request.args.get('for_wonder'))
     from_discard_pile = false_true(request.args.get('from_discard_pile'))
+    trade = false_true(request.args.get('trade'))
 
-    if process_card(card, player, discarded, for_wonder, from_discard_pile=from_discard_pile):
+    if process_card(card, player, discarded, for_wonder, from_discard_pile=from_discard_pile, trade=trade):
         return jsonify(status="Card played")
     else:
         return jsonify(

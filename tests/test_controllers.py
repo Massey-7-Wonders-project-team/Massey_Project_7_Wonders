@@ -141,25 +141,97 @@ class TestControllersWithAlchemy(TestCase):
         self.assertTrue(process_card(stockade,player,True,False))
         self.assertEqual(previous_money+3, player.money)
 
-    def test_process_card_monetary_cost(self):
-        game = Game(age=1, round=1)
-        user = User(email='a@a.com', name='test', password='testcase')
-        timberYard = Card('Timber Yard', 3, 1, 'brown')
-        timberYard.set_benefit_wood(1)
-        timberYard.set_benefit_stone(1)
-        timberYard.set_resource_alternating(True)
-        timberYard.set_cost_money(1)
-        db_committing_function(user,game,timberYard)
-        player = Player(userId=user.id, gameId=game.id, name=user.name, money=0)
-        db_committing_function(player)
-        round = Round(cardId=timberYard.id, playerId=player.id)
-        #card_hist = Cardhist()
-        db_committing_function(round)#,card_hist)
-        
-        self.assertEqual(0,player.money)
-        self.assertFalse(process_card(timberYard,player,False,False))
-        self.assertEqual(0,player.money)
-        player.money = 3
-        db_committing_function(player)
-        self.assertTrue(process_card(timberYard,player,False,False))
-        self.assertEqual(2,player.money)
+    def test_trade_not_enough_goods(self):
+        user = User(email='test@test.com', name='test', password='tester')
+        user1 = User(email='test1@test.com', name='test', password='tester')
+        user2 = User(email='test2@test.com', name='test', password='tester')
+        game = Game()
+        db_committing_function(user, user1, user2, game)
+
+        players = []
+        player1 = Player(gameId=game.id, userId=user.id, name=user.name)
+        players.append(player1)
+        players.append(Player(gameId=game.id, userId=user1.id, name=user1.name))
+        players.append(Player(gameId=game.id, userId=user2.id, name=user2.name))
+        db_committing_function(players)
+        set_player_neighbours(players)
+
+        card1 = Card('test', 3, 1, 'brown')
+        card1.costBrick = 1
+        card1.costWood = 1
+        card_left = Card('test2', 3, 1, 'brown')
+        card_left.resourceAlternating = True
+        card_left.giveBrick = 1
+        card_left.giveWood = 1
+        db_committing_function(card1, card_left)
+
+        hist = Cardhist(playerId=player1.left_id, cardId=card_left.id)
+        db_committing_function(hist)
+        success, trade_info = calculate_trades(card1, player1)
+
+        self.assertFalse(success)
+        self.assertTrue(trade_info is None)
+
+    def test_trade_no_trade_needed(self):
+        user = User(email='test@test.com', name='test', password='tester')
+        user1 = User(email='test1@test.com', name='test', password='tester')
+        user2 = User(email='test2@test.com', name='test', password='tester')
+        game = Game()
+        db_committing_function(user, user1, user2, game)
+
+        players = []
+        player1 = Player(gameId=game.id, userId=user.id, name=user.name)
+        players.append(player1)
+        player1.wood = 1
+        player1.brick = 1
+        players.append(Player(gameId=game.id, userId=user1.id, name=user1.name))
+        players.append(Player(gameId=game.id, userId=user2.id, name=user2.name))
+        db_committing_function(players)
+        set_player_neighbours(players)
+
+        card1 = Card('test', 3, 1, 'brown')
+        card1.costBrick = 1
+        card1.costWood = 1
+        db_committing_function(card1)
+
+        success, trade_info = calculate_trades(card1, player1)
+
+        self.assertTrue(success)
+        self.assertTrue(trade_info is None)
+
+    def test_trade_trade_needed(self):
+        user = User(email='test@test.com', name='test', password='tester')
+        user1 = User(email='test1@test.com', name='test', password='tester')
+        user2 = User(email='test2@test.com', name='test', password='tester')
+        game = Game()
+        db_committing_function(user, user1, user2, game)
+
+        players = []
+        player1 = Player(gameId=game.id, userId=user.id, name=user.name)
+        players.append(player1)
+        player1.wood = 1
+        players.append(Player(gameId=game.id, userId=user1.id, name=user1.name))
+        players.append(Player(gameId=game.id, userId=user2.id, name=user2.name))
+        db_committing_function(players)
+        set_player_neighbours(players)
+
+        card1 = Card('test', 3, 1, 'brown')
+        card1.costBrick = 1
+        card1.costWood = 1
+        card_left = Card('test2', 3, 1, 'brown')
+        card_left.resourceAlternating = True
+        card_left.giveBrick = 1
+        card_left.giveWood = 1
+        db_committing_function(card1, card_left)
+
+        hist = Cardhist(playerId=player1.left_id, cardId=card_left.id)
+        db_committing_function(hist)
+        success, trade_info = calculate_trades(card1, player1)
+
+        self.assertTrue(success)
+        self.assertTrue(
+            sum(trade_info['left']) == 1 and
+            trade_info['left_cost'] == 2 and
+            trade_info['total_cost'] == 2 and
+            trade_info['possible'] is True
+        )
