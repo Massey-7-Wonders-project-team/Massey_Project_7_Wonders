@@ -14,10 +14,6 @@ class Cardhist(db.Model):
 
     def serialise(self):
         return {
-            'id':self.id,
             'playerId':self.playerId,
-            'cardId':self.cardId,
             'card_name':self.card_name,
-            'discarded':self.discarded,
-            'for_wonder': self.for_wonder
         }
