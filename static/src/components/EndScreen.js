@@ -40,7 +40,6 @@ export class EndScreen extends Component {
         const open = true;
         const { game } = this.props;
         const totalPlayers = this.props.game.allPlayers;
-        totalPlayers.push(game.player);
         const scoreBoardActions = [
             <FlatButton
                 label="Close"
@@ -50,7 +49,6 @@ export class EndScreen extends Component {
         ];
 
         let title = 'Final Results';
-        console.log(game.game)
         if (game.game.age === 2) {
             title = 'Results from Round 1';
         } else if (game.game.age === 3) {
@@ -65,7 +63,7 @@ export class EndScreen extends Component {
                     open={open}
                     onRequestClose={this.handleClose}
                 >
-                    <EndGameMarkup players={totalPlayers} />
+                    <EndGameMarkup players={totalPlayers} player={game.player} />
                 </Dialog>
             </div>
         );
