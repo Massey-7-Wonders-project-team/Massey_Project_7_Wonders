@@ -5,138 +5,57 @@ from .game_state_functions import *
 from .ai import *
 
 
-def get_next_player_id(player, age):
-    if age == 2:
-        return player.right_id
-    else:
-        return player.left_id
-
-
-def resource_alternating_rec_search(balance, cards):
-    """Helper function for check_move. Checks resource permutations for alternating resource cards
-     Returns False if not possible, True if possible"""
-    if not list(filter(lambda x: x > 0, balance)):
-        return True
-    if not cards:
-        return False
-
-    new_cards = copy.deepcopy(cards)
-    new_bal = copy.deepcopy(balance)
-
-    for card in new_cards:
-        new_cards = new_cards[1:]
-
-        for i in range(len(balance)):
-            if balance[i] > 0 and card[i] > 0:
-                new_bal[i] -= card[i]
-                if resource_alternating_rec_search(new_bal, new_cards):
-                    return True
-                else:
-                    # Roll back changes from iteration
-                    new_bal[i] += card[i]
-
-    # Search sub-space exhausted without success
-    return False
-
-
-def check_valid_move(card, player):
-    """Call before processing card to check that it is a valid move, returns boolean"""
-
-    history = get_cards(player=player, history=True)
-
-    # Checks there is not already one of this card played yet
-    if [x for x in history if x.name == card.name]:
-        return False
-
-    # Checks if card can be played using prerequisites
-    if [x for x in history if card.prerequisite1 == x.name or card.prerequisite2 == x.name]:
-        return True
-
-    # Check money
-    if card.costMoney > player.money:
-        print("not enough money")
-        return False
-
-    balance = [card.costStone - player.stone, card.costBrick - player.brick, card.costOre - player.ore,
-               card.costWood - player.wood, card.costGlass - player.glass, card.costPaper - player.paper,
-               card.costCloth - player.cloth]
-
-    # If true, there are materials missing, and checks for resource alternating materials ensues
-    if list(filter(lambda x: x > 0, balance)):
-        extra = [player.extra_stone, player.extra_brick, player.extra_ore, player.extra_wood, player.extra_glass,
-                 player.extra_paper, player.extra_cloth]
-        maximum = [x-y for (x,y) in zip(balance, extra)]
-
-        # Investigates if there is a permutation that will work after checking that there could be a chance of success
-        if list(filter(lambda x: x > 0, maximum)):
-            return False
-        else:
-            ra_cards = [[x.giveStone, x.giveBrick, x.giveOre, x.giveWood, x.giveGlass, x.givePaper, x.giveCloth]
-                        for x in history if x.resourceAlternating]
-            return resource_alternating_rec_search(balance, ra_cards)
-
-    # Triggers if there are enough materials without considering resource alternation
-    else:
-        return True
-
-
-def prepare_db_changes_after_turn(card, player, is_discarded, for_wonder, game_info, old_id):
-
-    old_round_cardId = [c.id for c in get_cards(player)]
-    print("Cards in hand", old_round_cardId, "    Card trying to remove:", card.id)
-    old_round_cardId.remove(old_id)
-
-    history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder, card_name=card.name)
-
-    rounds = []
-    for unplayed_card in old_round_cardId:
-        rounds.append(Round(playerId=get_next_player_id(player, game_info.age), age=game_info.age, round=game_info.round + 1,
-                            cardId=unplayed_card))
-
-    db_committing_function(p=player, h=history, r=rounds)
-
-
-def process_card(card, player, is_discarded, for_wonder):
+def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None, trade=True):
     """Called from play_card API endpoint, plays card, updates DB, and checks if able to go to next turn
     Returns false if card unable to be played, otherwise true"""
     game_info = get_game(player=player)
-
-    # Guards against more than one card being played in a round
-    if Round.query.filter_by(age=game_info.age, round=game_info.round+1, playerId=get_next_player_id(player, game_info.age)).all():
-        print("Card already played this round")
-        return False
-
-    # Guards against playing cards that are not in the current hand
-    if not [c for c in get_cards(player=player) if c == card]:
-        print(str(card.name) + " is not part of this hand")
-        return False
-
-    # Play card
-    old_id = card.id
-    if is_discarded:
-        print(card.name + " is discarded")
-        player.money += 3
-    else:
-        if for_wonder:
-            # use wonder card instead of played card
-            print(card.name + " is used for wonder")
-            old_id = card.id
-            card = get_wonder_card(player)
-        if not card or check_valid_move(card, player) is False:
-            print(card.name + " is not a valid move (insufficient resources/prerequisites or already played card with same name)")
-            return False
-        print(card.name + " is used for wonder or is processed")
-        update_player_object(card, player, for_wonder)
-
-    # UPDATE DB
-    prepare_db_changes_after_turn(card, player, is_discarded, for_wonder, game_info, old_id)
-
-    # TURN COMPLETION LOGIC
     players = (Player.query.filter_by(gameId=player.gameId)).all()
 
-    # AI players play if single player
-    if game_info.single_player and not player.ai:
-        ai_move([p for p in players if p != player], game_info)
+    if from_discard_pile:
+        play_card(card, player, False, False, no_prereq=True)
+        game_info.waiting_for_discard = False
+        db_committing_function(game_info)
+
+    else:
+        # Guards against more than one card being played in a round
+        if Round.query.filter_by(age=game_info.age, round=game_info.round+1, playerId=get_next_player_id(player, game_info.age)).all():
+            print("Card already played this round")
+            return False
+
+        # Guards against playing cards that are not in the current hand
+        if not [c for c in get_cards(player=player) if c == card]:
+            print(str(card.name) + " is not part of this hand")
+            return False
+
+        # Attempts to play the card
+        if not play_card(card, player, is_discarded, for_wonder):
+            if trade:
+                success, info = calculate_trades(card, player)
+                if not success or info['total_cost'] > player.money:
+                    return False
+
+                play_card(card, player, False, for_wonder, no_prereq=True)
+                player.money -= info['total_cost']
+                player_left = get_player(player.left_id).money
+                player_left += info['left_cost']
+                player_right = get_player(player.right_id).money
+                player_right += info['right_cost']
+                db_committing_function(player, player_left, player_right)
+
+                print("Trade used for card: ", card.name)
+                print("Costs", info)
+
+            else:
+                return False
+
+        # Gives hand to next player
+        swap_hands(card, player, game_info)
+
+        # TURN COMPLETION LOGIC
+        # AI players play if single player
+        if game_info.single_player and not player.ai:
+            for p in [p for p in players if p != player]:
+                ai_move(p, game_info)
 
     for p in players:
         query = Round.query.filter_by(age=game_info.age, round=game_info.round+1, playerId=p.id).all()
@@ -150,17 +69,218 @@ def process_card(card, player, is_discarded, for_wonder):
     return True
 
 
-def ai_move(ai_players, game):
+def calculate_trades(card, player):
+    """
+    :param card: Card to be played
+    :param player: Player playing the card
+    :return: None if no trade needed, else a dict itemising the optimal trade
+    """
+    # Figure out if trade is required.
+    # Resources_needed is a list of lists of what was missing during that branch of recursion
+    no_trade_needed, resources_needed = how_much_deficit(card, player)
+
+    if no_trade_needed:
+        print("No trade needed")
+        return True, None
+
+    # Get neighbouring resources
+    left_player = get_player(player.left_id)
+    right_player = get_player(player.right_id)
+    left_balance = [left_player.stone, left_player.brick, left_player.ore, left_player.wood, left_player.glass,
+                    left_player.paper, left_player.cloth]
+    right_balance = [right_player.stone, right_player.brick, right_player.ore, right_player.wood,
+                     right_player.glass, right_player.paper, right_player.cloth]
+    left_ra_cards = [[x.giveStone, x.giveBrick, x.giveOre, x.giveWood, x.giveGlass, x.givePaper, x.giveCloth]
+                     for x in get_cards(left_player, history=True) if x.resourceAlternating]
+    right_ra_cards = [[x.giveStone, x.giveBrick, x.giveOre, x.giveWood, x.giveGlass, x.givePaper, x.giveCloth]
+                      for x in get_cards(right_player, history=True) if x.resourceAlternating]
+
+    # RA card combos
+    left_RA_combinations = []
+    right_RA_combinations = []
+    for RA_card in left_ra_cards:
+        group = []
+        for i in range(len(RA_card)):
+            if RA_card[i] != 0:
+                temp = [0] * 7
+                temp[i] = RA_card[i]
+                group.append(temp)
+        if left_RA_combinations:
+            left_RA_combinations = [[a + b for (a, b) in zip(x, y)] for x in left_RA_combinations for y in group]
+        else:
+            left_RA_combinations = group
+    for RA_card in right_ra_cards:
+        group = []
+        for i in range(len(RA_card)):
+            if RA_card[i] != 0:
+                temp = [0] * 7
+                temp[i] = RA_card[i]
+                group.append(temp)
+        if right_RA_combinations:
+            right_RA_combinations = [[a + b for (a, b) in zip(x, y)] for x in left_RA_combinations for y in group]
+        else:
+            right_RA_combinations = group
+
+    # Populate trading choices
+    trade_choices = []
+    for combination in resources_needed:
+        combo = search_trade_options(player, combination, left_balance, right_balance,
+                                     left_RA_combinations, right_RA_combinations)
+        trade_choices.append(combo)
+
+    # Evaluate best choice and return the dictionary of the best combination
+    prices = [x['total_cost'] for x in trade_choices if x['possible']]
+    if prices:  # Success
+        min_price = min(prices)
+        return True, [choice for choice in trade_choices if choice['total_cost'] == min_price][0]
+    else:  # Failure - no trade options
+        return False, None
+
+
+def search_trade_options(player, c, left_balance, right_balance, left_ra_cards, right_ra_cards):
+    """
+    :param player: Player object who needs the trade
+    :param c: 7 element list of what resources are needed for trade
+    :param left_balance: Normal resources that the left player has (7 element list)
+    :param right_balance: Normal resources that the right player has (7 element list)
+    :param left_ra_cards: RA resources that the left player has. Each sublist is one combination of RA cards (list of 7 element lists)
+    :param right_ra_cards: RA resources that the right player has. Each sublist is one combination of RA cards (list of 7 element lists)
+    :return: The combo dict shown below
+    """
+
+    # Set data structure
+    combo = {'left': [0, 0, 0, 0, 0, 0, 0],
+             'right': [0, 0, 0, 0, 0, 0, 0],
+             'left_cost': 0,
+             'right_cost': 0,
+             'total_cost': 0,
+             'possible': False}
+    c = [x if x > 0 else 0 for x in c]  # Make all elements in c non-negative
+
+    # Run calculations
+    if player.right_cheap_trade and not player.left_cheap_trade:
+        # Right basic resources
+        trade_updater(player, combo, c, right_balance, advanced=False, left=False)
+        # Right RA basic resources
+        best = get_best_RA_combo(c, right_ra_cards)
+        trade_updater(player, combo, c, best, advanced=False, left=False)
+        # Left all resources
+        trade_updater(player, combo, c, left_balance, left=True)
+        # Left RA resources
+        best = get_best_RA_combo(c, left_ra_cards)
+        trade_updater(player, combo, c, best, advanced=False)
+        best = get_best_RA_combo(c, left_ra_cards, basic=False)
+        trade_updater(player, combo, c, best, basic=False)
+        # Right advanced resources
+        trade_updater(player, combo, c, right_balance, basic=False, left=False)
+        # Right RA advanced resources
+        best = get_best_RA_combo(c, right_ra_cards, basic=False)
+        trade_updater(player, combo, c, best, basic=False, left=False)
+
+    else:
+        # Left resources
+        trade_updater(player, combo, c, left_balance)
+        # Left RA resources
+        best = get_best_RA_combo(c, left_ra_cards)
+        trade_updater(player, combo, c, best, advanced=False)
+        best = get_best_RA_combo(c, left_ra_cards, basic=False)
+        trade_updater(player, combo, c, best, basic=False)
+        # Right resources
+        trade_updater(player, combo, c, right_balance, left=False)
+        # Right RA resources
+        best = get_best_RA_combo(c, right_ra_cards)
+        trade_updater(player, combo, c, best, advanced=False)
+        best = get_best_RA_combo(c, right_ra_cards, basic=False)
+        trade_updater(player, combo, c, best, basic=False)
+
+    # Return results
+    if not combo['possible'] and not [x for x in c if x > 0]:
+        combo['possible'] = True
+    combo['total_cost'] = combo['left_cost'] + combo['right_cost']
+    return combo
+
+
+def get_best_RA_combo(c, list_cards, basic=True):
+    """
+    Assumes no RA cards have both basic and advanced resources.
+    Without considering combinations of both left and right players' RA cards, it is technically possible to
+    return a non-optimal solution, but should happen so infrequently as to not be worth doing. Monitor and change
+    if it happens a noticeable amount of times.
+    :param c: A 7 element list of what is needed
+    :param list_cards: A list of 7 element lists specifying possible combinations
+    :param basic: If true, returns the best combination of basic resources, otherwise of advanced resources
+    :return: Returns best 7 element list
+    """
+    if not list_cards:
+        return None
+    if basic:
+        usage = [sum([a if a < b else b for (a, b) in zip(x[0:4], c[0:4])]) for x in list_cards]
+        best_index = usage.index(max(usage))
+    else:
+        usage = [sum([a if a < b else b for (a, b) in zip(x[4:], c[4:])]) for x in list_cards]
+        best_index = usage.index(max(usage))
+
+    return list_cards[best_index]
+
+
+def trade_updater(player, combo, c, cards, basic=True, advanced=True, left=True):
+    """
+    This function updates the combo dict based on the settings provided
+    :param player: Player object
+    :param combo: Combo dict specified in search trade options
+    :param c: 7 element list specifying what is still needed
+    :param cards: 7 element list specifying what resources can be provided
+    :param basic: Optional, if False, Brick, Wood, Stone and Ore are not updated
+    :param advanced: Optional, if False, Glass, Paper and Cloth are not updated
+    :param left: Optional, if False, the card is assumed to come from the right player (not the default left)
+    :return: No return. C and combo are changed in situ
+    """
+    if not cards:
+        return
+
+    # Are we done yet?
+    if combo['possible']:
+        return
+    elif not [x for x in c if x > 0]:  # Triggers if there are no outstanding resource needs in c
+        combo['possible'] = True
+        return
+
+    if basic:
+        used = [x if y > x else y for (x, y) in zip(c[0:4], cards[0:4])]
+        c[0:4] = [y-x for (x, y) in zip(used, c)]  # Use resources
+        if left:
+            combo['left'][0:4] = [x+y for (x, y) in zip(used, combo['left'])]
+            combo['left_cost'] += sum(used) if player.left_cheap_trade else sum(used) * 2
+        else:
+            combo['right'][0:4] = [x+y for (x, y) in zip(used, combo['right'])]
+            combo['right_cost'] += sum(used) if player.right_cheap_trade else sum(used) * 2
+
+    if advanced:
+        used = [x if y > x else y for (x, y) in zip(c[4:], cards[4:])]
+        c[4:] = [y-x for (x, y) in zip(used, c[4:])]   # Use resources
+        if left:
+            combo['left'][4:] = [x+y for (x, y) in zip(used, combo['left'][4:])]
+            combo['left_cost'] += sum(used) if player.advanced_cheap_trade else sum(used) * 2
+        else:
+            combo['right'][4:] = [x+y for (x, y) in zip(used, combo['right'][4:])]
+            combo['right_cost'] += sum(used) if player.advanced_cheap_trade else sum(used) * 2
+
+
+def ai_move(player, game):
     """
     All AI play round. Currently they just play the first card they can. Difficulty -100 ;)
-    :param ai_players: All non-human players in list
+    :param player: Non-human player
     :param game: Game object
     :return: No return
     """
-    for player in ai_players:
-        cards = get_cards(player=player, game=game)
+    cards = get_cards(player=player, game=game)
 
-        for card in cards:
-            if process_card(card, player, False, False):
-                break
-        process_card(cards[0], player, True, False)
+    # Tries to play the first available card
+    for card in cards:
+        if play_card(card, player, False, False):
+            swap_hands(card, player, game)
+            return
+
+    # No cards can be played, so discards one
+    play_card(cards[0], player, True, False)
+    swap_hands(card, player, game)

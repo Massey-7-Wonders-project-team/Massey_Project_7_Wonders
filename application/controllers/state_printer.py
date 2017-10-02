@@ -12,16 +12,29 @@ def print_json(player, players=None, cards=None, history=None, game=None):
     if not game:
         game = get_game(player=player)
 
-    return {
-        'game': game.serialise(),
-        'player': player.serialise(),
-        'allPlayers': [p.serialise() for p in players if p != player],
-        'history': [h.serialise() for h in history],
-        'cards': [card.serialise() for card in cards],
-    }
+    if game.waiting_for_discard and player.wonder == "The Mausoleum of Halicarnassus":
+        discarded_cards = get_all_discarded_cards(player)
+        return {
+            'game': game.serialise(),
+            'player': player.serialise(),
+            'allPlayers': [p.serialise() for p in players if p != player],
+            'history': [h.serialise() for h in history],
+            'cards': [card.serialise() for card in cards],
+            'discarded': [discarded.serialise() for discarded in discarded_cards]
+        }
+    else:
+        return {
+            'game': game.serialise(),
+            'player': player.serialise(),
+            'allPlayers': [p.serialise() for p in players if p != player],
+            'history': [h.serialise() for h in history],
+            'cards': [card.serialise() for card in cards],
+        }
 
 
 def false_true (string):
+    if not string:
+        return None
     if string == 'false':
         return False
     elif string == 'true':

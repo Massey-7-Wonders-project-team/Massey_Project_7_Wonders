@@ -31,11 +31,18 @@ const EndGameMarkup = props =>
                     <TableRowColumn> {player.military} </TableRowColumn>
                 </TableRow>,
             )}
+            <TableRow key={props.player.name} style={{ background: 'red' }}>
+                <TableRowColumn> You </TableRowColumn>
+                <TableRowColumn> {props.player.points} </TableRowColumn>
+                <TableRowColumn> {props.player.money} </TableRowColumn>
+                <TableRowColumn> {props.player.military} </TableRowColumn>
+            </TableRow>,
         </TableBody>
     </Table>;
 
 EndGameMarkup.propTypes = {
     players: PropTypes.array.isRequired,
+    player: PropTypes.object.isRequired,
 };
 
 export default EndGameMarkup;
