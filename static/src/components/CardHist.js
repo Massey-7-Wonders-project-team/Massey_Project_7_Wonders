@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { Card, CardText, CardHeader, CardMedia, CardTitle, GridList } from 'material-ui';
 
 function CardHist(props) {
-    console.log('==>', props.historyData);
     let cardsPlayed = props.historyData;
     return (
       <div>
