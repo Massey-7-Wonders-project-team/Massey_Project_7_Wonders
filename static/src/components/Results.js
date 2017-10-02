@@ -63,7 +63,7 @@ export class Results extends Component {
                     <h1>Results</h1>
                 </div>
                 {game && game.allPlayers && !error &&
-                    <EndGameMarkup players={game.allPlayers} />
+                    <EndGameMarkup players={game.allPlayers} player={game.player} />
                 }
                 {error &&
                     <p>There was an error getting your game results</p>
