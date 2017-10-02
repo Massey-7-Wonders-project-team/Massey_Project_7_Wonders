@@ -1,0 +1,19 @@
+/* global describe, test, expect */
+
+import React from 'react';
+import { shallow } from 'enzyme';
+
+import { GameScreen } from '../../src/components/GameScreen';
+
+describe('Component: GameScreen', () => {
+    const minProps = {
+        game: { allPlayers: { wonder_level: 0, userId: 1, points: 1, military: 1, profile: 'a' },
+            game: { age: 1, completed: false, id: 1, round: 1, started: true },
+            player: { wonder_level: 0, userId: 1, points: 1, military: 1, profile: 'a' }
+        },
+    };
+    const wrapper = shallow(<GameScreen {...minProps} />);
+    test('render without exploding', () => {
+        expect(wrapper.find('<FlatButton>').exists()).toEqual(true);
+    });
+});
