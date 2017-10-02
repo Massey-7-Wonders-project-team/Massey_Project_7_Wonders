@@ -107,7 +107,7 @@ export class GameScreen extends Component {
             });
         }
     }
-    
+
     wonderCard(cardId) {
         if (!this.props.cardPlayed) {
             this.props.playCard(this.props.playerId, cardId, false, true, true);
@@ -228,13 +228,16 @@ export class GameScreen extends Component {
                                     />
                                 }
                             </div>
+                            <center>
                             {game.cards && game.cards[0].name &&
                                 game.cards.map((card, index) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
                                         <Card className="Card" data-card-number={index} key={card.id} style={{ width: 130, display: 'inline-block', paddingBottom: 0 }}>
                                             <CardTitle
-                                                title={card.name} titleStyle={{ fontSize: 18 }}
+                                                title={card.name}
+                                                titleStyle={{ fontSize: 18 }}
+                                                style={{ padding: 3, height: 75 }}
                                             />
                                             <CardMedia>
                                                 <img
@@ -242,9 +245,6 @@ export class GameScreen extends Component {
                                                     src={`dist/images/cards/${imageName}.png`}
                                                 />
                                             </CardMedia>
-                                            <CardText>
-                                                <p>Discription of what card does</p>
-                                            </CardText>
                                             <CardActions>
                                                 <FlatButton
                                                     label="Play Card"
@@ -265,6 +265,7 @@ export class GameScreen extends Component {
                                     );
                                 })
                             }
+                        </center>
                         </div>
                         {showPlayCardError &&
                             <Dialog
