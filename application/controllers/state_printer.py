@@ -1,14 +1,12 @@
 from .database_functions import *
 
 
-def print_json(player, players=None, cards=None, history=None, game=None):
+def print_json(player, players=None, cards=None, game=None):
 
     if not players:
         players = get_players(player.gameId)
     if not cards:
         cards = get_cards(player=player)
-    if not history:
-        history = get_card_history(player)
     if not game:
         game = get_game(player=player)
 
@@ -18,7 +16,7 @@ def print_json(player, players=None, cards=None, history=None, game=None):
             'game': game.serialise(),
             'player': player.serialise(),
             'allPlayers': [p.serialise() for p in players if p != player],
-            'history': [h.serialise() for h in history],
+            'history': [[h.serialise() for h in get_card_history(p)] for p in players],
             'cards': [card.serialise() for card in cards],
             'discarded': [discarded.serialise() for discarded in discarded_cards]
         }
@@ -27,7 +25,7 @@ def print_json(player, players=None, cards=None, history=None, game=None):
             'game': game.serialise(),
             'player': player.serialise(),
             'allPlayers': [p.serialise() for p in players if p != player],
-            'history': [h.serialise() for h in history],
+            'history': [[h.serialise() for h in get_card_history(p)] for p in players],
             'cards': [card.serialise() for card in cards],
         }
 
