@@ -80,11 +80,11 @@ export function checkGameStatus(playerId) {
         });
     };
 }
-export function playCard(playerId, cardId, discarded, wonder) {
+export function playCard(playerId, cardId, discarded, wonder, trade) {
     return (dispatch) => {
         dispatch(requestPlayCard());
         const token = localStorage.getItem('token');
-        fetch(`/api/game/play_card?player_id=${playerId}&card_id=${cardId}&discarded=${discarded}&for_wonder=${wonder}`, {
+        fetch(`/api/game/play_card?player_id=${playerId}&card_id=${cardId}&discarded=${discarded}&for_wonder=${wonder}&trade=${trade}`, {
             method: 'get',
             credentials: 'include',
             headers: {
