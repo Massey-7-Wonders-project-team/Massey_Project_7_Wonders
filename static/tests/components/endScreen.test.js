@@ -17,7 +17,8 @@ describe('Component: EndScreen', () => {
         },
     };
     const wrapper = shallow(<EndScreen {...minProps} />);
+    console.log(typeof totalPlayers);
     test('render without exploding', () => {
-        expect(wrapper.find('<FlatButton>').exists()).toEqual(true);
+        expect(wrapper.find('<Dialog>').exists()).toEqual(true);
     });
 });
