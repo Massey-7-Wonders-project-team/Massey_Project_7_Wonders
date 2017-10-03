@@ -42,6 +42,7 @@ export class PlayerDisplay extends Component {
             this.lookRight = this.lookRight.bind(this);
             this.lookUser = this.lookUser.bind(this);
             this.search = this.search.bind(this);
+            this.searchHistory = this.searchHistory.bind(this);
         }
     }
 
@@ -88,8 +89,22 @@ export class PlayerDisplay extends Component {
         return data;
     }
 
+    searchHistory() {
+        const nameKey = this.state.displayID;
+        var data = {};
+        const myArray = this.props.game.history;
+        for (var i=0; i < myArray.length; i++) {
+            const cardArray = myArray[i];
+            if (cardArray[0].playerId === nameKey) {
+                  data = myArray[i];
+            }
+        }
+        return data;
+    }
+
     render() {
         const boardData = this.search();
+        const historyData = this.searchHistory();
         const { error, game, started } = this.props;
         const ListStyle = {
             width: 100,
@@ -103,15 +118,14 @@ export class PlayerDisplay extends Component {
             const city = longCityNameArray.length - 1;
             imageName = longCityNameArray[city].toLowerCase();
         }
-    		let pName = `Player Name (id:${this.state.displayID})`;			// default profile title
-    		if (boardData.profile) {
-    			pName = boardData.profile;									// display profile name if present in returned data
-    		}
+        let pName = `Player Name (id:${this.state.displayID})`;
+        if (boardData.profile) {
+            pName = boardData.profile;
+        }
         let homeWonder = false;
         if (boardData.id === this.state.userID) {
             homeWonder = true;
         }
-
         return (
             <div>
                 {game && !error && started && boardData &&
@@ -194,7 +208,7 @@ export class PlayerDisplay extends Component {
                                             </div>
                                         </CardText>
                                         <CardText id="played_cards" expandable={true}>
-                                            <CardHist historyData={game.history} />
+                                            <CardHist history={historyData} />
                                         </CardText>
                                     </Card>
                                   </TableRowColumn>
