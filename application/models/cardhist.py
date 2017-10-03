@@ -9,6 +9,7 @@ class Cardhist(db.Model):
     playerId = db.Column(db.Integer, db.ForeignKey('player.id'))
     cardId = db.Column(db.Integer, db.ForeignKey('card.id'))
     card_name = db.Column(db.String(30), default='')
+    card_colour = db.Column(db.String(30), default='')
     discarded = db.Column(db.Boolean, default=False)
     for_wonder = db.Column(db.Boolean, default=False)
 
@@ -16,4 +17,5 @@ class Cardhist(db.Model):
         return {
             'playerId':self.playerId,
             'card_name':self.card_name,
+            'card_colour':self.card_colour
         }

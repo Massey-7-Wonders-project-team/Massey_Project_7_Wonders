@@ -188,7 +188,7 @@ class TestControllersWithAlchemy(TestCase):
         card_left.giveWood = 1
         db_committing_function(card1, card_left)
 
-        hist = Cardhist(playerId=player1.left_id, cardId=card_left.id)
+        hist = Cardhist(playerId=player1.left_id, cardId=card_left.id, card_colour=card_left.colour)
         db_committing_function(hist)
         success, trade_info = calculate_trades(card1, player1)
 
@@ -247,7 +247,7 @@ class TestControllersWithAlchemy(TestCase):
         card_left.giveWood = 1
         db_committing_function(card1, card_left)
 
-        hist = Cardhist(playerId=player1.left_id, cardId=card_left.id)
+        hist = Cardhist(playerId=player1.left_id, cardId=card_left.id, card_colour=card_left.colour)
         db_committing_function(hist)
         success, trade_info = calculate_trades(card1, player1)
 
