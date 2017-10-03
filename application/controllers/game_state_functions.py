@@ -14,7 +14,8 @@ def deal_wonders(players):
 
         card = Card.query.filter_by(name=wonder.card_0).first()
         update_player_object(card, player)
-        cardhists.append(Cardhist(playerId=player.id, cardId=card.id, discarded=False, for_wonder=True, card_name=card.name))
+        cardhists.append(Cardhist(playerId=player.id, cardId=card.id, discarded=False, for_wonder=True,
+                                  card_name=card.name, card_colour=card.colour))
 
     db_committing_function(p=players, c=cardhists)
 
@@ -247,7 +248,7 @@ def play_card(card, player, is_discarded, for_wonder, no_prereq=False):
             return False
 
     history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder,
-                       card_name=card.name)
+                       card_name=card.name, card_colour=card.colour)
     db_committing_function(player, history)
 
     return True
