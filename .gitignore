@@ -9,3 +9,4 @@ tmp
 static/dist
 *.log
 /static/reports
+.idea/*
