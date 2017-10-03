@@ -221,16 +221,21 @@ def play_card(card, player, is_discarded, for_wonder, no_prereq=False):
 
     elif for_wonder:
         wondercard = get_wonder_card(player)
-        if check_valid_move(wondercard, player):
+        if no_prereq:
             print("Playing: ", wondercard.name)
             update_player_object(wondercard, player, for_wonder=True)
-            if player.wonder == "The Mausoleum of Halicarnassus":
-                game = get_game(player=player)
-                game.waiting_for_discard = True
-                db_committing_function(game)
+        elif check_valid_move(wondercard, player):
+            print("Playing: ", wondercard.name)
+            update_player_object(wondercard, player, for_wonder=True)
         else:
             print(wondercard.name + " is an invalid move")
             return False
+
+        card = wondercard
+        if player.wonder == "The Mausoleum of Halicarnassus":
+            game = get_game(player=player)
+            game.waiting_for_discard = True
+            db_committing_function(game)
 
     elif not is_discarded and not for_wonder:
         if no_prereq: # Branch used for certain wonder bonuses
@@ -244,11 +249,6 @@ def play_card(card, player, is_discarded, for_wonder, no_prereq=False):
     history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder,
                        card_name=card.name)
     db_committing_function(player, history)
-
-    if for_wonder:
-        history = Cardhist(playerId=player.id, cardId=wondercard.id, discarded=is_discarded,
-                           for_wonder=for_wonder, card_name=wondercard.name)
-        db_committing_function(history)
 
     return True
 
@@ -304,8 +304,20 @@ def update_player_object(card, player, for_wonder=False):
 
         elif card.name == 'babylon_2':
             player.play_twice = True
-
-    if card.colour == 'yellow':
+    elif card.colour == 'grey':
+        player.grey += 1
+    elif card.colour == 'red':
+        player.red += 1
+    elif card.colour == 'green':
+        player.green += 1
+    elif card.colour == 'purple':
+        player.purple += 1
+    elif card.colour == 'blue':
+        player.blue += 1
+    elif card.colour == 'brown':
+        player.brown += 1
+    elif card.colour == 'yellow':
+        player.yellow += 1
         left_player = get_player(player.left_id)
         left_player_cards = get_cards(player=left_player, history=True)
         cards = get_cards(player=player, history=True)
