@@ -82,7 +82,6 @@ function CardHist(props) {
 
 CardHist.propTypes = {
     history: PropTypes.object.isRequired,
-=======
 import { Card, CardText, CardHeader, CardMedia, CardTitle, GridList } from 'material-ui';
 
 function CardHist(props) {
