@@ -47,7 +47,6 @@ function CardHist(props) {
                                 let marginLeft = -60;
                                 if (index === 0) { marginLeft = 0; }
                                 const topMargin = index * 32;
-                                console.log(index, marginLeft);
                                 return (
                                     <CardMedia
                                         style={{
