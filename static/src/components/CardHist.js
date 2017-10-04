@@ -47,7 +47,6 @@ function CardHist(props) {
                                 let marginLeft = -60;
                                 if (index === 0) { marginLeft = 0; }
                                 const topMargin = index * 32;
-                                console.log(index, marginLeft);
                                 return (
                                     <CardMedia
                                         style={{
@@ -83,6 +82,50 @@ function CardHist(props) {
 
 CardHist.propTypes = {
     history: PropTypes.object.isRequired,
+import { Card, CardText, CardHeader, CardMedia, CardTitle, GridList } from 'material-ui';
+
+function CardHist(props) {
+    let cardsPlayed = props.historyData;
+    return (
+      <div>
+        <p><b>All your Cards played</b></p>
+        <div>
+            {cardsPlayed &&
+                cardsPlayed.map((card, index) => {
+                    const imageName = (card.card_name).replace(/\s+/g, '').toLowerCase();
+                    let margin = -20;
+                    if (index === 1) { margin = 0; }
+                    if (index > 0)
+                    {
+                      return (
+                        <Card
+                            className="Card"
+                            data-card-number={index}
+                            key={card.id}
+                            style={{
+                                margin: `${margin}`,
+                                width: 90, display:
+                                'inline-block',
+                                padding: 0 }}
+                        >
+                            <CardMedia>
+                                <img
+                                    alt={`${card.card_name} image`}
+                                    src={`dist/images/cards/${imageName}.png`}
+                                />
+                            </CardMedia>
+                        </Card>
+                    );
+                  }
+                })
+            }
+      </div>
+      </div>
+    );
+}
+
+CardHist.propTypes = {
+    historyData: PropTypes.object.isRequired,
 };
 
 export default CardHist;
