@@ -50,6 +50,15 @@ class Player(db.Model):
     extra_paper = db.Column(db.Integer, default=0)
     extra_cloth = db.Column(db.Integer, default=0)
 
+    yellow = db.Column(db.Integer, default=0)
+    grey = db.Column(db.Integer, default=0)
+    blue = db.Column(db.Integer, default=0)
+    green = db.Column(db.Integer, default=0)
+    brown = db.Column(db.Integer, default=0)
+    red = db.Column(db.Integer, default=0)
+    purple = db.Column(db.Integer, default=0)
+
+
     def __eq__(self, other):
         if type(self) is type(other):
             return self.id == other.id
@@ -94,5 +103,12 @@ class Player(db.Model):
             'cog':self.cog,
             'tablet':self.tablet,
             'compass':self.compass,
-            'wildcard':self.wildcard
+            'wildcard':self.wildcard,
+            'brown':self.brown,
+            'grey':self.grey,
+            'red':self.red,
+            'green':self.green,
+            'yellow':self.yellow,
+            'blue':self.blue,
+            'purple':self.purple
         }
