@@ -11,7 +11,7 @@ function sortByColor(props) {
     let green = [];
     let red = [];
 
-    for (let i = 1; i < unsorted.length; ++i) {
+    for (let i = 0; i < unsorted.length; ++i) {
         if (unsorted[i].card_colour === 'brown') { brown.push(unsorted[i]); }
         if (unsorted[i].card_colour === 'grey') { grey.push(unsorted[i]); }
         if (unsorted[i].card_colour === 'yellow') { yellow.push(unsorted[i]); }
