@@ -16,11 +16,7 @@ def print_json(player, players=None, cards=None, game=None):
             'game': game.serialise(),
             'player': player.serialise(),
             'allPlayers': [p.serialise() for p in players if p != player],
-<<<<<<< HEAD
             'history': [[h.serialise() for h in get_cards(player=p, history=True)] for p in players],
-=======
-            'history': [[h.serialise() for h in get_card_history(p)] for p in players],
->>>>>>> b8d0c62ec23f126d607fdadcd6106baa9c55e721
             'cards': [card.serialise() for card in cards],
             'discarded': [discarded.serialise() for discarded in discarded_cards]
         }
@@ -29,11 +25,7 @@ def print_json(player, players=None, cards=None, game=None):
             'game': game.serialise(),
             'player': player.serialise(),
             'allPlayers': [p.serialise() for p in players if p != player],
-<<<<<<< HEAD
             'history': [[h.serialise() for h in get_cards(player=p, history=True)] for p in players],
-=======
-            'history': [[h.serialise() for h in get_card_history(p)] for p in players],
->>>>>>> b8d0c62ec23f126d607fdadcd6106baa9c55e721
             'cards': [card.serialise() for card in cards],
         }
 
