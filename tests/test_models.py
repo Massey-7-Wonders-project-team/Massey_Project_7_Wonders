@@ -241,7 +241,7 @@ class TestModelsWithAlchemy(TestCase):
         db_committing_function(card, user, game)
         player = Player(userId=user.id, gameId=game.id, name=user.name)
         db_committing_function(player)
-        cardhist = Cardhist(cardId=card.id, card_name=card.name, playerId=player.id)
+        cardhist = Cardhist(cardId=card.id, card_name=card.name, playerId=player.id, card_colour=card.colour)
         db_committing_function(cardhist)
 
         self.assertTrue(
@@ -250,7 +250,8 @@ class TestModelsWithAlchemy(TestCase):
             cardhist.for_wonder is False and
             cardhist.playerId == player.id and
             cardhist.cardId == card.id and
-            cardhist.card_name == card.name
+            cardhist.card_name == card.name and
+            cardhist.card_colour == card.colour
         )
 
     def test_cardhist_serialise(self):
@@ -260,7 +261,7 @@ class TestModelsWithAlchemy(TestCase):
         db_committing_function(card, user, game)
         player = Player(userId=user.id, gameId=game.id, name=user.name)
         db_committing_function(player)
-        cardhist = Cardhist(cardId=card.id, card_name=card.name, playerId=player.id)
+        cardhist = Cardhist(cardId=card.id, card_name=card.name, playerId=player.id, card_colour=card.colour)
         db_committing_function(cardhist)
 
         dict = cardhist.serialise()
@@ -271,7 +272,8 @@ class TestModelsWithAlchemy(TestCase):
             dict.get('for_wonder') is False and
             dict.get('playerId') == player.id and
             dict.get('cardId') == card.id and
-            dict.get('card_name') == card.name
+            dict.get('card_name') == card.name and
+            dict.get('card_colour') == card.colour
         )
 
     def test_wonder(self):

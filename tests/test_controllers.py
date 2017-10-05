@@ -140,6 +140,29 @@ class TestControllersWithAlchemy(TestCase):
         previous_money = player.money
         self.assertTrue(process_card(stockade,player,True,False))
         self.assertEqual(previous_money+3, player.money)
+        
+    def test_process_card_monetary_cost(self):
+        game = Game(age=1, round=1)
+        user = User(email='a@a.com', name='test', password='testcase')
+        timberYard = Card('Timber Yard', 3, 1, 'brown')
+        timberYard.set_benefit_wood(1)
+        timberYard.set_benefit_stone(1)
+        timberYard.set_resource_alternating(True)
+        timberYard.set_cost_money(1)
+        db_committing_function(user,game,timberYard)
+        player = Player(userId=user.id, gameId=game.id, name=user.name, money=0)
+        db_committing_function(player)
+        round = Round(cardId=timberYard.id, playerId=player.id)
+        #card_hist = Cardhist()
+        db_committing_function(round)#,card_hist)
+        
+        self.assertEqual(0,player.money)
+        self.assertFalse(process_card(timberYard,player,False,False))
+        self.assertEqual(0,player.money)
+        player.money = 3
+        db_committing_function(player)
+        self.assertTrue(process_card(timberYard,player,False,False))
+        self.assertEqual(2,player.money)
 
     def test_trade_not_enough_goods(self):
         user = User(email='test@test.com', name='test', password='tester')
@@ -165,7 +188,7 @@ class TestControllersWithAlchemy(TestCase):
         card_left.giveWood = 1
         db_committing_function(card1, card_left)
 
-        hist = Cardhist(playerId=player1.left_id, cardId=card_left.id)
+        hist = Cardhist(playerId=player1.left_id, cardId=card_left.id, card_colour=card_left.colour)
         db_committing_function(hist)
         success, trade_info = calculate_trades(card1, player1)
 
@@ -224,7 +247,7 @@ class TestControllersWithAlchemy(TestCase):
         card_left.giveWood = 1
         db_committing_function(card1, card_left)
 
-        hist = Cardhist(playerId=player1.left_id, cardId=card_left.id)
+        hist = Cardhist(playerId=player1.left_id, cardId=card_left.id, card_colour=card_left.colour)
         db_committing_function(hist)
         success, trade_info = calculate_trades(card1, player1)
 
