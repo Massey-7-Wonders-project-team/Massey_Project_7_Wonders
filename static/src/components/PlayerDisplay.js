@@ -126,6 +126,10 @@ export class PlayerDisplay extends Component {
         if (boardData.id === this.state.userID) {
             homeWonder = true;
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> b8d0c62ec23f126d607fdadcd6106baa9c55e721
         return (
             <div>
                 {game && !error && started && boardData &&
