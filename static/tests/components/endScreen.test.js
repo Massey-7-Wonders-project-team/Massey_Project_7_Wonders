@@ -20,6 +20,6 @@ describe('Component: EndScreen', () => {
     };
     const wrapper = shallow(<EndScreen {...minProps} />);
     test('render without exploding', () => {
-        expect(wrapper.find('.Results').length).toEqual(0);
+        expect(wrapper.find('.Results').length).toEqual(1);
     });
 });
