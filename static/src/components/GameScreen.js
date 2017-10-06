@@ -205,14 +205,15 @@ export class GameScreen extends Component {
             this.playersLogged();
         }
 
+        if (started && game.game.age) {
+          document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
+        }
+
+
         return (
             <div>
                 {game && !error && started &&
                     <div>
-                    <div style={{ padding: 0 }}>
-                        <h2>Age {game.game.age}, Round {game.game.round}</h2>
-                    </div>
-
                         <div>
                             {game.playedCards &&
                                 game.playedCards.map((pcard) => {
@@ -258,8 +259,10 @@ export class GameScreen extends Component {
                                     />
                                 }
                             </div>
+                            <h3 style={{ marginLeft: 100 }}>
+                                <b>Age {game.game.age}, Round {game.game.round}: Cards in Hand</b>
+                            </h3>
                             <center>
-                            <p><b>Age {game.game.age}, Round {game.game.round}: Cards in Hand</b></p>
                             {game.cards && game.cards[0].name &&
                                 game.cards.map((card, index) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
