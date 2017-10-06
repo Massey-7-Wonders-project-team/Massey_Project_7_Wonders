@@ -101,6 +101,10 @@ export class PlayerDisplay extends Component {
             const longCityNameArray = (boardData.wonder).split(' ');
             const city = longCityNameArray.length - 1;
             imageName = longCityNameArray[city].toLowerCase();
+            console.log('--');
+            console.log(imageName );
+            console.log('--');
+
         }
         let pName = `Player Name (id:${this.state.displayID})`;  // default profile title
         if (boardData.profile) {
@@ -128,7 +132,7 @@ export class PlayerDisplay extends Component {
                                                         id="CardHeader"
                                                         title={pName}
                                                         subtitle={boardData.wonder}
-                                                        avatar={<Avatar src={`dist/images/cards/age${game.cards[0].age}.png`} size={55} />}
+                                                        avatar={<Avatar src={`dist/images/cards/age${game.age}.png`} size={55} />}
                                                         actAsExpander={true}
                                                         showExpandableButton={true}
                                                     />
@@ -161,7 +165,8 @@ export class PlayerDisplay extends Component {
                                                                                 <img alt="" src={`dist/images/cities/${imageName}A.png`} />
                                                                             </CardMedia>
                                                                             <Wonder
-                                                                                data={boardData} />
+                                                                                data={boardData}
+                                                                            />
                                                                         </TableRowColumn>
                                                                         <TableRowColumn
                                                                             style={inventorycustomColumnStyle}

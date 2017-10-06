@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { shallow } from 'enzyme';
-import FlatButton from 'material-ui';
+
 import { PlayerDisplay } from '../../src/components/PlayerDisplay';
 
 describe('Component: Player Display', () => {
@@ -11,14 +11,18 @@ describe('Component: Player Display', () => {
         started: true,
         id: 1,
         boardData: { wonder_level: 0, userId: 1, points: 1, military: 1, profile: 'a' },
-        game: { allPlayers: { wonder_level: 0, userId: 1, points: 1, military: 1, profile: 'a', wonder: 'a' },
+        game: { allPlayers: {
+            0: { wonder_level: 1, userId: 1, points: 1, military: 1, profile: 'a', wonder: 'The Temple of Artemis in Ephesus', wood: 0, blue: 0, brick: 0, brown: 0, cloth: 0, cog: 0, compass: 0, extra_ore: 0, extra_brick: 0, extra_cloth: 0, extra_wood: 0, extra_glass: 0, extra_stone: 0, extra_paper: 0, military_loss: 0, tablet: 0, left_id: 2, right_id: 3 },
+            1: { wonder_level: 1, userId: 2, points: 1, military: 1, profile: 'b', wonder: 'The Hanging Gardens of Babylon', blue: 0, brick: 0, brown: 0, cloth: 0, cog: 0, compass: 0, extra_ore: 0, extra_brick: 0, extra_cloth: 0, extra_wood: 0, extra_glass: 0, extra_stone: 0, extra_paper: 0, military_loss: 0, tablet: 0, left_id: 1, right_id: 3 },
+            2: { wonder_level: 1, userId: 3, points: 1, military: 1, profile: 'c', wonder: 'The Statue of Zeus in Olympia', blue: 0, brick: 0, brown: 0, cloth: 0, cog: 0, compass: 0, extra_ore: 0, extra_brick: 0, extra_cloth: 0, extra_wood: 0, extra_glass: 0, extra_stone: 0, extra_paper: 0, military_loss: 0, tablet: 0, left_id: 2, right_id: 1 },
+        },
             game: { age: 1, completed: false, id: 1, round: 1, started: true },
-            player: { wonder_level: 0, userId: 1, points: 1, military: 1, profile: 'a', id: 1 },
+            player: { wonder_level: 1, userId: 1, points: 1, military: 1, profile: 'a', id: 1, wonder: 'The Temple of Artemis in Ephesus' },
             wonder: { id: 1, name: 'a', slots: 0, card_0: 'a' }
         },
     };
     const wrapper = shallow(<PlayerDisplay {...minProps} />);
     test('render without exploding', () => {
-        expect(wrapper.contains(<FlatButton label="Back to your Wonder" onClick={this.lookUser} />)).toEqual(true);
+        expect(wrapper.contains(<h3>All Cards Played for Wonder</h3>)).toEqual(true);
     });
 });
