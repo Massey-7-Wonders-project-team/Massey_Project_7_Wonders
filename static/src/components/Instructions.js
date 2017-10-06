@@ -7,24 +7,24 @@ const Instructions = () => (
         <p> Below are some instructions on how to play 7 Wonders</p>
         <p> From original game manual to navigating around our <i>Online Capstone Edition 2017</i> </p>
         <br />
-        <Card style={{ width: 800 }}>
+        <Card style={{ width: '100%' }}>
             <CardHeader
-                title="Original Game Manual"
+                title="Quick Rules and Gameplay"
                 actAsExpander={true}
                 showExpandableButton={true}
             />
-            <CardText expandable={true} style={{ height: 450 }}>
+            <CardText expandable={true} style={{ height: 'auto' }}>
                 <CardMedia>
                     <embed
-                        alt='Original Manual PDF'
-                        src='dist/images/background/manual.pdf'
-                        style={{ height: 400 }}
+                        alt='Rules PDF'
+                        src='dist/images/background/QuickRules.pdf#toolbar=0&navpanes=0'
+                        style={{ height: '100%' }}
                     />
                 </CardMedia>
             </CardText>
         </Card>
         <br />
-        <Card style={{ width: 800 }}>
+        <Card style={{ width: '100%' }}>
             <CardHeader
                 title="ScreenShots"
                 actAsExpander={true}
