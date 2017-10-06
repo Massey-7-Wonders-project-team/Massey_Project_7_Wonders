@@ -8,6 +8,6 @@ import { Footer } from '../../src/components/Footer/index';
 describe('<Footer />', () => {
     test('renders <Footer />', () => {
         const wrapper = shallow(<Footer />);
-        expect(typeof wrapper.find('© DZT 2016').text()).toEqual('string');
+        expect(wrapper.contains(<p>© DZT 2016</p>)).toEqual(true);
     });
 });

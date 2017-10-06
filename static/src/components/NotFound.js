@@ -16,8 +16,8 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(actionCreators, dispatch);
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
-class NotFound extends React.Component { // eslint-disable-line react/prefer-stateless-function
+
+export class NotFound extends React.Component { // eslint-disable-line react/prefer-stateless-function
     render() {
         return (
             <div className="col-md-8">
@@ -27,4 +27,7 @@ class NotFound extends React.Component { // eslint-disable-line react/prefer-sta
     }
 }
 
-export default NotFound;
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(NotFound);

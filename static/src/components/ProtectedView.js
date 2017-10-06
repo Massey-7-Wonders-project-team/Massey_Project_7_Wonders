@@ -28,8 +28,7 @@ const style = {
     display: 'inline-block',
 };
 
-@connect(mapStateToProps, mapDispatchToProps)
-export default class ProtectedView extends React.Component {
+export class ProtectedView extends React.Component {
     componentDidMount() {
         this.fetchData();
     }
@@ -61,7 +60,7 @@ export default class ProtectedView extends React.Component {
                                 onClick={() => this.dispatchNewRoute('/play')}
                             />
                         </div>
-                        <div style={{ float: "right", paddingRight: 50 }}>
+                        <div style={{ float: 'right', paddingRight: 50 }}>
                             <img alt="statue" src={'dist/images/background/statue.jpg'} />
                         </div>
                     </div>
@@ -78,3 +77,7 @@ ProtectedView.propTypes = {
     data: React.PropTypes.any,
     token: React.PropTypes.string,
 };
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(ProtectedView);

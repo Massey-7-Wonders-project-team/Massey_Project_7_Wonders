@@ -22,7 +22,6 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(actionCreators, dispatch);
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
 export class Header extends React.Component {
     constructor(props) {
         super(props);

@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { shallow } from 'enzyme';
-
 import { EndScreen } from '../../src/components/EndScreen';
+import { EndGameMarkup } from '../../src/components/EndGameMarkup';
 
 describe('Component: EndScreen', () => {
     const minProps = {
@@ -19,6 +19,9 @@ describe('Component: EndScreen', () => {
     const wrapper = shallow(<EndScreen {...minProps} />);
     console.log(typeof totalPlayers);
     test('render without exploding', () => {
-        expect(wrapper.find('<Dialog>').exists()).toEqual(true);
+        expect(
+          wrapper.contains(
+              <EndGameMarkup players={minProps.game.allPlayers} player={minProps.gam.player} />)
+        ).toEqual(true);
     });
 });
