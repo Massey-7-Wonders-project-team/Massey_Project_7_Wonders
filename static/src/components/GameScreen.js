@@ -35,7 +35,8 @@ export class GameScreen extends Component {
             playerCount: null,
             ready: false,
             endOfRound: false,
-            age: 1,
+            ageDialog: false,
+            ageDialogDisplayOnce: false,
             showScoreBoard: false,
             shownForRound: false,
             endGameScoreboard: false,
@@ -47,6 +48,7 @@ export class GameScreen extends Component {
         this.playersLogged = this.playersLogged.bind(this);
         this.hideScoreboard = this.hideScoreboard.bind(this);
         this.hideInvalidMoveError = this.hideInvalidMoveError.bind(this);
+        this.hideAgeDialog = this.hideAgeDialog.bind(this);
     }
 
     componentDidMount() {
@@ -72,6 +74,8 @@ export class GameScreen extends Component {
             if (nextProps.game.game.round === 2) {
                 this.setState({
                     shownForRound: false,
+                    ageDialogDisplayOnce: false,
+                    ageDialog: false,
                 });
             }
         }
@@ -81,6 +85,11 @@ export class GameScreen extends Component {
                 polling: true,
             });
             this.pollGameStatus();
+        }
+        if (nextProps.game.game.round === 1) {
+            this.setState({
+                ageDialog: true,
+            });
         }
     }
 
@@ -97,6 +106,8 @@ export class GameScreen extends Component {
         }
         this.props.startGame(this.props.playerId);
     }
+
+    // playCard(playerId, cardId, discarded, wonder, trade)
 
     playCard(cardId) {
         if (!this.props.cardPlayed) {
@@ -147,11 +158,14 @@ export class GameScreen extends Component {
         });
     }
 
+    hideAgeDialog() {
+        this.setState({
+            ageDialog: false,
+            ageDialogDisplayOnce: true,
+        });
+    }
+
     playersLogged() {
-      // this function is just to find how many players are logged into
-      // the currently created game
-      // Replication of what Game.js does
-      // Just not sure how to retrieve info from Game.js
         const token = localStorage.getItem('token');
         fetch(`/api/game/status?player_id=${this.props.playerId}`, {
             method: 'get',
@@ -175,7 +189,6 @@ export class GameScreen extends Component {
     render() {
         const { error, game, started, loading } = this.props;
         const { showPlayCardError, showScoreBoard, showInvalidMoveError } = this.state;
-
         const showPlayCardActions = [
             <FlatButton
                 label="Ok"
@@ -188,7 +201,6 @@ export class GameScreen extends Component {
                 onClick={this.hideInvalidMoveError}
             />,
         ];
-        // update total numbers of players logged in
         if (!started) {
             this.playersLogged();
         }
@@ -197,12 +209,10 @@ export class GameScreen extends Component {
             <div>
                 {game && !error && started &&
                     <div>
-                        <div style={{ padding: '20px 0' }}>
-                            <h2>Age {game.game.age}, Round {game.game.round}</h2>
-                        </div>
-                        <div>
-                            <PlayerDisplay playerId={this.props.playerId} />
-                        </div>
+                    <div style={{ padding: 0 }}>
+                        <h2>Age {game.game.age}, Round {game.game.round}</h2>
+                    </div>
+
                         <div>
                             {game.playedCards &&
                                 game.playedCards.map((pcard) => {
@@ -220,6 +230,26 @@ export class GameScreen extends Component {
                                     );
                                 })
                             }
+                            {this.state.ageDialog && !this.state.ageDialogDisplayOnce &&
+                                <Dialog
+                                    title={`Age ${game.game.age} is about to begin...`}
+                                    actions={
+                                        <FlatButton
+                                            label="Begin"
+                                            primary={true}
+                                            onClick={this.hideAgeDialog}
+                                        />
+                                    }
+                                    open={this.state.ageDialog}
+                                    onRequestClose={this.hideAgeDialog}
+                                    contentStyle={{ width: '40%' }}
+                                >
+                                  <center><div>
+
+                                      <img height="75%" src={`dist/images/icons/age${game.game.age}cards.png`} />
+                                  </div></center>
+                                </Dialog>
+                            }
                             <div>
                                 {showScoreBoard &&
                                     <EndScreen
@@ -229,11 +259,12 @@ export class GameScreen extends Component {
                                 }
                             </div>
                             <center>
+                            <p><b>Age {game.game.age}, Round {game.game.round}: Cards in Hand</b></p>
                             {game.cards && game.cards[0].name &&
                                 game.cards.map((card, index) => {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
-                                        <Card className="Card" data-card-number={index} key={card.id} style={{ width: 130, display: 'inline-block', paddingBottom: 0 }}>
+                                        <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
                                             <CardTitle
                                                 title={card.name}
                                                 titleStyle={{ fontSize: 18 }}
@@ -266,6 +297,9 @@ export class GameScreen extends Component {
                                 })
                             }
                         </center>
+                        </div>
+                        <div>
+                            <PlayerDisplay playerId={this.props.playerId} />
                         </div>
                         {showPlayCardError &&
                             <Dialog

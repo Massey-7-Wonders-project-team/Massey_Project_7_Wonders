@@ -34,50 +34,49 @@ function CardHist(props) {
               </div>
           }
           {cardsPlayed &&
-            <div style={{ display: 'inline-block' }}>
-                <p><b>All your Cards played</b></p>
-                <div>
-                  {sorted &&
-                    sorted.map((color, cIndex) => {
-                      return(
-                        <div style={{ float: 'left', margin: 20 }}>
-                          {color &&
-                            color.map((card, index) => {
-                                const imageName = (card.card_name).replace(/\s+/g, '').toLowerCase();
-                                let marginLeft = -60;
-                                if (index === 0) { marginLeft = 0; }
-                                const topMargin = index * 32;
-                                return (
-                                    <CardMedia
-                                        style={{
-                                            marginLeft: `${marginLeft}`,
-                                            width: 90,
-                                            display: 'inline-block',
-                                            padding: 0 }}
-                                    >
-                                        <img
-                                            alt={`${card.card_name} image`}
-                                            src={`dist/images/cards/${imageName}.png`}
-                                            style={{
-                                                paddingTop: topMargin,
-                                                width: 90,
-                                                display: 'inline-block',
-                                            }}
-                                        />
-                                    </CardMedia>
-                              );
-                            })
-                          }
-                      </div>
-                    )
-                    })
-                  }
+              <div style={{ display: 'inline-block' }}>
+                  <p><b>All your Cards played</b></p>
+                  <div>
+                      {sorted &&
+                        sorted.map((color) => {
+                            return (
+                                <div style={{ float: 'left', margin: 20 }}>
+                                    {color &&
+                                      color.map((card, index) => {
+                                          const imageName = (card.card_name).replace(/\s+/g, '').toLowerCase();
+                                          let marginLeft = -60;
+                                          if (index === 0) { marginLeft = 0; }
+                                          const topMargin = index * 32;
+                                          return (
+                                              <CardMedia
+                                                  style={{
+                                                      marginLeft: `${marginLeft}`,
+                                                      width: 90,
+                                                      display: 'inline-block',
+                                                      padding: 0 }}
+                                              >
+                                                  <img
+                                                      alt={`${card.card_name} image`}
+                                                      src={`dist/images/cards/${imageName}.png`}
+                                                      style={{
+                                                          paddingTop: topMargin,
+                                                          width: 90,
+                                                          display: 'inline-block',
+                                                      }}
+                                                  />
+                                              </CardMedia>
+                                          );
+                                      })
+                                    }
+                                </div>
+                            )
+                        })
+                      }
+                  </div>
               </div>
-          }
+            }
       </div>
-    }
-    </div>
-  )
+    )
 }
 
 CardHist.propTypes = {
