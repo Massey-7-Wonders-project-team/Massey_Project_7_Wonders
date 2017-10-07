@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { RaisedButton, Dialog, FlatButton, Paper, Checkbox, Avatar, Chip } from 'material-ui';
+import { RaisedButton, Dialog, FlatButton, Paper, Checkbox } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { browserHistory } from 'react-router';
