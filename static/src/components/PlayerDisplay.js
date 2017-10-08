@@ -148,7 +148,7 @@ export class PlayerDisplay extends Component {
                                                         id="CardHeader"
                                                         title={pName}
                                                         subtitle={boardData.wonder}
-                                                        avatar={<Avatar src={`dist/images/cards/age${game.cards[0].age}.png`} size={55} />}
+                                                        avatar={<Avatar src={`dist/images/cards/age${game.age}.png`} size={55} />}
                                                         actAsExpander={true}
                                                         showExpandableButton={true}
                                                     />

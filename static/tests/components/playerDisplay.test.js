@@ -18,11 +18,13 @@ describe('Component: Player Display', () => {
         },
             game: { age: 1, completed: false, id: 1, round: 1, started: true },
             player: { wonder_level: 1, userId: 1, points: 1, military: 1, profile: 'a', id: 1, wonder: 'The Temple of Artemis in Ephesus' },
+            history: { 0: { age: 0, costBrick: 0, costCloth: 0, costGlass: 0, costMoney: 0, costOre: 0, costPaper: 0, id: 6, name: 'a', noPlayers: 3, resourceAlternating: false, playerId: 1 },
+            },
             wonder: { id: 1, name: 'a', slots: 0, card_0: 'a' }
         },
     };
     const wrapper = shallow(<PlayerDisplay {...minProps} />);
     test('render without exploding', () => {
-        expect(wrapper.contains(<h3>All Cards Played for Wonder</h3>)).toEqual(true);
+        expect(wrapper.find('.PlayerDisplayBoard').exists()).toEqual(true);
     });
 });
