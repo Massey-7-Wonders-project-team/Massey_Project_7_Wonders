@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
 import Inventory from './Inventory';
 import Wonder from './Wonder';
+import CardHist from './CardHist'
 
 function mapStateToProps(state) {
     return {
@@ -41,6 +42,7 @@ export class PlayerDisplay extends Component {
             this.lookRight = this.lookRight.bind(this);
             this.lookUser = this.lookUser.bind(this);
             this.search = this.search.bind(this);
+            this.searchHistory = this.searchHistory.bind(this);
         }
     }
 
@@ -101,10 +103,6 @@ export class PlayerDisplay extends Component {
             const longCityNameArray = (boardData.wonder).split(' ');
             const city = longCityNameArray.length - 1;
             imageName = longCityNameArray[city].toLowerCase();
-            console.log('--');
-            console.log(imageName );
-            console.log('--');
-
         }
         let pName = `Player Name (id:${this.state.displayID})`;  // default profile title
         if (boardData.profile) {
@@ -196,22 +194,22 @@ export class PlayerDisplay extends Component {
                                                             </Table>
                                                         </div>
                                                     </CardText>
-                                          <CardText id="played cards" expandable={true}>
-                                              <hr />
-                                              <h3>All Cards Played for Wonder</h3>
-                                              <p><i>
-                                                  Card 1, Card 2...
-                                              </i></p>
-                                          </CardText>
+                                                    <CardText id="played cards" expandable={true}>
+                                                        <hr />
+                                                        <h3>All Cards Played for Wonder</h3>
+                                                        <p><i>
+                                                            Card 1, Card 2...
+                                                        </i></p>
+                                                    </CardText>
 
-                                      </Card>
-                                    </TableRowColumn>
-                                    <TableRowColumn width="50" id="rightNav" >
-                                      <input type="image" width="20" src='dist/images/icons/right_arrow.png' onClick={this.lookRight} />
-                                    </TableRowColumn>
-                                  </TableRow>
-                                </TableBody>
-                              </Table>
+                                                </Card>
+                                            </TableRowColumn>
+                                            <TableRowColumn width="50" id="rightNav" >
+                                                <input type="image" width="20" src='dist/images/icons/right_arrow.png' onClick={this.lookRight} />
+                                            </TableRowColumn>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
                             </div>
                           }
                     </div>
@@ -224,7 +222,6 @@ export class PlayerDisplay extends Component {
 PlayerDisplay.propTypes = {
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
-
 };
 
 PlayerDisplay.defaultProps = {
