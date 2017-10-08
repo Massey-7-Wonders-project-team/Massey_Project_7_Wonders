@@ -49,7 +49,7 @@ export class PlayerDisplay extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.game.player !== this.state.userData) {
             this.setState({
-              userData: nextProps.game.player
+                userData: nextProps.game.player
             })
         }
     }
@@ -92,6 +92,7 @@ export class PlayerDisplay extends Component {
     render() {
         const boardData = this.search();
         const { error, game, started } = this.props;
+        const historyData = this.searchHistory();
         const ListStyle = {
             width: 100,
             paddingTop: 0,
@@ -107,6 +108,10 @@ export class PlayerDisplay extends Component {
         let pName = `Player Name (id:${this.state.displayID})`;  // default profile title
         if (boardData.profile) {
             pName = boardData.profile;  // display profile name if present in returned data
+        }
+        let homeWonder = false;
+        if (boardData.id === this.state.userID) {
+            homeWonder = true;
         }
 
         return (
@@ -130,15 +135,14 @@ export class PlayerDisplay extends Component {
                                                         id="CardHeader"
                                                         title={pName}
                                                         subtitle={boardData.wonder}
-                                                        avatar={<Avatar src={`dist/images/cards/age${game.age}.png`} size={55} />}
+                                                        avatar={<Avatar src={`dist/images/cards/age${game.cards[0].age}.png`} size={55} />}
                                                         actAsExpander={true}
                                                         showExpandableButton={true}
                                                     />
                                                     <CardText id="CardText" style={{ paddingBottom: 0, paddingTop: 0 }}>
                                                         <div>
                                                             <Table>
-                                                                <TableBody
-                                                                    displayRowCheckbox={false} >
+                                                                <TableBody displayRowCheckbox={false} >
                                                                     <TableRow selectable={false}>
                                                                         <TableRowColumn
                                                                             style={inventorycustomColumnStyle}
@@ -155,16 +159,16 @@ export class PlayerDisplay extends Component {
                                                                         </TableRowColumn>
                                                                         <TableRowColumn>
                                                                             <CardActions>
-                                                                                <FlatButton label="Back to your Wonder" onClick={this.lookUser} />
+                                                                                { !homeWonder ?
+                                                                                    <FlatButton label="Back to your Wonder" onClick={this.lookUser} />
+                                                                                    :
+                                                                                    <FlatButton label="" disabled={true} />
+                                                                                }
                                                                             </CardActions>
-                                                                            <CardMedia
-                                                                                overlay={<CardTitle subtitle="Player thinking..." />}
-                                                                            >
-                                                                                <img alt="" src={`dist/images/cities/${imageName}A.png`} />
+                                                                            <CardMedia>
+                                                                                <img alt="" src={`dist/images/cities/${imageName}B.png`} />
                                                                             </CardMedia>
-                                                                            <Wonder
-                                                                                data={boardData}
-                                                                            />
+                                                                            <Wonder data={boardData} />
                                                                         </TableRowColumn>
                                                                         <TableRowColumn
                                                                             style={inventorycustomColumnStyle}
@@ -172,21 +176,18 @@ export class PlayerDisplay extends Component {
                                                                             <List style={ListStyle}>
                                                                                 <Inventory item="vp" amount={boardData.points} />
                                                                                 <Inventory item="coin" amount={boardData.money} />
-                                                                                <Inventory item="pyramid-stage0" amount={boardData.wonder_level} />
-                                                                                <br />
-                                                                                <Inventory item="military" amount={boardData.military} />
-                                                                                <Inventory item="victoryminus1" amount={boardData.military_loss} />
+                                                                                <Inventory item={`pyramid-stage${boardData.wonder_level}`} amount={boardData.wonder_level} />
                                                                             </List>
                                                                         </TableRowColumn>
                                                                         <TableRowColumn
                                                                             style={inventorycustomColumnStyle}
                                                                         >
                                                                             <List id="buildings" style={ListStyle}>
+                                                                                <Inventory item="military" amount={boardData.military} />
+                                                                                <Inventory item="victoryminus1" amount={boardData.military_loss} />
                                                                                 <Inventory item="cog" amount={boardData.cog} />
                                                                                 <Inventory item="tablet" amount={boardData.tablet} />
                                                                                 <Inventory item="compass" amount={boardData.compass} />
-                                                                                <Inventory item="commercial" amount={0} />
-                                                                                <Inventory item="civilian" amount={0} />
                                                                             </List>
                                                                         </TableRowColumn>
                                                                     </TableRow>
@@ -194,18 +195,13 @@ export class PlayerDisplay extends Component {
                                                             </Table>
                                                         </div>
                                                     </CardText>
-                                                    <CardText id="played cards" expandable={true}>
-                                                        <hr />
-                                                        <h3>All Cards Played for Wonder</h3>
-                                                        <p><i>
-                                                            Card 1, Card 2...
-                                                        </i></p>
+                                                    <CardText id="played_cards" expandable={true}>
+                                                        <CardHist history={historyData} />
                                                     </CardText>
-
                                                 </Card>
                                             </TableRowColumn>
                                             <TableRowColumn width="50" id="rightNav" >
-                                                <input type="image" width="20" src='dist/images/icons/right_arrow.png' onClick={this.lookRight} />
+                                              <input type="image" width="20" src='dist/images/icons/right_arrow.png' onClick={this.lookRight} />
                                             </TableRowColumn>
                                         </TableRow>
                                     </TableBody>
