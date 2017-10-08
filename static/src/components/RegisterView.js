@@ -161,7 +161,7 @@ export default class RegisterView extends React.Component {
                             style={{ marginTop: 50 }}
                             id="RegisterButton"
                             label="Submit"
-                            onClick={(e) => this.login(e)}
+                            onTouchTap={(e) => this.login(e)}
                           />
 
                       </div>

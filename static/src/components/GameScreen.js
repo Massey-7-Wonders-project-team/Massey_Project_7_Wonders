@@ -192,13 +192,13 @@ export class GameScreen extends Component {
         const showPlayCardActions = [
             <FlatButton
                 label="Ok"
-                onClick={this.hidePlayCardError}
+                onTouchTap={this.hidePlayCardError}
             />,
         ];
         const showInvalidMoveActions = [
             <FlatButton
                 label="Ok"
-                onClick={this.hideInvalidMoveError}
+                onTouchTap={this.hideInvalidMoveError}
             />,
         ];
         if (!started) {
@@ -238,7 +238,7 @@ export class GameScreen extends Component {
                                         <FlatButton
                                             label="Begin"
                                             primary={true}
-                                            onClick={this.hideAgeDialog}
+                                            onTouchTap={this.hideAgeDialog}
                                         />
                                     }
                                     open={this.state.ageDialog}
@@ -283,16 +283,16 @@ export class GameScreen extends Component {
                                                 <FlatButton
                                                     label="Play Card"
                                                     className="PlayCardButton"
-                                                    onClick={() => this.playCard(card.id)}
+                                                    onTouchTap={() => this.playCard(card.id)}
                                                 />
                                                 <FlatButton
                                                     label="Wonder"
-                                                    onClick={() => this.wonderCard(card.id)}
+                                                    onTouchTap={() => this.wonderCard(card.id)}
                                                 />
                                                 <FlatButton
                                                     label="Discard"
                                                     className="DiscardCardButton"
-                                                    onClick={() => this.discard(card.id)}
+                                                    onTouchTap={() => this.discard(card.id)}
                                                 />
                                             </CardActions>
                                         </Card>
@@ -358,7 +358,7 @@ export class GameScreen extends Component {
                                   ? <RaisedButton
                                         id="ReadyButton"
                                       label="I am ready"
-                                      onClick={() => this.startGame()}
+                                      onTouchTap={() => this.startGame()}
                                   />
                                   :
                                   <div>
