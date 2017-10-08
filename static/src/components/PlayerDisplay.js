@@ -79,12 +79,25 @@ export class PlayerDisplay extends Component {
         if (nameKey === this.state.userID) {
             data = this.state.userData;
         } else {
-          const myArray = this.props.game.allPlayers;
-          for (var i=0; i < myArray.length; i++) {
-              if (myArray[i].id === nameKey) {
-                  data = myArray[i];
-              }
-          }
+            const myArray = this.props.game.allPlayers;
+            for (var i = 0; i < myArray.length; i++) {
+                if (myArray[i].id === nameKey) {
+                    data = myArray[i];
+                }
+            }
+        }
+        return data;
+    }
+
+    searchHistory() {
+        const nameKey = this.state.displayID;
+        var data = {};
+        const myArray = this.props.game.history;
+        for (var i = 0; i < myArray.length; i++) {
+            const cardArray = myArray[i];
+            if (cardArray[0].playerId === nameKey) {
+                data = myArray[i];
+            }
         }
         return data;
     }
