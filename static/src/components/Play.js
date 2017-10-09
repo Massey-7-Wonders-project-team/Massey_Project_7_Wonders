@@ -191,7 +191,7 @@ export class Play extends React.Component {
         ];
 
         return (
-            <div className="Game col-md-12">
+            <div className="Game col-md-12" style={{ padding: 0 }}>
                 {error &&
                     <p>There was an error</p>
                 }
@@ -226,17 +226,28 @@ export class Play extends React.Component {
                         </div>
                     </div>
                 }
-                {game &&
-                    <RaisedButton
-                        label="End Game"
-                        primary={primary}
-                        style={{
-                            float: 'right',
-                            display: 'block',
-                            margin: '0 0 20px 0',
-                        }}
-                        onClick={() => this.endGameDialog()}
-                    />
+                {game && this.props.game &&
+                    <div>
+                        <div style={{ float: 'left', marginRight: 0, paddingTop: 0, paddingLeft: 50, width: '20%' }}>
+                            <h3 style={{ marginTop: 0 }}>
+                                <b>Age: {this.props.game.game.age} -
+                                Round: {this.props.game.game.round}
+                                </b>
+                            </h3>
+                        </div>
+                        <div style={{ float: 'left', marginRight: 0, paddingTop: 0, width: '60%' }}>
+                            <center><h3 style={{ marginTop: 0 }}> Cards in Hand </h3></center>
+                        </div>
+                        <RaisedButton
+                            label="End Game"
+                            primary={primary}
+                            style={{
+                                float: 'right',
+                                margin: '0 0 20px 0',
+                            }}
+                            onClick={() => this.endGameDialog()}
+                        />
+                    </div>
                 }
                 {game &&
                     <div style={{ clear: 'both' }}>
@@ -260,6 +271,7 @@ export class Play extends React.Component {
 
 Play.propTypes = {
     endGame: PropTypes.func.isRequired,
+    game: PropTypes.object,
 };
 
 export default connect(
