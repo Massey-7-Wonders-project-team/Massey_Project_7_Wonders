@@ -168,6 +168,7 @@ export class RegisterView extends React.Component {
                     <br />
                     <center>
                         <img alt='7_wonders_logo'
+
                             width='300'
                             src={`dist/images/background/7w_logo.png`}
                         />

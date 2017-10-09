@@ -44,13 +44,16 @@ export class Results extends Component {
                 error: true,
             });
         });
+        document.title = "Final Results";
     }
 
     playAgain() {
+        document.title = `7 Wonders`;
         browserHistory.push('/play');
     }
 
     goHome() {
+        document.title = `7 Wonders`;
         browserHistory.push('/home');
     }
 
@@ -75,11 +78,11 @@ export class Results extends Component {
                             style={{
                                 marginRight: '20px',
                             }}
-                            onClick={() => this.playAgain()}
+                            onTouchTap={() => this.playAgain()}
                         />
                         <RaisedButton
-                            label="Go Home"
-                            onClick={() => this.goHome()}
+                            label="Back to Home"
+                            onTouchTap={() => this.goHome()}
                         />
                     </div>
 

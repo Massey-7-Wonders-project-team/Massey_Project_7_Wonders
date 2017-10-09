@@ -126,7 +126,7 @@ export class PlayerDisplay extends Component {
         if (boardData.id === this.state.userID) {
             homeWonder = true;
         }
-
+        
         return (
             <div>
                 {game && !error && started && boardData &&
@@ -137,7 +137,7 @@ export class PlayerDisplay extends Component {
                                     <TableBody displayRowCheckbox={false} >
                                         <TableRow selectable={false}>
                                             <TableRowColumn width="50" id="leftNav" >
-                                                <input type="image" width="20" src='dist/images/icons/left_arrow.png' onClick={this.lookLeft} />
+                                                <input type="image" width="20" src='dist/images/icons/left_arrow.png' onTouchTap={this.lookLeft} />
                                             </TableRowColumn>
                                             <TableRowColumn>
                                                 <Card
@@ -173,7 +173,7 @@ export class PlayerDisplay extends Component {
                                                                         <TableRowColumn>
                                                                             <CardActions>
                                                                                 { !homeWonder ?
-                                                                                    <FlatButton label="Back to your Wonder" onClick={this.lookUser} />
+                                                                                    <FlatButton label="Back to your Wonder" onTouchTap={this.lookUser} />
                                                                                     :
                                                                                     <FlatButton label="" disabled={true} />
                                                                                 }
@@ -214,12 +214,13 @@ export class PlayerDisplay extends Component {
                                                 </Card>
                                             </TableRowColumn>
                                             <TableRowColumn width="50" id="rightNav" >
-                                              <input type="image" width="20" src='dist/images/icons/right_arrow.png' onClick={this.lookRight} />
+                                              <input type="image" width="20" src='dist/images/icons/right_arrow.png' onTouchTap={this.lookRight} />
                                             </TableRowColumn>
                                         </TableRow>
                                     </TableBody>
                                 </Table>
                             </div>
+
                           }
                     </div>
                 }
