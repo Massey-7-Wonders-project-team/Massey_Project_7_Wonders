@@ -164,6 +164,48 @@ class TestControllersWithAlchemy(TestCase):
         self.assertTrue(process_card(timberYard,player,False,False))
         self.assertEqual(2,player.money)
 
+    def test_process_card_prerequisites(self):
+        game = Game(age=1, round=1)
+        user = User(email='a@a.com', name='test', password='testcase')
+        
+        loom = Card('Loom', 3, 1, 'grey')
+        loom.set_benefit_cloth(1)
+        apothecary = Card('Apothecary', 5, 1, 'green')
+        apothecary.set_cost_cloth(1)
+        apothecary.set_benefit_research('compass')
+        forum = Card('Forum', 3, 1, 'yellow')
+        forum.set_benefit_cloth(1)
+        forum.set_benefit_glass(1)
+        forum.set_benefit_paper(1)
+        forum.set_resource_alternating(True)
+        forum.set_cost_brick(2)
+        forum.set_prerequisite_1('East Trading Post')
+        forum.set_prerequisite_2('West Trading Post')
+        stables = Card('Stables', 3, 1, 'red')
+        stables.set_benefit_military(2)
+        stables.set_cost_brick(1)
+        stables.set_cost_wood(1)
+        stables.set_cost_ore(1)
+        stables.set_prerequisite_1('Apothecary')
+        
+        db_committing_function(user,game,loom,apothecary,forum,stables)
+        player = Player(userId=user.id, gameId=game.id, name=user.name)
+        db_committing_function(player)
+        round1 = Round(cardId=loom.id, playerId=player.id)
+        round2 = Round(cardId=apothecary.id, playerId=player.id, round=2)
+        round3a = Round(cardId=forum.id, playerId=player.id, round=3)
+        round3b = Round(cardId=stables.id, playerId=player.id, round=3)
+        db_committing_function(round1,round2,round3a,round3b)
+        
+        self.assertTrue(process_card(loom,player,False,False))
+        self.assertTrue(process_card(apothecary,player,False,False))
+        
+        #can't play this card
+        self.assertFalse(process_card(forum,player,False,False))
+        
+        #can play this card
+        self.assertTrue(process_card(stables,player,False,False))
+        
     def test_trade_not_enough_goods(self):
         user = User(email='test@test.com', name='test', password='tester')
         user1 = User(email='test1@test.com', name='test', password='tester')
