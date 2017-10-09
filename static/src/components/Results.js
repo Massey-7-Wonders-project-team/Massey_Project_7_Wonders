@@ -78,11 +78,11 @@ export class Results extends Component {
                             style={{
                                 marginRight: '20px',
                             }}
-                            onClick={() => this.playAgain()}
+                            onTouchTap={() => this.playAgain()}
                         />
                         <RaisedButton
                             label="Back to Home"
-                            onClick={() => this.goHome()}
+                            onTouchTap={() => this.goHome()}
                         />
                     </div>
 

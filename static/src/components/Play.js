@@ -182,11 +182,11 @@ export class Play extends React.Component {
         const endGameActions = [
             <FlatButton
                 label="No"
-                onClick={this.handleClose}
+                onTouchTap={this.handleClose}
             />,
             <FlatButton
                 label="Yes"
-                onClick={this.endGame}
+                onTouchTap={this.endGame}
             />,
         ];
 
@@ -207,7 +207,7 @@ export class Play extends React.Component {
                                 <RaisedButton
                                     label="Create/Join Game"
                                     id="Play-CreateGame"
-                                    onClick={() => this.createGame()}
+                                    onTouchTap={() => this.createGame()}
                                 />
                             </Paper>
                             <div
@@ -245,7 +245,7 @@ export class Play extends React.Component {
                                 float: 'right',
                                 margin: '0 0 20px 0',
                             }}
-                            onClick={() => this.endGameDialog()}
+                            onTouchTap={() => this.endGameDialog()}
                         />
                     </div>
                 }
