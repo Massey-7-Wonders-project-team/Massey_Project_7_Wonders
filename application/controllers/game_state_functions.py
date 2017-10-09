@@ -222,6 +222,9 @@ def play_card(card, player, is_discarded, for_wonder, no_prereq=False):
 
     elif for_wonder:
         wondercard = get_wonder_card(player)
+        if not wondercard:
+            print("No wonder cards remaining")
+            return False
         if no_prereq:
             print("Playing: ", wondercard.name)
             update_player_object(wondercard, player, for_wonder=True)

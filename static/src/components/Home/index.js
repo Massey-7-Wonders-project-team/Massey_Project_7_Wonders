@@ -34,14 +34,14 @@ export class Home extends React.Component {
                     <p>Sign in or Register to begin</p>
                     <RaisedButton
                         label="Sign in"
-                        onClick={(e) => this.dispatchNewRoute(e, '/login')}
+                        onTouchTap={(e) => this.dispatchNewRoute(e, '/login')}
                         style={{
                             marginRight: '10px',
                         }}
                     />
                     <RaisedButton
                         label="Register"
-                        onClick={(e) => this.dispatchNewRoute(e, '/register')}
+                        onTouchTap={(e) => this.dispatchNewRoute(e, '/register')}
                         style={{
                             marginLeft: '10px',
                         }}

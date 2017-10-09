@@ -150,7 +150,7 @@ export default class LoginView extends React.Component {
                               style={{ marginTop: 50 }}
                               label="Submit"
                               id="LoginButton"
-                              onClick={(e) => this.login(e)}
+                              onTouchTap={(e) => this.login(e)}
                             />
 
                         </div>
