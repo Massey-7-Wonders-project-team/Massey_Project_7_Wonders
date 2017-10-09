@@ -126,7 +126,7 @@ export class PlayerDisplay extends Component {
         if (boardData.id === this.state.userID) {
             homeWonder = true;
         }
-
+        
         return (
             <div>
                 {game && !error && started && boardData &&

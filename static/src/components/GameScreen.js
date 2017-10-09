@@ -259,9 +259,6 @@ export class GameScreen extends Component {
                                     />
                                 }
                             </div>
-                            <h3 style={{ marginLeft: 100 }}>
-                                <b>Age {game.game.age}, Round {game.game.round}: Cards in Hand</b>
-                            </h3>
                             <center>
                             {game.cards && game.cards[0].name &&
                                 game.cards.map((card, index) => {
