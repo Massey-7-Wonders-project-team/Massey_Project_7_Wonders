@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { Table, TableBody, TableRow, TableRowColumn } from 'material-ui';
 
 function Wonder(props) {
-    const boardData = props.data;
+    const { boardData } = props;
     var rows = [];
     for (var each = 0; each < boardData.max_wonder; each ++) {
         if (each < boardData.wonder_level) {
@@ -21,10 +21,10 @@ function Wonder(props) {
             >
                 <TableRow>
                     {
-                        rows.map((wCard) => {
+                        rows.map((wCard, index) => {
                     if (wCard) {
                       return (
-                          <TableRowColumn style={{ padding: 0}}>
+                          <TableRowColumn key={index} style={{ padding: 0}}>
                           <center>
                                   <img width="150" alt="Complete" src={'dist/images/icons/wonderCard.png'} />
                           </center>
@@ -32,7 +32,7 @@ function Wonder(props) {
                       );
                     } else {
                       return (
-                        <TableRowColumn style={{ padding: 0 }}>
+                        <TableRowColumn key={index} style={{ padding: 0 }}>
 
                         </TableRowColumn>
                     )
