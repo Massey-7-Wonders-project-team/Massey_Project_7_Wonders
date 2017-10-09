@@ -172,16 +172,14 @@ export class PlayerDisplay extends Component {
                                                             </TableRowColumn>
                                                             <TableRowColumn>
                                                                 <CardActions>
-                                                                    { !homeWonder ?
+                                                                    {homeWonder &&
                                                                         <FlatButton label="Back to your Wonder" onClick={this.lookUser} />
-                                                                        :
-                                                                        <FlatButton label="" disabled={true} />
                                                                     }
                                                                 </CardActions>
                                                                 <CardMedia>
                                                                     <img alt="" src={`dist/images/cities/${imageName}B.png`} />
                                                                 </CardMedia>
-                                                                <Wonder data={boardData} />
+                                                                <Wonder boardData={boardData} />
                                                             </TableRowColumn>
                                                             <TableRowColumn
                                                                 style={inventorycustomColumnStyle}
