@@ -86,7 +86,7 @@ export class GameScreen extends Component {
             });
             this.pollGameStatus();
         }
-        if (nextProps.game.game.round === 1) {
+        if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1 ) {
             this.setState({
                 ageDialog: true,
             });
@@ -148,6 +148,7 @@ export class GameScreen extends Component {
     hideScoreboard() {
         this.setState({
             showScoreBoard: false,
+            ageDialog: true,
         });
     }
 
@@ -208,7 +209,6 @@ export class GameScreen extends Component {
         if (started && game.game.age) {
           document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
         }
-
 
         return (
             <div>
