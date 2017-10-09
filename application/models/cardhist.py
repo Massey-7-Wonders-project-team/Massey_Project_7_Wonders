@@ -20,6 +20,6 @@ class Cardhist(db.Model):
             'card_colour':self.card_colour,
             'cardId':self.id,
             'for_wonder':self.for_wonder,
-            'discarded':self.discarded,
+            'discarded':self.discarded
         }
 
