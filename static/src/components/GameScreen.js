@@ -210,8 +210,6 @@ export class GameScreen extends Component {
           document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
         }
 
-        console.log("AgeDialog: ", this.state.ageDialog);
-
         return (
             <div>
                 {game && !error && started &&
