@@ -13,7 +13,7 @@ class Cardhist(db.Model):
     discarded = db.Column(db.Boolean, default=False)
     for_wonder = db.Column(db.Boolean, default=False)
 
-        def serialise(self):
+    def serialise(self):
         return {
             'playerId':self.playerId,
             'card_name':self.card_name,
@@ -21,5 +21,5 @@ class Cardhist(db.Model):
             'cardId':self.id,
             'for_wonder':self.for_wonder,
             'discarded':self.discarded,
-            'playerId':self.playerId
         }
+
