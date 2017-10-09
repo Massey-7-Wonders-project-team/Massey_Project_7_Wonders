@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { Table, TableBody, TableRow, TableRowColumn } from 'material-ui';
 
 function Wonder(props) {
-    const boardData = props.data;
+    const { boardData } = props;
     var rows = [];
     for (var each = 0; each < boardData.max_wonder; each ++) {
         if (each < boardData.wonder_level) {
@@ -21,7 +21,7 @@ function Wonder(props) {
             >
                 <TableRow>
                     {
-                        rows.map((wCard) => {
+                        rows.map((wCard, index) => {
                             if (wCard) {
                                 return (
                                     <TableRowColumn style={{ padding: 0 }} >
