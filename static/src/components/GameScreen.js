@@ -209,9 +209,9 @@ export class GameScreen extends Component {
             <div>
                 {game && !error && started &&
                     <div>
-                    <div style={{ padding: 0 }}>
-                        <h2>Age {game.game.age}, Round {game.game.round}</h2>
-                    </div>
+                        <div style={{ padding: 0 }} className="GameScreen">
+                            <h2>Age {game.game.age}, Round {game.game.round}</h2>
+                        </div>
 
                         <div>
                             {game.playedCards &&

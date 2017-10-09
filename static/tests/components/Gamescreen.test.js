@@ -23,6 +23,6 @@ describe('Component: GameScreen', () => {
     };
     const wrapper = shallow(<GameScreen {...minProps} />);
     test('render without exploding', () => {
-        expect(wrapper.contains(<h2>Age 1, Round 1</h2>)).toEqual(true);
+        expect(wrapper.find('.GameScreen').exists()).toEqual(true);
     });
 });
