@@ -38,9 +38,9 @@ function CardHist(props) {
                   <p><b>All your Cards played</b></p>
                   <div>
                       {sorted &&
-                        sorted.map((color) => {
+                        sorted.map((color, k) => {
                             return (
-                                <div style={{ float: 'left', margin: 20 }}>
+                                <div key={k} style={{ float: 'left', margin: 20 }}>
                                     {color &&
                                       color.map((card, index) => {
                                           const imageName = (card.card_name).replace(/\s+/g, '').toLowerCase();
@@ -53,7 +53,9 @@ function CardHist(props) {
                                                       marginLeft: `${marginLeft}`,
                                                       width: 90,
                                                       display: 'inline-block',
-                                                      padding: 0 }}
+                                                      padding: 0
+                                                  }}
+                                                  key={index}
                                               >
                                                   <img
                                                       alt={`${card.card_name} image`}

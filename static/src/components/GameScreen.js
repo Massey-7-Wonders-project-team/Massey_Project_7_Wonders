@@ -78,6 +78,11 @@ export class GameScreen extends Component {
                     ageDialog: false,
                 });
             }
+            if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1) {
+                this.setState({
+                    ageDialog: true,
+                });
+            }
         }
 
         if (nextProps.started && !this.state.polling) {
@@ -85,11 +90,6 @@ export class GameScreen extends Component {
                 polling: true,
             });
             this.pollGameStatus();
-        }
-        if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1 ) {
-            this.setState({
-                ageDialog: true,
-            });
         }
     }
 
@@ -247,7 +247,7 @@ export class GameScreen extends Component {
                                 >
                                   <center><div>
 
-                                      <img height="75%" src={`dist/images/icons/age${game.game.age}cards.png`} />
+                                      <img alt="" width={'100%'} src={`dist/images/icons/age${game.game.age}cards.png`} />
                                   </div></center>
                                 </Dialog>
                             }
@@ -392,10 +392,10 @@ GameScreen.propTypes = {
     loading: PropTypes.bool.isRequired,
     playerId: PropTypes.number,
     playCard: PropTypes.func,
-    cardPlayed: PropTypes.bool.isRequired,
+    cardPlayed: PropTypes.bool,
     playerCount: PropTypes.number,
     setPollId: PropTypes.func.isRequired,
-    cardValid: PropTypes.bool.isRequired,
+    cardValid: PropTypes.bool,
     clearInvalidCardError: PropTypes.func.isRequired,
 };
 
@@ -404,6 +404,8 @@ GameScreen.defaultProps = {
     playerId: null,
     playerCount: null,
     playCard: null,
+    cardPlayed: null,
+    cardValid: null,
 };
 
 export default connect(
