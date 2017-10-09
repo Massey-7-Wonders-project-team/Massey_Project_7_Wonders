@@ -15,11 +15,8 @@ const Instructions = () => (
             />
             <CardText expandable={true} style={{ height: 'auto' }}>
                 <CardMedia>
-                    <embed
-                        alt='Rules PDF'
-                        src='dist/images/background/QuickRules.pdf#toolbar=0&navpanes=0'
-                        style={{ height: '100%' }}
-                    />
+                    <p> This is where I put an HTML version of rules and gameplay</p>
+                    <p><i>(This section will be filled in another PR. For now, This is just to clear this outstanding PR)</i></p>
                 </CardMedia>
             </CardText>
         </Card>
