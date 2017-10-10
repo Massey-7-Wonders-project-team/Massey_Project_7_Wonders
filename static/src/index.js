@@ -5,6 +5,8 @@ import { Router, Redirect, browserHistory } from 'react-router';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { polyfill } from 'es6-promise';
+import 'isomorphic-fetch';
+import 'babel-polyfill';
 
 import configureStore from './store/configureStore';
 import routes from './routes';

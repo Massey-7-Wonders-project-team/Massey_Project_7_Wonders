@@ -99,7 +99,7 @@ export class Header extends React.Component {
                                 <Divider />
                                 <MenuItem
                                     id="PlayButton"
-                                    onClick={() => this.dispatchNewRoute('/play')}
+                                    onTouchTap={() => this.dispatchNewRoute('/play')}
                                 >
                                     <b>Play</b>
                                 </MenuItem>
