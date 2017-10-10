@@ -17,9 +17,6 @@ class Cardhist(db.Model):
         return {
             'playerId':self.playerId,
             'card_name':self.card_name,
-            'card_colour':self.card_colour,
-            'cardId':self.id,
-            'for_wonder':self.for_wonder,
-            'discarded':self.discarded
+            'card_colour':self.card_colour
         }
 
