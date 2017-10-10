@@ -44,7 +44,7 @@ export class EndScreen extends Component {
             <FlatButton
                 label="Close"
                 primary={primaryButton}
-                onClick={this.handleClose}
+                onTouchTap={this.handleClose}
             />,
         ];
 

@@ -67,7 +67,7 @@ export class Header extends React.Component {
                     {
                         !this.props.isAuthenticated ?
                             <div>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/home')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/home')}>
                                     <img
                                         alt="logo"
                                         width="200"
@@ -77,23 +77,23 @@ export class Header extends React.Component {
                                     />
                                 </MenuItem>
                                 <Divider />
-                                <MenuItem onClick={() => this.dispatchNewRoute('/login')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/login')}>
                                     Login
                                 </MenuItem>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/register')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/register')}>
                                     Register
                                 </MenuItem>
                             </div>
                             :
                             <div>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/play')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/play')}>
                                     <img
                                         alt="logo"
                                         width="200"
                                         src={`dist/images/background/7w_logo.png`}
                                     />
                                 </MenuItem>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/home')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/home')}>
                                     <i>Signed in ({this.props.userName})</i>
                                 </MenuItem>
                                 <Divider />
@@ -104,17 +104,17 @@ export class Header extends React.Component {
                                     <b>Play</b>
                                 </MenuItem>
                                 <Divider />
-                                <MenuItem onClick={() => this.dispatchNewRoute('/instructions')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/instructions')}>
                                     How to Play
                                 </MenuItem>
                                 <Divider />
-                                <MenuItem onClick={() => this.dispatchNewRoute('/home')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/home')}>
                                     Home
                                 </MenuItem>
                                 <Divider />
                                 <MenuItem
                                     id="LogoutButton"
-                                    onClick={(e) => this.logout(e)}
+                                    onTouchTap={(e) => this.logout(e)}
                                 >
                                     <i>Logout</i>
                                 </MenuItem>
@@ -127,11 +127,11 @@ export class Header extends React.Component {
                     onLeftIconButtonTouchTap={() => this.openNav()}
                     iconElementRight={
                       !this.props.userName ?
-                          <FlatButton label="Home" onClick={() => this.dispatchNewRoute('/')} />
+                          <FlatButton label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
                         :
                           <div>
-                              <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onClick={() => this.dispatchNewRoute('/home')} />
-                              <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onClick={() => this.dispatchNewRoute('/')} />
+                              <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onTouchTap={() => this.dispatchNewRoute('/home')} />
+                              <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
                           </div>
 
                     }

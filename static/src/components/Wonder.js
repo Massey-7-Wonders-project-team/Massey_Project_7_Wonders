@@ -32,8 +32,7 @@ function Wonder(props) {
                                 );
                             } else {
                                 return (
-                                    <TableRowColumn style={{ padding: 0 }}>
-                                    </TableRowColumn>
+                                    <TableRowColumn key={index} style={{ padding: 0 }} />
                                 );
                             }
                         })

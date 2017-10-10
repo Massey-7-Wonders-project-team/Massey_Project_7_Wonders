@@ -41,7 +41,7 @@ const EndGameMarkup = props =>
     </Table>;
 
 EndGameMarkup.propTypes = {
-    players: PropTypes.object.isRequired,
+    players: PropTypes.array.isRequired,
     player: PropTypes.object.isRequired,
 };
 

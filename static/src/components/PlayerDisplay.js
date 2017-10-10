@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../actions/game';
 import Inventory from './Inventory';
 import Wonder from './Wonder';
-import CardHist from './CardHist'
+import CardHist from './CardHist';
 
 function mapStateToProps(state) {
     return {
@@ -126,7 +126,6 @@ export class PlayerDisplay extends Component {
         if (boardData.id === this.state.userID) {
             homeWonder = true;
         }
-
         return (
             <div>
                 {game && !error && started && boardData &&
@@ -220,6 +219,7 @@ export class PlayerDisplay extends Component {
                                     </TableBody>
                                 </Table>
                             </div>
+
                           }
                     </div>
                 }

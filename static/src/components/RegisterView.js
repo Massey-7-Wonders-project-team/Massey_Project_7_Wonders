@@ -160,15 +160,16 @@ export class RegisterView extends React.Component {
                                 style={{ marginTop: 50 }}
                                 id="RegisterButton"
                                 label="Submit"
-                                onClick={(e) => this.login(e)}
+                                onTouchTap={(e) => this.login(e)}
                             />
 
                         </div>
                     </Paper>
                     <br />
                     <center>
-                        <img alt='7_wonders_logo'
-                            width='300'
+                        <img
+                            alt="7_wonders_logo"
+                            width="300"
                             src={`dist/images/background/7w_logo.png`}
                         />
                     </center>

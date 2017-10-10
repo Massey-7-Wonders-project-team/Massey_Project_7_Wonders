@@ -57,7 +57,7 @@ export class ProtectedView extends React.Component {
                             <FlatButton
                                 style={{ marginLeft: 55, marginTop: 25 }}
                                 label="Select Play in the Menu to find a Game to join"
-                                onClick={() => this.dispatchNewRoute('/play')}
+                                onTouchTap={() => this.dispatchNewRoute('/play')}
                             />
                         </div>
                         <div style={{ float: 'right', paddingRight: 50 }}>
