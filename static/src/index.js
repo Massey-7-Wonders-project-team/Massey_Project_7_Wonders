@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -7,6 +6,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { polyfill } from 'es6-promise';
 import 'isomorphic-fetch';
+import 'babel-polyfill';
 
 import configureStore from './store/configureStore';
 import routes from './routes';
@@ -14,7 +14,7 @@ import './style.scss';
 
 injectTapEventPlugin();
 
-// ES6 Promise pollyfill for IE
+// es6 promise pollyfill for IE
 polyfill();
 
 const store = configureStore();

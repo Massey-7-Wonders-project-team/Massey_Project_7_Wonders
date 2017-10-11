@@ -15,35 +15,33 @@ function Wonder(props) {
     return (
         <Table
             id="wonderTable"
-            style={{ marginLeft:10, marginRight: 10 }}>
+            style={{ marginLeft: 10, marginRight: 10 }} >
             <TableBody
                 displayRowCheckbox={false}
             >
                 <TableRow>
                     {
                         rows.map((wCard, index) => {
-                    if (wCard) {
-                      return (
-                          <TableRowColumn key={index} style={{ padding: 0}}>
-                          <center>
-                                  <img width="150" alt="Complete" src={'dist/images/icons/wonderCard.png'} />
-                          </center>
-                          </TableRowColumn>
-                      );
-                    } else {
-                      return (
-                        <TableRowColumn key={index} style={{ padding: 0 }}>
-
-                        </TableRowColumn>
-                    )
-                    }
-                })
+                            if (wCard) {
+                                return (
+                                    <TableRowColumn style={{ padding: 0 }} >
+                                        <center>
+                                            <img width="150" alt="Complete" src={'dist/images/icons/wonderCard.png'} />
+                                        </center>
+                                    </TableRowColumn>
+                                );
+                            } else {
+                                return (
+                                    <TableRowColumn key={index} style={{ padding: 0 }} />
+                                );
+                            }
+                        })
 
               }
-            </TableRow>
-          </TableBody>
+                </TableRow>
+            </TableBody>
         </Table>
-  )
+    );
 }
 
 Wonder.propTypes = {

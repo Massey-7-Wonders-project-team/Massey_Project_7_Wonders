@@ -55,7 +55,7 @@ export class EndScreen extends Component {
             title = 'Results from Round 2';
         }
         return (
-            <div>
+            <div className="Results">
                 <Dialog
                     title={title}
                     actions={scoreBoardActions}

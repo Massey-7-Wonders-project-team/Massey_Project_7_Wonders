@@ -22,8 +22,7 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(actionCreators, dispatch);
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class Header extends Component {
+export class Header extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -123,17 +122,17 @@ export class Header extends Component {
                     }
                 </LeftNav>
                 <AppBar
-                  title="7 Wonders"
-                  className="Nav"
-                  onLeftIconButtonTouchTap={() => this.openNav()}
-                  iconElementRight={
+                    title="7 Wonders"
+                    className="Nav"
+                    onLeftIconButtonTouchTap={() => this.openNav()}
+                    iconElementRight={
                       !this.props.userName ?
-                        <FlatButton label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
+                          <FlatButton label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
                         :
-                        <div>
-                          <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onTouchTap={() => this.dispatchNewRoute('/home')} />
-                          <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
-                        </div>
+                          <div>
+                              <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onTouchTap={() => this.dispatchNewRoute('/home')} />
+                              <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
+                          </div>
 
                     }
                 />
@@ -147,3 +146,7 @@ Header.propTypes = {
     logoutAndRedirect: React.PropTypes.func,
     isAuthenticated: React.PropTypes.bool,
 };
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Header);

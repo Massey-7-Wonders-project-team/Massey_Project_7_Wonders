@@ -21,8 +21,8 @@ class App extends React.Component { // eslint-disable-line react/prefer-stateles
                 <section>
                     <Header />
                     <div
-                      className="container-fluid"
-                      style={{ marginTop: 10, padding: 2 }}
+                        className="container-fluid"
+                        style={{ marginTop: 10, padding: 2 }}
                     >
                         {this.props.children}
                     </div>

@@ -44,4 +44,3 @@ def false_true (string):
         print(string + " given into false_true function")
     else:
         print(string)
-

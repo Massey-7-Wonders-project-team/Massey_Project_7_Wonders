@@ -3,7 +3,7 @@ import { Card, CardText, CardHeader, CardMedia } from 'material-ui';
 
 const Instructions = () => (
     <div className="col-md-8">
-        <h1>How to play...</h1>
+      <h1>How to play...</h1>
         <p> Below are some instructions on how to play 7 Wonders</p>
         <p> From original game manual to navigating around our <i>Online Capstone Edition 2017</i> </p>
         <br />
