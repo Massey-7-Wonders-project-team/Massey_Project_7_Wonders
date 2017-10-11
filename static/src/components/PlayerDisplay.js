@@ -147,7 +147,7 @@ export class PlayerDisplay extends Component {
                                                         id="CardHeader"
                                                         title={pName}
                                                         subtitle={boardData.wonder}
-                                                        avatar={<Avatar src={`dist/images/cards/age${game.age}.png`} size={55} />}
+                                                        avatar={<Avatar src={`dist/images/cards/age${game.game.age}.png`} size={55} />}
                                                         actAsExpander={true}
                                                         showExpandableButton={true}
                                                     />
@@ -180,7 +180,7 @@ export class PlayerDisplay extends Component {
                                                                             <CardMedia>
                                                                                 <img alt="" src={`dist/images/cities/${imageName}B.png`} />
                                                                             </CardMedia>
-                                                                            <Wonder data={boardData} />
+                                                                            <Wonder boardData={boardData} />
                                                                         </TableRowColumn>
                                                                         <TableRowColumn
                                                                             style={inventorycustomColumnStyle}

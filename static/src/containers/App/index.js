@@ -4,7 +4,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 /* application components */
-import { Header } from '../../components/Header';
+import Header from '../../components/Header';
 import { Footer } from '../../components/Footer';
 
 /* global styles for app */

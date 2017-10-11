@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Paper, FlatButton } from 'material-ui';
+import { browserHistory } from 'react-router';
 import * as actionCreators from '../actions/data';
 
 function mapStateToProps(state) {
@@ -37,6 +38,13 @@ export class ProtectedView extends React.Component {
     fetchData() {
         const token = this.props.token;
         this.props.fetchProtectedData(token);
+    }
+
+    dispatchNewRoute(route) {
+        browserHistory.push(route);
+        this.setState({
+            open: false,
+        });
     }
 
     render() {
