@@ -302,7 +302,7 @@ def game_result():
     """Endpoint for ending a game mid game
     Inputs - player_id
     Outputs - status comment"""
-    player = Player.query.join(User).filter_by(email=g.current_user["email"]).join(Game).filter_by(complete=True).first()
+    player = Player.query.join(User).filter_by(email=g.current_user["email"]).join(Game).order_by(Game.id.desc()).filter_by(complete=True).first()
     game = get_game(player=player)
     players = get_players(player=player)
     player_count = len(players)
