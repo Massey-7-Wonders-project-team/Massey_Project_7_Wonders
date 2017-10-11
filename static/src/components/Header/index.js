@@ -22,8 +22,7 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(actionCreators, dispatch);
 }
 
-@connect(mapStateToProps, mapDispatchToProps)
-export class Header extends Component {
+export class Header extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -68,7 +67,7 @@ export class Header extends Component {
                     {
                         !this.props.isAuthenticated ?
                             <div>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/home')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/home')}>
                                     <img
                                         alt="logo"
                                         width="200"
@@ -78,44 +77,44 @@ export class Header extends Component {
                                     />
                                 </MenuItem>
                                 <Divider />
-                                <MenuItem onClick={() => this.dispatchNewRoute('/login')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/login')}>
                                     Login
                                 </MenuItem>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/register')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/register')}>
                                     Register
                                 </MenuItem>
                             </div>
                             :
                             <div>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/play')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/play')}>
                                     <img
                                         alt="logo"
                                         width="200"
                                         src={`dist/images/background/7w_logo.png`}
                                     />
                                 </MenuItem>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/home')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/home')}>
                                     <i>Signed in ({this.props.userName})</i>
                                 </MenuItem>
                                 <Divider />
                                 <MenuItem
                                     id="PlayButton"
-                                    onClick={() => this.dispatchNewRoute('/play')}
+                                    onTouchTap={() => this.dispatchNewRoute('/play')}
                                 >
                                     <b>Play</b>
                                 </MenuItem>
                                 <Divider />
-                                <MenuItem onClick={() => this.dispatchNewRoute('/instructions')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/instructions')}>
                                     How to Play
                                 </MenuItem>
                                 <Divider />
-                                <MenuItem onClick={() => this.dispatchNewRoute('/home')}>
+                                <MenuItem onTouchTap={() => this.dispatchNewRoute('/home')}>
                                     Home
                                 </MenuItem>
                                 <Divider />
                                 <MenuItem
                                     id="LogoutButton"
-                                    onClick={(e) => this.logout(e)}
+                                    onTouchTap={(e) => this.logout(e)}
                                 >
                                     <i>Logout</i>
                                 </MenuItem>
@@ -123,17 +122,17 @@ export class Header extends Component {
                     }
                 </LeftNav>
                 <AppBar
-                  title="7 Wonders"
-                  className="Nav"
-                  onLeftIconButtonTouchTap={() => this.openNav()}
-                  iconElementRight={
+                    title="7 Wonders"
+                    className="Nav"
+                    onLeftIconButtonTouchTap={() => this.openNav()}
+                    iconElementRight={
                       !this.props.userName ?
-                        <FlatButton label="Home" onClick={() => this.dispatchNewRoute('/')} />
+                          <FlatButton label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
                         :
-                        <div>
-                          <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onClick={() => this.dispatchNewRoute('/home')} />
-                          <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onClick={() => this.dispatchNewRoute('/')} />
-                        </div>
+                          <div>
+                              <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onTouchTap={() => this.dispatchNewRoute('/home')} />
+                              <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
+                          </div>
 
                     }
                 />
@@ -147,3 +146,7 @@ Header.propTypes = {
     logoutAndRedirect: React.PropTypes.func,
     isAuthenticated: React.PropTypes.bool,
 };
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Header);

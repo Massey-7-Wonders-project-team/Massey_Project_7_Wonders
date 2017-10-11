@@ -80,6 +80,11 @@ export class GameScreen extends Component {
                     ageDialog: false,
                 });
             }
+            if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1) {
+                this.setState({
+                    ageDialog: true,
+                });
+            }
         }
 
         if (nextProps.started && !this.state.polling) {
@@ -87,11 +92,6 @@ export class GameScreen extends Component {
                 polling: true,
             });
             this.pollGameStatus();
-        }
-        if (nextProps.game.game.round === 1) {
-            this.setState({
-                ageDialog: true,
-            });
         }
     }
 
@@ -154,6 +154,7 @@ export class GameScreen extends Component {
     hideScoreboard() {
         this.setState({
             showScoreBoard: false,
+            ageDialog: true,
         });
     }
 
@@ -198,13 +199,13 @@ export class GameScreen extends Component {
         const showPlayCardActions = [
             <FlatButton
                 label="Ok"
-                onClick={this.hidePlayCardError}
+                onTouchTap={this.hidePlayCardError}
             />,
         ];
         const showInvalidMoveActions = [
             <FlatButton
                 label="Ok"
-                onClick={this.hideInvalidMoveError}
+                onTouchTap={this.hideInvalidMoveError}
             />,
         ];
         if (!started) {
@@ -215,12 +216,11 @@ export class GameScreen extends Component {
           document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
         }
 
-
         return (
             <div>
                 {game && !error && started &&
                     <div>
-                        <div>
+                        <div className="GameScreen">
                             {game.playedCards &&
                                 game.playedCards.map((pcard) => {
                                     const imageName = (pcard.card.name).replace(/\s+/g, '').toLowerCase();
@@ -244,7 +244,7 @@ export class GameScreen extends Component {
                                         <FlatButton
                                             label="Begin"
                                             primary={true}
-                                            onClick={this.hideAgeDialog}
+                                            onTouchTap={this.hideAgeDialog}
                                         />
                                     }
                                     open={this.state.ageDialog}
@@ -253,7 +253,7 @@ export class GameScreen extends Component {
                                 >
                                   <center><div>
 
-                                      <img height="75%" src={`dist/images/icons/age${game.game.age}cards.png`} />
+                                      <img alt="" width={'100%'} src={`dist/images/icons/age${game.game.age}cards.png`} />
                                   </div></center>
                                 </Dialog>
                             }
@@ -265,9 +265,6 @@ export class GameScreen extends Component {
                                     />
                                 }
                             </div>
-                            <h3 style={{ marginLeft: 100 }}>
-                                <b>Age {game.game.age}, Round {game.game.round}: Cards in Hand</b>
-                            </h3>
                             <center>
                             {game.cards && game.cards[0].name &&
                                 game.cards.map((card, index) => {
@@ -289,16 +286,16 @@ export class GameScreen extends Component {
                                                 <FlatButton
                                                     label="Play Card"
                                                     className="PlayCardButton"
-                                                    onClick={() => this.playCard(card.id)}
+                                                    onTouchTap={() => this.playCard(card.id)}
                                                 />
                                                 <FlatButton
                                                     label="Wonder"
-                                                    onClick={() => this.wonderCard(card.id)}
+                                                    onTouchTap={() => this.wonderCard(card.id)}
                                                 />
                                                 <FlatButton
                                                     label="Discard"
                                                     className="DiscardCardButton"
-                                                    onClick={() => this.discard(card.id)}
+                                                    onTouchTap={() => this.discard(card.id)}
                                                 />
                                             </CardActions>
                                         </Card>
@@ -364,7 +361,7 @@ export class GameScreen extends Component {
                                   ? <RaisedButton
                                         id="ReadyButton"
                                       label="I am ready"
-                                      onClick={() => this.startGame()}
+                                      onTouchTap={() => this.startGame()}
                                   />
                                   :
                                   <div>
@@ -401,10 +398,10 @@ GameScreen.propTypes = {
     loading: PropTypes.bool.isRequired,
     playerId: PropTypes.number,
     playCard: PropTypes.func,
-    cardPlayed: PropTypes.bool.isRequired,
+    cardPlayed: PropTypes.bool,
     playerCount: PropTypes.number,
     setPollId: PropTypes.func.isRequired,
-    cardValid: PropTypes.bool.isRequired,
+    cardValid: PropTypes.bool,
     clearInvalidCardError: PropTypes.func.isRequired,
 };
 
@@ -413,6 +410,8 @@ GameScreen.defaultProps = {
     playerId: null,
     playerCount: null,
     playCard: null,
+    cardPlayed: null,
+    cardValid: null,
 };
 
 export default connect(

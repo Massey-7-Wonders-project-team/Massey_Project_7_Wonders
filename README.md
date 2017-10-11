@@ -93,6 +93,11 @@ Step 2:
 
 Browser tests are located in static/tests/browser
 
+### Cross Browser Support		
+ We support the following browsers:		
+ Internet Explorer 11, Microsoft Edge, Google Chrome (latest), Mozilla Firefox (latest), Apple Safari (latest), Android Chrome, Apple Safari for iOS		
+ For more info on Cross Browser support click [here](browserSupport.md)		
+
 ### Deployment
 The app is running on a hobby dyno instance on Heroku
 [massey7wonders.herokuapp.com](https://massey7wonders.herokuapp.com)

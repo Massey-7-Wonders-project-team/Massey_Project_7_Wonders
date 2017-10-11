@@ -44,7 +44,7 @@ export class EndScreen extends Component {
             <FlatButton
                 label="Close"
                 primary={primaryButton}
-                onClick={this.handleClose}
+                onTouchTap={this.handleClose}
             />,
         ];
 
@@ -55,7 +55,7 @@ export class EndScreen extends Component {
             title = 'Results from Round 2';
         }
         return (
-            <div>
+            <div className="Results">
                 <Dialog
                     title={title}
                     actions={scoreBoardActions}

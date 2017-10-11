@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { Table, TableBody, TableRow, TableRowColumn } from 'material-ui';
 
 function Wonder(props) {
-    const boardData = props.data;
+    const { boardData } = props;
     var rows = [];
     for (var each = 0; each < boardData.max_wonder; each ++) {
         if (each < boardData.wonder_level) {
@@ -15,35 +15,33 @@ function Wonder(props) {
     return (
         <Table
             id="wonderTable"
-            style={{ marginLeft:10, marginRight: 10 }}>
+            style={{ marginLeft: 10, marginRight: 10 }} >
             <TableBody
                 displayRowCheckbox={false}
             >
                 <TableRow>
                     {
-                        rows.map((wCard) => {
-                    if (wCard) {
-                      return (
-                          <TableRowColumn style={{ padding: 0}}>
-                          <center>
-                                  <img width="150" alt="Complete" src={'dist/images/icons/wonderCard.png'} />
-                          </center>
-                          </TableRowColumn>
-                      );
-                    } else {
-                      return (
-                        <TableRowColumn style={{ padding: 0 }}>
-
-                        </TableRowColumn>
-                    )
-                    }
-                })
+                        rows.map((wCard, index) => {
+                            if (wCard) {
+                                return (
+                                    <TableRowColumn style={{ padding: 0 }} >
+                                        <center>
+                                            <img width="150" alt="Complete" src={'dist/images/icons/wonderCard.png'} />
+                                        </center>
+                                    </TableRowColumn>
+                                );
+                            } else {
+                                return (
+                                    <TableRowColumn key={index} style={{ padding: 0 }} />
+                                );
+                            }
+                        })
 
               }
-            </TableRow>
-          </TableBody>
+                </TableRow>
+            </TableBody>
         </Table>
-  )
+    );
 }
 
 Wonder.propTypes = {

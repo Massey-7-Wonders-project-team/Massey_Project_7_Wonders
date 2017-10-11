@@ -182,11 +182,11 @@ export class Play extends React.Component {
         const endGameActions = [
             <FlatButton
                 label="No"
-                onClick={this.handleClose}
+                onTouchTap={this.handleClose}
             />,
             <FlatButton
                 label="Yes"
-                onClick={this.endGame}
+                onTouchTap={this.endGame}
             />,
         ];
 
@@ -207,7 +207,7 @@ export class Play extends React.Component {
                                 <RaisedButton
                                     label="Create/Join Game"
                                     id="Play-CreateGame"
-                                    onClick={() => this.createGame()}
+                                    onTouchTap={() => this.createGame()}
                                 />
                             </Paper>
                             <div
@@ -226,7 +226,18 @@ export class Play extends React.Component {
                         </div>
                     </div>
                 }
-                {game &&
+                {game && this.props.game &&
+                <div>
+                    <div style={{ float: 'left', marginRight: 0, paddingTop: 0, paddingLeft: 50, width: '20%' }}>>
+                        <h3 style={{ marginTop: 0}}>
+                            <b>Age: {this.props.game.game.age} -
+                            Round: {this.props.game.game.round}
+                            </b>
+                        </h3>
+                    </div>
+                    <div style={{ float: 'left', marginRight: 0, paddingTop: 0, width: '60%' }}>
+                        <center><h3 style={{ marginTop: 0 }}> Cards in Hand </h3></center>
+                    </div>
                     <RaisedButton
                         label="End Game"
                         primary={primary}
@@ -235,8 +246,9 @@ export class Play extends React.Component {
                             display: 'block',
                             margin: '0 0 20px 0',
                         }}
-                        onClick={() => this.endGameDialog()}
+                        onTouchTap={() => this.endGameDialog()}
                     />
+                </div>
                 }
                 {game &&
                     <div style={{ clear: 'both' }}>

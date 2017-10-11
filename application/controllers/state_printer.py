@@ -16,7 +16,7 @@ def print_json(player, players=None, cards=None, game=None):
             'game': game.serialise(),
             'player': player.serialise(),
             'allPlayers': [p.serialise() for p in players if p != player],
-            'history': [[h.serialise() for h in get_card_history(p)] for p in players],
+            'history': [[h.serialise() for h in get_card_history(p) if not h.discarded] for p in players],
             'cards': [card.serialise() for card in cards],
             'discarded': [discarded.serialise() for discarded in discarded_cards]
         }
@@ -25,7 +25,7 @@ def print_json(player, players=None, cards=None, game=None):
             'game': game.serialise(),
             'player': player.serialise(),
             'allPlayers': [p.serialise() for p in players if p != player],
-            'history': [[h.serialise() for h in get_card_history(p)] for p in players],
+            'history': [[h.serialise() for h in get_card_history(p) if not h.discarded] for p in players],
             'cards': [card.serialise() for card in cards],
         }
 
@@ -44,4 +44,3 @@ def false_true (string):
         print(string + " given into false_true function")
     else:
         print(string)
-

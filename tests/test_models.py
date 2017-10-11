@@ -266,15 +266,9 @@ class TestModelsWithAlchemy(TestCase):
 
         dict = cardhist.serialise()
 
-        self.assertTrue(
-            dict.get('id') == 1 and
-            dict.get('discarded') is False and
-            dict.get('for_wonder') is False and
-            dict.get('playerId') == player.id and
-            dict.get('cardId') == card.id and
-            dict.get('card_name') == card.name and
-            dict.get('card_colour') == card.colour
-        )
+        self.assertEqual(dict.get('playerId'), player.id)
+        self.assertEqual(dict.get('card_name'), card.name)
+        self.assertEqual(dict.get('card_colour'), card.colour)
 
     def test_wonder(self):
         wonder = Wonder()

@@ -19,3 +19,4 @@ class Cardhist(db.Model):
             'card_name':self.card_name,
             'card_colour':self.card_colour
         }
+
