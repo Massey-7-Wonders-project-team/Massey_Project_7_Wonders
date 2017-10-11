@@ -4,7 +4,7 @@ from .controllers.card_logic import *
 from index import app
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
-
+from flask_socketio import join_room, leave_room, send, emit
 
 @app.route('/', methods=['GET'])
 def index():
@@ -163,9 +163,9 @@ def single_player(user):
     )
 
 
-@app.route("/api/game/status", methods=["GET"])
-@requires_auth
-def game_status():
+# @app.route("/api/game/status", methods=["GET"])
+# @requires_auth
+def emit_update(id):
     """ Send the status of a game
      Inputs - player_id
      Output
@@ -173,28 +173,31 @@ def game_status():
         Game started - status comment, game (player, cards), playerCount """
     # firstly check game has started
     try:
-        player = get_player(request.args.get('player_id'))
+
+        player = get_player(id)
         game = get_game(player=player)
         players = get_players(player=player)
         player_count = len(players)
 
-        if not game.started:
-            return jsonify(
-                status="Waiting",
-                playerCount=player_count
-            )
-        elif game.complete:
-            return jsonify(
-                status="Completed",
-                game=print_json(player, players=players, game=game),
-                players=player_count
-            )
-        else:
-            return jsonify(
-                status="Started",
-                game=print_json(player, players=players, game=game),
-                players=player_count
-            )
+        for p in players:
+            if not game.started:
+                emit('update', {
+                    status:"Waiting",
+                    playerCount:player_count
+                })
+            elif game.complete:
+                emit('update', {
+                    status:"Completed",
+                    game:print_json(player, players=players, game=game),
+                    players:player_count
+                });
+            else:
+                emit('update', {
+                    status:"Started",
+                    game:print_json(player, players=players, game=game),
+                    players:player_count
+                })
+
 
     except Exception as e:
         print(e)
@@ -291,7 +294,7 @@ def end_game():
         print('Ending game')
         db.session.commit()
         return jsonify(message="Success")
-    
+
     except Exception as e:
         print(e)
         return jsonify(message="There was an error"), 500

@@ -96,6 +96,7 @@
     "react-tap-event-plugin": "^2.0.1",
     "react-test-renderer": "^15.6.1",
     "react-transform-hmr": "^1.0.1",
-    "redux": "^3.2.1"
+    "redux": "^3.2.1",
+    "socket.io-client": "^2.0.3"
   }
 }

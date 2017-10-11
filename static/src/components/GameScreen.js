@@ -3,10 +3,13 @@ import { RaisedButton, CardActions, FlatButton, Card,
     CardText, CardMedia, CardTitle, CircularProgress, Dialog } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import io from 'socket.io-client';
 import * as actions from '../actions/game';
 import { poll } from '../utils/misc';
 import PlayerDisplay from './PlayerDisplay';
 import EndScreen from './EndScreen';
+
+const socket = io('http://localhost:5000');
 
 function mapStateToProps(state) {
     return {
@@ -57,7 +60,6 @@ export class GameScreen extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.cardValid === false) {
-            console.log('INVALID')
             this.setState({
                 showInvalidMoveError: true,
             });
@@ -94,8 +96,12 @@ export class GameScreen extends Component {
     }
 
     pollGameStatus() {
-        const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 1000);
-        this.props.setPollId(pollId);
+        if (window.WebSocket) {
+             console.log('BROWSER SUPPORTED');
+        } else {
+            const pollId = poll(() => this.props.checkGameStatus(this.props.playerId), 1000);
+            this.props.setPollId(pollId);
+        }
     }
 
     startGame() {

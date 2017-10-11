@@ -1,6 +1,7 @@
 from .database_functions import *
 import random
 import copy
+from ..app import *
 
 
 def deal_wonders(players):
@@ -219,6 +220,7 @@ def play_card(card, player, is_discarded, for_wonder, no_prereq=False):
 
     if is_discarded:
         player.money += 3
+        emitUpdate(player.id)
 
     elif for_wonder:
         wondercard = get_wonder_card(player)
