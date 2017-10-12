@@ -72,8 +72,6 @@ export class Header extends React.Component {
                                         alt="logo"
                                         width="200"
                                         src={`dist/images/background/7w_logo.png`}
-                                        padding="10px"
-                                        align="center"
                                     />
                                 </MenuItem>
                                 <Divider />
