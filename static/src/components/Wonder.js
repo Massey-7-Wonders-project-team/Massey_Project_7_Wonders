@@ -24,7 +24,7 @@ function Wonder(props) {
                         rows.map((wCard, index) => {
                             if (wCard) {
                                 return (
-                                    <TableRowColumn style={{ padding: 0 }} >
+                                    <TableRowColumn key={wCard} style={{ padding: 0 }} >
                                         <center>
                                             <img width="150" alt="Complete" src={'dist/images/icons/wonderCard.png'} />
                                         </center>

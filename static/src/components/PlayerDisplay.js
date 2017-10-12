@@ -174,7 +174,7 @@ export class PlayerDisplay extends Component {
                                                                                 { !homeWonder ?
                                                                                     <FlatButton label="Back to your Wonder" onTouchTap={this.lookUser} />
                                                                                     :
-                                                                                    <FlatButton label="" disabled={true} />
+                                                                                    <FlatButton label=" " disabled={true} />
                                                                                 }
                                                                             </CardActions>
                                                                             <CardMedia>

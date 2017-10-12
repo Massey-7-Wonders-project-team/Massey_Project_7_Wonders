@@ -67,7 +67,7 @@ export class GameScreen extends Component {
             });
         }
 
-        if (nextProps.game) {
+        if (nextProps.started) {
             if (!this.state.shownForRound &&
                 nextProps.game.game.round === 1 && nextProps.game.game.age !== 1) {
                 this.setState({
@@ -88,6 +88,11 @@ export class GameScreen extends Component {
                     ageDialog: true,
                 });
             }
+            if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1 ) {
+                this.setState({
+                    ageDialog: true,
+                });
+            }
         }
 
         if (nextProps.started && !this.state.polling) {
@@ -96,11 +101,7 @@ export class GameScreen extends Component {
             });
             this.pollGameStatus();
         }
-        if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1 ) {
-            this.setState({
-                ageDialog: true,
-            });
-        }
+
     }
 
     pollGameStatus() {
