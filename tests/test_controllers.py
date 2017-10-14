@@ -2,6 +2,7 @@ from testing_config import BaseTestConfig
 from flask_testing import TestCase
 from application.controllers.database_functions import *
 from application.controllers.card_logic import *
+from application.controllers.game_state_functions import *
 from manage import *
 from index import app
 
@@ -73,7 +74,6 @@ class TestControllersWithAlchemy(TestCase):
         
         self.assertTrue(process_card(card2,player,False,False))
         
-    '''
     def test_process_card_with_resource_cost(self):
         game = Game(age=1, round=1)
         user = User(email='a@a.com', name='test', password='testcase')
@@ -110,7 +110,7 @@ class TestControllersWithAlchemy(TestCase):
         #can play this one
         previous_military = player1.military
         self.assertTrue(process_card(stockade,player1,False,False))
-        self.assertEqual(previous_military+1, player1.military)'''
+        self.assertEqual(previous_military+1, player1.military)
     
     def test_process_card_discard(self):
         game = Game(age=1, round=1)
@@ -159,8 +159,8 @@ class TestControllersWithAlchemy(TestCase):
         player = Player(userId=user.id, gameId=game.id, name=user.name, money=0)
         db_committing_function(player)
         round = Round(cardId=timberYard.id, playerId=player.id)
-        #card_hist = Cardhist()
-        db_committing_function(round)#,card_hist)
+
+        db_committing_function(round)
         
         self.assertEqual(0,player.money)
         self.assertFalse(process_card(timberYard,player,False,False))
@@ -170,16 +170,11 @@ class TestControllersWithAlchemy(TestCase):
         self.assertTrue(process_card(timberYard,player,False,False))
         self.assertEqual(2,player.money)
         
-    '''
     def test_process_card_prerequisites(self):
         game = Game(age=1, round=1)
         user = User(email='a@a.com', name='test', password='testcase')
-        user1 = User(email='test1@test.com', name='test', password='tester')
-        user2 = User(email='test2@test.com', name='test', password='tester')
-        
-        test_card = Card('Card', 3, 1, 'grey')
-        test_card2 = Card('Card', 3, 1, 'grey')
-        apothecary = Card('Apothecary', 5, 1, 'green')
+
+        apothecary = Card('Apothecary', 3, 1, 'green')
         apothecary.giveResearch = 'compass'
         forum = Card('Forum', 3, 1, 'yellow')
         forum.giveCloth = 1
@@ -196,27 +191,99 @@ class TestControllersWithAlchemy(TestCase):
         stables.costOre = 1
         stables.prerequisite1 = 'Apothecary'
         
-        db_committing_function(user,game,test_card,test_card2,apothecary,forum,stables)
-        players = []
+        db_committing_function(user,game,apothecary,forum,stables)
         player = Player(gameId=game.id, userId=user.id, name=user.name)
-        players.append(player)
-        players.append(Player(gameId=game.id, userId=user1.id, name=user1.name))
-        players.append(Player(gameId=game.id, userId=user2.id, name=user2.name))
-        db_committing_function(players)
-        set_player_neighbours(players)
+        db_committing_function(player)
 
-        round2 = Round(cardId=apothecary.id, playerId=player.id)
-        round3a = Round(cardId=forum.id, playerId=player.id, round=2)
-        round3b = Round(cardId=stables.id, playerId=player.id, round=2)
-        db_committing_function(round2,round3a,round3b)
+        round1 = Round(cardId=apothecary.id, playerId=player.id)
+        round2 = Round(cardId=stables.id, playerId=player.id, round=2)
+        round3 = Round(cardId=forum.id, playerId=player.id, round=3)
+        db_committing_function(round1, round2, round3)
         
         self.assertTrue(process_card(apothecary,player,False,False))
         
-        #can't play this card
-        self.assertFalse(process_card(forum,player,False,False))
-        
         #can play this card
-        self.assertTrue(process_card(stables,player,False,False))'''
+        self.assertTrue(process_card(stables,player,False,False))
+        
+        #can't play this card
+        self.assertFalse(process_card(forum,player,False,False,trade=False))
+        
+    def test_process_card_wonder(self):
+        alex_0 = Card(name='alex_0', noPlayers=0, age=0, colour='wonder')
+        alex_0.giveGlass = 1
+        alex_1 = Card(name='alex_1', noPlayers=0, age=0, colour='wonder')
+        alex_1.costBrick = 2
+        alex_1.giveBrick = 1
+        alex_1.giveOre = 1
+        alex_1.giveStone = 1
+        alex_1.giveWood = 1
+        alex_1.resourceAlternating = True
+        alex_2 = Card(name='alex_2', noPlayers=0, age=0, colour='wonder')
+        alex_2.costWood = 2
+        alex_2.giveGlass = 1
+        alex_2.givePaper = 1
+        alex_2.giveCloth = 1
+        alex_2.resourceAlternating = True
+        alex_3 = Card(name='alex_3', noPlayers=0, age=0, colour='wonder')
+        alex_3.costStone = 3
+        alex_3.givePoints = 7
+        alex = Wonder(name="The Lighthouse of Alexandria", slots=3, card_0="alex_0", card_1="alex_1", card_2="alex_2", card_3="alex_3")
+        db_committing_function(alex,alex_0,alex_1,alex_2,alex_3)
+        
+        game = Game(age=1, round=1)
+        user = User(email='a@a.com', name='test', password='testcase')
+        db_committing_function(user,game)
+        player = Player(userId=user.id, gameId=game.id, name=user.name, wonder=alex.name, max_wonder=alex.slots)
+        db_committing_function(player)
+        
+        deal_wonders([player])
+        self.assertEqual(player.wonder, alex.name)
+        self.assertEqual(player.max_wonder, alex.slots)
+        self.assertEqual(player.glass, 1)
+        
+        #first wonder
+        card1 = Card('test', 3, 1, 'brown')
+        card1.costOre = 10
+        db_committing_function(card1)
+        round1 = Round(cardId=card1.id, playerId=player.id, round=game.round)
+        db_committing_function(round1)
+        
+        #second wonder
+        card2 = Card('test', 3, 1, 'brown')
+        card2.costOre = 10
+        db_committing_function(card2)
+        round2 = Round(cardId=card2.id, playerId=player.id, round=game.round+1)
+        db_committing_function(round2)
+        
+        #third wonder
+        card3 = Card('test', 3, 1, 'brown')
+        card3.costOre = 10
+        db_committing_function(card3)
+        round3 = Round(cardId=card3.id, playerId=player.id, round=game.round+2)
+        db_committing_function(round3)
+        
+        #first wonder
+        self.assertFalse(process_card(card1,player,False,True,trade=False))
+        player.brick = 2
+        db_committing_function(player)
+        self.assertTrue(process_card(card1,player,False,True,trade=False))
+        self.assertEqual(player.extra_brick, 1)
+        
+        #second wonder
+        self.assertFalse(process_card(card2,player,False,True,trade=False))
+        player.wood = 2
+        db_committing_function(player)
+        self.assertTrue(process_card(card2,player,False,True,trade=False))
+        self.assertEqual(player.extra_paper, 1)
+        
+        #third wonder
+        self.assertFalse(process_card(card3,player,False,True,trade=False))
+        player.stone = 3
+        db_committing_function(player)
+        self.assertTrue(process_card(card3,player,False,True,trade=False))
+        self.assertEqual(player.points, 7)
+        
+        
 
     def test_trade_not_enough_goods(self):
         user = User(email='test@test.com', name='test', password='tester')
@@ -312,3 +379,5 @@ class TestControllersWithAlchemy(TestCase):
             trade_info['total_cost'] == 2 and
             trade_info['possible'] is True
         )
+
+        
