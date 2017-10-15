@@ -54,9 +54,9 @@ export class GameScreen extends Component {
         this.hideAgeDialog = this.hideAgeDialog.bind(this);
     }
 
-    componentDidMount() {
-        this.props.checkGameStatus(this.props.playerId);
-    }
+    // componentDidMount() {
+    //     this.props.checkGameStatus(this.props.playerId);
+    // }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.cardValid === false) {
@@ -65,7 +65,7 @@ export class GameScreen extends Component {
             });
         }
 
-        if (nextProps.game) {
+        if (nextProps.game !== null) {
             if (!this.state.shownForRound &&
                 nextProps.game.game.round === 1 && nextProps.game.game.age !== 1) {
                 this.setState({
@@ -87,7 +87,7 @@ export class GameScreen extends Component {
             }
         }
 
-        if (nextProps.started && !this.state.polling) {
+        if (nextProps.started  && !this.state.polling) {
             this.setState({
                 polling: true,
             });
@@ -208,11 +208,11 @@ export class GameScreen extends Component {
                 onTouchTap={this.hideInvalidMoveError}
             />,
         ];
-        if (!started) {
-            this.playersLogged();
-        }
-
-        if (started && game.game.age) {
+        // if (!started) {
+        //     this.playersLogged();
+        // }
+        console.log(this.props.started)
+        if (started === true) {
           document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
         }
 

@@ -151,7 +151,13 @@ export function startGame(playerId) {
         })
         .then(response => response.json())
         .then((body) => {
-            dispatch(receiveStartGame({ game: body.game, started: true, players: body.players }));
+            console.log(body)
+            if (body.status === 'Started') {
+                dispatch(receiveStartGame({
+                    game: body.game, started: true, players: body.players,
+                }));
+            }
+            dispatch(receiveStartGame({ game: null, started: false, players: body.players }));
         })
         .catch((err) => {
             // catch error

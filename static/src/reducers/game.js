@@ -49,7 +49,7 @@ export default createReducer(initialState, {
         Object.assign({}, state, {
             game: payload.game,
             error: false,
-            started: true,
+            started: payload.started,
             loading: false,
             clearInterval: payload.clearInterval,
         }),

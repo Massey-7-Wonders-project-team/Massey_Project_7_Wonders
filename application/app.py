@@ -163,8 +163,43 @@ def single_player(user):
     )
 
 
-# @app.route("/api/game/status", methods=["GET"])
-# @requires_auth
+@app.route("/api/game/status", methods=["GET"])
+@requires_auth
+def game_status():
+    """ Send the status of a game
+     Inputs - player_id
+     Output
+        Game not started - status comment, playerCount
+        Game started - status comment, game (player, cards), playerCount """
+    # firstly check game has started
+    try:
+        player = get_player(request.args.get('player_id'))
+        game = get_game(player=player)
+        players = get_players(player=player)
+        player_count = len(players)
+
+        if not game.started:
+            return jsonify(
+                status="Waiting",
+                playerCount=player_count
+            )
+        elif game.complete:
+            return jsonify(
+                status="Completed",
+                game=print_json(player, players=players, game=game),
+                players=player_count
+            )
+        else:
+            return jsonify(
+                status="Started",
+                game=print_json(player, players=players, game=game),
+                players=player_count
+            )
+
+    except Exception as e:
+        print(e)
+        return jsonify(message="There was an error"), 500
+
 def emit_update(id):
     """ Send the status of a game
      Inputs - player_id
@@ -240,6 +275,8 @@ def begin_game():
         # Game can begin
         game = get_game(player=player)
         game.started = True
+
+        emit('started')
 
         # Sets up neighbours and first round
         set_player_neighbours(players)
