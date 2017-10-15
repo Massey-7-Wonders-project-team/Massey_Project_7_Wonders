@@ -10,8 +10,10 @@ dependencies:
 
 test:
     override:
-        - python test.py --cov-report=term --cov-report=xml --cov-report=html --cov=application/ tests/
-
+        - mkdir -p $CIRCLE_TEST_REPORTS/reports:
+            parallel: true
+        - python test.py --cov-report=term --cov-report=xml --cov-report=html --cov=application/ tests/:
+            parallel: true
     post:
         - mv coverage.xml $CIRCLE_TEST_REPORTS/reports/coverage.xml
         - npm run test
