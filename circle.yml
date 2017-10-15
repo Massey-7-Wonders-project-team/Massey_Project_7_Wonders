@@ -12,7 +12,7 @@ test:
     override:
         - mkdir -p $CIRCLE_TEST_REPORTS/reports:
             parallel: true
-        - python test.py --junit-xml=pytest.xml --cov=application/ tests/:
+        - python test.py --junit-xml=coverage.xml --cov=application/ tests/:
             parallel: true
     post:
         - mv coverage.xml $CIRCLE_TEST_REPORTS/reports/coverage.xml
