@@ -13,3 +13,4 @@ static/dist
 /static/coverage
 htmlcov
 coverage.xml
+junit.xml

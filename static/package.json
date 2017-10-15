@@ -60,6 +60,7 @@
     "http-proxy": "^1.12.0",
     "imports-loader": "^0.6.5",
     "jest": "^20.0.4",
+    "jest-junit": "^3.1.0",
     "jwt-decode": "^2.1.0",
     "less": "^2.5.3",
     "less-loader": "^2.2.2",
@@ -86,7 +87,7 @@
   "dependencies": {
     "autoprefixer": "^7.1.2",
     "axios": "^0.16.2",
-    "babel-polyfill": "^6.26.0",		
+    "babel-polyfill": "^6.26.0",
     "es6-promise": "^4.1.1",
     "isomorphic-fetch": "^2.2.1",
     "material-ui": "^0.16.4",
@@ -102,6 +103,7 @@
     "redux": "^3.2.1"
   },
   "jest": {
-    "collectCoverage": true
+    "collectCoverage": true,
+    "testResultsProcessor": "jest-junit"
   }
 }

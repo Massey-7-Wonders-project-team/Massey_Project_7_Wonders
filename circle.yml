@@ -17,4 +17,4 @@ test:
     post:
         - mv coverage.xml $CIRCLE_TEST_REPORTS/reports/coverage.xml
         - npm run test
-        - mv static/coverage/clover.xml $CIRCLE_TEST_REPORTS/reports/clover.xml
+        - mv static/junit.xml $CIRCLE_TEST_REPORTS/reports/junit.xml
