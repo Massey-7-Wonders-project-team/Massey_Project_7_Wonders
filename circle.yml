@@ -17,5 +17,5 @@ test:
     post:
         - mv coverage.xml $CIRCLE_TEST_REPORTS/reports/coverage.xml
         - npm run test:coveralls
-        - cat ./coverage/lcov.info | coveralls
+        - cat static/coverage/lcov.info | coveralls
         - mv static/junit.xml $CIRCLE_TEST_REPORTS/reports/junit.xml
