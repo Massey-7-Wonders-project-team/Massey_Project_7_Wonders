@@ -11,7 +11,8 @@
     "start": "node bin/server.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:browser": "nightwatch"
+    "test:browser": "nightwatch",
+    "test:coveralls": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,7 @@
     "babel-preset-react-hmre": "^1.0.1",
     "babel-preset-stage-0": "^6.3.13",
     "copy-webpack-plugin": "^4.0.1",
+    "coveralls": "^3.0.0",
     "css-loader": "^0.26.1",
     "enzyme": "^2.9.1",
     "eslint": "^3.17.1",
