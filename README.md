@@ -59,6 +59,13 @@ You will need a production frontend build if you are running this way
 python test.py tests/
 ```
 
+To produce test coverage we use the pytest-cov package. See [here](https://pypi.python.org/pypi/pytest-cov) for more info.
+E.g.:
+```sh
+python test.py --cov-report=term --cov=application/ tests/
+```
+Will show the test coverage in the terminal
+
 #### Run Front-End
 
 ```sh
@@ -82,6 +89,8 @@ Will run the frontend test suite
 
 If you want to run the test in watch mode run:
 `npm run test:watch`
+
+The coverage will automatically be shown in the terminal
 
 #### Browser tests
 Step 1:
