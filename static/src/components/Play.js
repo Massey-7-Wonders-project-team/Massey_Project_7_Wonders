@@ -228,7 +228,7 @@ export class Play extends React.Component {
                 }
                 {game && this.props.game &&
                 <div>
-                    <div style={{ float: 'left', marginRight: 0, paddingTop: 0, paddingLeft: 50, width: '20%' }}>>
+                    <div style={{ float: 'left', marginRight: 0, paddingTop: 0, paddingLeft: 50, width: '20%' }}>
                         <h3 style={{ marginTop: 0}}>
                             <b>Age: {this.props.game.game.age} -
                             Round: {this.props.game.game.round}
