@@ -1,5 +1,6 @@
 # Massey_Project_7_Wonders
 7 Wonders implementation for Massey capstone project
+[![Build Status](https://circleci.com/gh/Massey-7-Wonders-project-team/Massey_Project_7_Wonders.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/Massey-7-Wonders-project-team/Massey_Project_7_Wonders/) [![Coverage Status](https://img.shields.io/coveralls/Massey-7-Wonders-project-team/Massey_Project_7_Wonders/master.svg?style=flat)](https://coveralls.io/github/Massey-7-Wonders-project-team/Massey_Project_7_Wonders?branch=master)
 
 ## Getting Started
 
