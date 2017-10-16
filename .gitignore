@@ -10,3 +10,7 @@ static/dist
 *.log
 /static/reports
 .idea/*
+/static/coverage
+htmlcov
+coverage.xml
+junit.xml

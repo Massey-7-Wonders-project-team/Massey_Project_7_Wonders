@@ -10,6 +10,13 @@ dependencies:
 
 test:
     override:
-        - python test.py tests/
+        - mkdir -p $CIRCLE_TEST_REPORTS/reports:
+            parallel: true
+        - python test.py --junit-xml=coverage.xml --cov=application/ tests/:
+            parallel: true
     post:
-        - npm run test
+        - mv coverage.xml $CIRCLE_TEST_REPORTS/reports/coverage.xml
+        - npm run test:coveralls
+        - cat static/coverage/lcov.info | static/node_modules/coveralls/bin/coveralls.js
+        - mv static/junit.xml $CIRCLE_TEST_REPORTS/reports/junit.xml
+        - coveralls

@@ -1,5 +1,7 @@
 # Massey_Project_7_Wonders
 7 Wonders implementation for Massey capstone project
+[![Build Status](https://circleci.com/gh/Massey-7-Wonders-project-team/Massey_Project_7_Wonders.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/Massey-7-Wonders-project-team/Massey_Project_7_Wonders/)
+[![Coverage Status](https://coveralls.io/repos/github/Massey-7-Wonders-project-team/Massey_Project_7_Wonders/badge.svg)](https://coveralls.io/github/Massey-7-Wonders-project-team/Massey_Project_7_Wonders)
 
 ## Getting Started
 
@@ -59,6 +61,13 @@ You will need a production frontend build if you are running this way
 python test.py tests/
 ```
 
+To produce test coverage we use the pytest-cov package. See [here](https://pypi.python.org/pypi/pytest-cov) for more info.
+E.g.:
+```sh
+python test.py --cov-report=term --cov=application/ tests/
+```
+Will show the test coverage in the terminal
+
 #### Run Front-End
 
 ```sh
@@ -82,6 +91,8 @@ Will run the frontend test suite
 
 If you want to run the test in watch mode run:
 `npm run test:watch`
+
+The coverage will automatically be shown in the terminal
 
 #### Browser tests
 Step 1:
