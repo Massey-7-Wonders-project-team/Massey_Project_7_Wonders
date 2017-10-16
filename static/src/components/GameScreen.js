@@ -206,7 +206,6 @@ export class GameScreen extends Component {
 
     getNeighbourArmy() {
         const userArmy = this.props.game.player;
-        const userProfile = this.props.game.player;
         const leftArmy = this.search(this.props.game.player.left_id);
         const rightArmy = this.search(this.props.game.player.right_id);
         return  {
@@ -221,10 +220,10 @@ export class GameScreen extends Component {
         const myArray = this.props.game.allPlayers;
         for (var i=0; i < myArray.length; i++) {
             if (myArray[i].id === searchID) {
-                return myArray[i];
+                data = myArray[i];
             }
         }
-        return null;
+        return data;
     }
 
     render() {

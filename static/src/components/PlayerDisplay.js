@@ -94,8 +94,8 @@ export class PlayerDisplay extends Component {
         var data = {};
         const myArray = this.props.game.history;
         for (var i = 0; i < myArray.length; i++) {
-            const cardArray = myArray[i];
-            if (cardArray[0].playerId === nameKey) {
+            const cardArray = myArray[i][0];
+            if (cardArray.playerId === nameKey) {
                 data = myArray[i];
             }
         }
