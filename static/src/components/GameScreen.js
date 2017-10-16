@@ -204,28 +204,6 @@ export class GameScreen extends Component {
       });
     }
 
-    getNeighbourArmy() {
-        const userArmy = this.props.game.player;
-        const leftArmy = this.search(this.props.game.player.left_id);
-        const rightArmy = this.search(this.props.game.player.right_id);
-        return  {
-            militaryLevel: [leftArmy.military, userArmy.military, rightArmy.military],
-            militaryUsers: [leftArmy.profile, userArmy.profile, rightArmy.profile],
-            age: this.props.game.game.age
-        };
-    }
-
-    search(searchID) {
-        var data = {};
-        const myArray = this.props.game.allPlayers;
-        for (var i=0; i < myArray.length; i++) {
-            if (myArray[i].id === searchID) {
-                data = myArray[i];
-            }
-        }
-        return data;
-    }
-
     render() {
         const { error, game, started, loading } = this.props;
         const { showPlayCardError, showScoreBoard, showInvalidMoveError } = this.state;
@@ -244,10 +222,8 @@ export class GameScreen extends Component {
         if (!started) {
             this.playersLogged();
         }
-        let armyList = null;
         if (started && game.game.age) {
             document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
-            armyList = this.getNeighbourArmy();
         }
 
         return (
