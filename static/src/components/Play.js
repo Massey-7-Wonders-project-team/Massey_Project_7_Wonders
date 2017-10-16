@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { browserHistory } from 'react-router';
 import * as actions from '../actions/game';
 import GameScreen from './GameScreen';
+import MilitaryUpdate from './MilitaryUpdate';
 
 function mapStateToProps(state) {
     return {
@@ -43,6 +44,8 @@ export class Play extends React.Component {
             playerCount: null,
             pollId: null,
             single: false,
+            militaryDialog: false,
+            militaryOnce: false,
         };
         this.createGame = this.createGame.bind(this);
         this.gameStatusCheck = this.gameStatusCheck.bind(this);
@@ -51,6 +54,7 @@ export class Play extends React.Component {
         this.endGameDialog = this.endGameDialog.bind(this);
         this.setPollId = this.setPollId.bind(this);
         this.updateCheck = this.updateCheck.bind(this);
+        this.hideArmyDialog = this.hideArmyDialog.bind(this);
     }
 
     componentDidMount() {
@@ -60,7 +64,10 @@ export class Play extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.clearInterval === true) {
-            this.endGame();
+            this.setState({
+                militaryDialog: true,
+                militaryOnce: true,
+            })
         }
     }
 
@@ -84,6 +91,7 @@ export class Play extends React.Component {
                     error: false,
                     playerId: body.player_id,
                     playerCount: body.playerCount,
+                    militaryOnce: false,
                 });
             } else {
                 this.setState({
@@ -176,6 +184,13 @@ export class Play extends React.Component {
         });
      }
 
+     hideArmyDialog() {
+         this.setState({
+             militaryDialog: false,
+         });
+         this.endGame();
+     }
+
     render() {
         const { game, error, playerId, endGame, playerCount } = this.state;
         const primary = true;
@@ -264,6 +279,24 @@ export class Play extends React.Component {
                     >
                       Ending the game cannot be undone and ends it for all players.
                     </Dialog>
+                }
+                {this.state.militaryDialog && this.state.militaryOnce &&
+                  <Dialog
+                      id="armyDialog"
+                      title={`Military Updates at end of Age 3`}
+                      actions={
+                          <FlatButton
+                              label="Close"
+                              primary={true}
+                              onClick={this.hideArmyDialog}
+                          />
+                      }
+                      open={this.state.militaryDialog}
+                      onRequestClose={this.hideArmyDialog}
+                      contentStyle={{ width: '100%' }}
+                  >
+                      <MilitaryUpdate data={this.props.game} />
+                  </Dialog>
                 }
             </div>
         );

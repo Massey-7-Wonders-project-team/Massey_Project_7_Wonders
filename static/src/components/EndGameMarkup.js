@@ -24,7 +24,7 @@ const EndGameMarkup = props =>
             stripedRows={tableTrue}
         >
             {props.players.map(player =>
-                <TableRow key={player.name}>
+                <TableRow key={player.profile}>
                     <TableRowColumn> {player.profile} </TableRowColumn>
                     <TableRowColumn> {player.points} </TableRowColumn>
                     <TableRowColumn> {player.money} </TableRowColumn>
@@ -41,7 +41,7 @@ const EndGameMarkup = props =>
     </Table>;
 
 EndGameMarkup.propTypes = {
-    players: PropTypes.array.isRequired,
+    players: PropTypes.object.isRequired,
     player: PropTypes.object.isRequired,
 };
 

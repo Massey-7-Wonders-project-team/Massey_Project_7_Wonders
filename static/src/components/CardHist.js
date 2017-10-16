@@ -82,7 +82,7 @@ function CardHist(props) {
 }
 
 CardHist.propTypes = {
-    history: PropTypes.object.isRequired,
+    history: PropTypes.array.isRequired,
 };
 
 export default CardHist;

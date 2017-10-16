@@ -7,6 +7,7 @@ import * as actions from '../actions/game';
 import { poll } from '../utils/misc';
 import PlayerDisplay from './PlayerDisplay';
 import EndScreen from './EndScreen';
+import MilitaryUpdate from './MilitaryUpdate';
 
 function mapStateToProps(state) {
     return {
@@ -37,6 +38,8 @@ export class GameScreen extends Component {
             endOfRound: false,
             ageDialog: false,
             ageDialogDisplayOnce: false,
+            armyDialog: false,
+            armyDialogDisplayOnce: false,
             showScoreBoard: false,
             shownForRound: false,
             endGameScoreboard: false,
@@ -49,6 +52,7 @@ export class GameScreen extends Component {
         this.hideScoreboard = this.hideScoreboard.bind(this);
         this.hideInvalidMoveError = this.hideInvalidMoveError.bind(this);
         this.hideAgeDialog = this.hideAgeDialog.bind(this);
+        this.hideArmyDialog = this.hideArmyDialog.bind(this);
     }
 
     componentDidMount() {
@@ -63,22 +67,28 @@ export class GameScreen extends Component {
             });
         }
 
-        if (nextProps.game) {
+        if (nextProps.started) {
             if (!this.state.shownForRound &&
                 nextProps.game.game.round === 1 && nextProps.game.game.age !== 1) {
                 this.setState({
-                    showScoreBoard: true,
-                    shownForRound: true,
+                    armyDialog: true,
                 });
             }
             if (nextProps.game.game.round === 2) {
                 this.setState({
-                    shownForRound: false,
-                    ageDialogDisplayOnce: false,
-                    ageDialog: false,
+                  shownForRound: false,
+                  ageDialogDisplayOnce: false,
+                  ageDialog: false,
+                  armyDialog: false,
+                  armyDialogDisplayOnce: false
                 });
             }
             if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1) {
+                this.setState({
+                    ageDialog: true,
+                });
+            }
+            if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1 ) {
                 this.setState({
                     ageDialog: true,
                 });
@@ -91,6 +101,7 @@ export class GameScreen extends Component {
             });
             this.pollGameStatus();
         }
+
     }
 
     pollGameStatus() {
@@ -106,8 +117,6 @@ export class GameScreen extends Component {
         }
         this.props.startGame(this.props.playerId);
     }
-
-    // playCard(playerId, cardId, discarded, wonder, trade)
 
     playCard(cardId) {
         if (!this.props.cardPlayed) {
@@ -166,6 +175,14 @@ export class GameScreen extends Component {
         });
     }
 
+    hideArmyDialog() {
+        this.setState({
+            armyDialog: false,
+            armyDialogDisplayOnce: true,
+            showScoreBoard: true,
+        });
+    }
+
     playersLogged() {
         const token = localStorage.getItem('token');
         fetch(`/api/game/status?player_id=${this.props.playerId}`, {
@@ -205,9 +222,8 @@ export class GameScreen extends Component {
         if (!started) {
             this.playersLogged();
         }
-
         if (started && game.game.age) {
-          document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
+            document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
         }
 
         return (
@@ -246,9 +262,26 @@ export class GameScreen extends Component {
                                     contentStyle={{ width: '40%' }}
                                 >
                                   <center><div>
-
-                                      <img alt="" width={'100%'} src={`dist/images/icons/age${game.game.age}cards.png`} />
+                                      <img alt="Age_image" height={'100%'} src={`dist/images/icons/age${game.game.age}cards.png`} />
                                   </div></center>
+                                </Dialog>
+                            }
+                            {this.state.armyDialog && !this.state.armyDialogDisplayOnce &&
+                                <Dialog
+                                    id="armyDialog"
+                                    title={`Military Updates at end of Age ${game.game.age - 1}`}
+                                    actions={
+                                        <FlatButton
+                                            label="Close"
+                                            primary={true}
+                                            onClick={this.hideArmyDialog}
+                                        />
+                                    }
+                                    open={this.state.armyDialog}
+                                    onRequestClose={this.hideArmyDialog}
+                                    contentStyle={{ width: '100%' }}
+                                >
+                                    <MilitaryUpdate data={this.props.game} />
                                 </Dialog>
                             }
                             <div>
