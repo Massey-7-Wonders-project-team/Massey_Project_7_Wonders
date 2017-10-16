@@ -10,6 +10,7 @@ const EndGameMarkup = props =>
             displaySelectALl={tableFalse}
             endableSelectAll={tableFalse}
             displayRowCheckbox={tableFalse}
+            adjustForCheckbox={tableFalse}
         >
             <TableRow>
                 <TableHeaderColumn>Name</TableHeaderColumn>

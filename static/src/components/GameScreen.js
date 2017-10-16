@@ -31,6 +31,7 @@ export class GameScreen extends Component {
         this.state = {
             polling: false,
             showPlayCardError: false,
+            showDiscarded: false,
             pollId: null,
             playerCount: null,
             ready: false,
@@ -120,6 +121,12 @@ export class GameScreen extends Component {
     }
 
     wonderCard(cardId) {
+        if (cardId === 100) {
+            this.setState({
+              showDiscarded:true,
+            });
+        // not actually 100 need to find out what card id is for halacaneses couldnt find card data.
+        }
         if (!this.props.cardPlayed) {
             this.props.playCard(this.props.playerId, cardId, false, true, true);
         } else {
@@ -127,7 +134,7 @@ export class GameScreen extends Component {
                 showPlayCardError: true,
             });
         }
-    }
+      }
 
     discard(cardId) {
         if (!this.props.cardPlayed) {
@@ -166,6 +173,12 @@ export class GameScreen extends Component {
         });
     }
 
+    hideDiscarded() {
+      this.setState({
+        showDiscarded: false,
+      })
+    }
+
     playersLogged() {
         const token = localStorage.getItem('token');
         fetch(`/api/game/status?player_id=${this.props.playerId}`, {
@@ -189,7 +202,7 @@ export class GameScreen extends Component {
 
     render() {
         const { error, game, started, loading } = this.props;
-        const { showPlayCardError, showScoreBoard, showInvalidMoveError } = this.state;
+        const { showPlayCardError, showScoreBoard, showInvalidMoveError, showDiscarded } = this.state;
         const showPlayCardActions = [
             <FlatButton
                 label="Ok"
@@ -207,7 +220,7 @@ export class GameScreen extends Component {
         }
 
         if (started && game.game.age) {
-          document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
+            document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
         }
 
         return (
@@ -259,44 +272,97 @@ export class GameScreen extends Component {
                                     />
                                 }
                             </div>
-                            <center>
-                            {game.cards && game.cards[0].name &&
-                                game.cards.map((card, index) => {
-                                    const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
-                                    return (
-                                        <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
-                                            <CardTitle
-                                                title={card.name}
-                                                titleStyle={{ fontSize: 18 }}
-                                                style={{ padding: 3, height: 75 }}
+                            <div>
+                                {showDiscarded &&
+                                    <Dialog
+                                        title={'Play a card from the discard pile...'}
+                                        actions={
+                                            <FlatButton
+                                                label="Close.."
+                                                primary={true}
+                                                onTouchTap={this.hideDiscarded}
                                             />
-                                            <CardMedia>
-                                                <img
-                                                    alt={`${card.name} image`}
-                                                    src={`dist/images/cards/${imageName}.png`}
+                                        }
+                                        open={this.state.showDiscarded}
+                                        onRequestClose={this.hideDiscarded}
+                                    >
+                                        {game.cards && game.cards[0].name && // need to change all card to discard when sent
+                                          game.cards.map((card, index) => {
+                                              const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
+                                              return (
+                                                  <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
+                                                      <CardTitle
+                                                          title={card.name}
+                                                          titleStyle={{ fontSize: 18 }}
+                                                          style={{ padding: 3, height: 75 }}
+                                                      />
+                                                      <CardMedia>
+                                                          <img
+                                                              alt={`${card.name} image`}
+                                                              src={`dist/images/cards/${imageName}.png`}
+                                                          />
+                                                      </CardMedia>
+                                                      <CardActions>
+                                                          <FlatButton
+                                                              label="Play Card"
+                                                              className="PlayCardButton"
+                                                              onTouchTap={() => this.playCard(card.id) && this.hideDiscarded()}
+                                                          />
+                                                          <FlatButton
+                                                              label="Wonder" // may need to delete as unsure if special card can play to wonder or discard
+                                                              onTouchTap={() => this.wonderCard(card.id) && this.hideDiscarded()}
+                                                          />
+                                                          <FlatButton
+                                                              label="Discard"
+                                                              className="DiscardCardButton"
+                                                              onTouchTap={() => this.discard(card.id) && this.hideDiscarded()}
+                                                          />
+                                                      </CardActions>
+                                                  </Card>
+                                              );
+                                          })
+                                        }
+                                    </Dialog>
+                                }
+                            </div>
+                            <center>
+                                {game.cards && game.cards[0].name &&
+                                    game.cards.map((card, index) => {
+                                        const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
+                                        return (
+                                            <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
+                                                <CardTitle
+                                                    title={card.name}
+                                                    titleStyle={{ fontSize: 18 }}
+                                                    style={{ padding: 3, height: 75 }}
                                                 />
-                                            </CardMedia>
-                                            <CardActions>
-                                                <FlatButton
-                                                    label="Play Card"
-                                                    className="PlayCardButton"
-                                                    onTouchTap={() => this.playCard(card.id)}
-                                                />
-                                                <FlatButton
-                                                    label="Wonder"
-                                                    onTouchTap={() => this.wonderCard(card.id)}
-                                                />
-                                                <FlatButton
-                                                    label="Discard"
-                                                    className="DiscardCardButton"
-                                                    onTouchTap={() => this.discard(card.id)}
-                                                />
-                                            </CardActions>
-                                        </Card>
-                                    );
-                                })
-                            }
-                        </center>
+                                                <CardMedia>
+                                                    <img
+                                                        alt={`${card.name} image`}
+                                                        src={`dist/images/cards/${imageName}.png`}
+                                                    />
+                                                </CardMedia>
+                                                <CardActions>
+                                                    <FlatButton
+                                                        label="Play Card"
+                                                        className="PlayCardButton"
+                                                        onTouchTap={() => this.playCard(card.id)}
+                                                    />
+                                                    <FlatButton
+                                                        label="Wonder"
+                                                        onTouchTap={() => this.wonderCard(card.id)}
+                                                    />
+                                                    <FlatButton
+                                                        label="Discard"
+                                                        className="DiscardCardButton"
+                                                        onTouchTap={() => this.discard(card.id)}
+                                                    />
+                                                </CardActions>
+                                            </Card>
+                                        );
+                                    })
+                                }
+                            </center>
                         </div>
                         <div>
                             <PlayerDisplay playerId={this.props.playerId} />
