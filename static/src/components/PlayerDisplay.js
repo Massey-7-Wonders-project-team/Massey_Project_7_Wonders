@@ -111,7 +111,7 @@ export class PlayerDisplay extends Component {
             paddingTop: 0,
         };
         const inventorycustomColumnStyle = {
-            paddingTop: 0, width: 100 };
+            paddingTop: 0, width: 140 };
         let imageName = '';
         if (true) {
             const longCityNameArray = (boardData.wonder).split(' ');
@@ -127,7 +127,7 @@ export class PlayerDisplay extends Component {
             homeWonder = true;
         }
         return (
-            <div>
+            <div style={{ paddingLeft: 100, paddingRight: 100 }}>
                 {game && !error && started && boardData &&
                     <div>
                         {
@@ -143,14 +143,6 @@ export class PlayerDisplay extends Component {
                                                     expanded={this.state.expanded}
                                                     onExpandChange={this.handleExpandChange}
                                                 >
-                                                    <CardHeader
-                                                        id="CardHeader"
-                                                        title={pName}
-                                                        subtitle={boardData.wonder}
-                                                        avatar={<Avatar src={`dist/images/cards/age${game.game.age}.png`} size={55} />}
-                                                        actAsExpander={true}
-                                                        showExpandableButton={true}
-                                                    />
                                                     <CardText id="CardText" style={{ paddingBottom: 0, paddingTop: 0 }}>
                                                         <div>
                                                             <Table>
@@ -170,14 +162,17 @@ export class PlayerDisplay extends Component {
                                                                             </List>
                                                                         </TableRowColumn>
                                                                         <TableRowColumn>
-                                                                            <CardActions>
-                                                                                { !homeWonder ?
-                                                                                    <FlatButton label="Back to your Wonder" onTouchTap={this.lookUser} />
-                                                                                    :
-                                                                                    <FlatButton label=" " disabled={true} />
+                                                                            <CardMedia
+                                                                                style={{ clear: 'left', paddingTop: 10 }}
+                                                                                overlay={
+                                                                                    <CardTitle
+                                                                                        title={boardData.profile}
+                                                                                        subtitle={boardData.wonder}
+                                                                                    />
                                                                                 }
-                                                                            </CardActions>
-                                                                            <CardMedia>
+                                                                                overlayContainerStyle={{ paddingBottom: '10%' }}
+                                                                                overlayContentStyle={{ background: null }}
+                                                                            >
                                                                                 <img alt="" src={`dist/images/cities/${imageName}B.png`} />
                                                                             </CardMedia>
                                                                             <Wonder boardData={boardData} />
@@ -185,30 +180,24 @@ export class PlayerDisplay extends Component {
                                                                         <TableRowColumn
                                                                             style={inventorycustomColumnStyle}
                                                                         >
+                                                                            { !homeWonder ?
+                                                                                <FlatButton style={{ align: 'left' }} label="Your Wonder" onTouchTap={this.lookUser} />
+                                                                                :
+                                                                                <FlatButton label=" " disabled={true} />
+                                                                            }
+
                                                                             <List style={ListStyle}>
                                                                                 <Inventory item="vp" amount={boardData.points} />
                                                                                 <Inventory item="coin" amount={boardData.money} />
                                                                                 <Inventory item={`pyramid-stage${boardData.wonder_level}`} amount={boardData.wonder_level} />
-                                                                            </List>
-                                                                        </TableRowColumn>
-                                                                        <TableRowColumn
-                                                                            style={inventorycustomColumnStyle}
-                                                                        >
-                                                                            <List id="buildings" style={ListStyle}>
                                                                                 <Inventory item="military" amount={boardData.military} />
                                                                                 <Inventory item="victoryminus1" amount={boardData.military_loss} />
-                                                                                <Inventory item="cog" amount={boardData.cog} />
-                                                                                <Inventory item="tablet" amount={boardData.tablet} />
-                                                                                <Inventory item="compass" amount={boardData.compass} />
                                                                             </List>
                                                                         </TableRowColumn>
                                                                     </TableRow>
                                                                 </TableBody>
                                                             </Table>
                                                         </div>
-                                                    </CardText>
-                                                    <CardText id="played_cards" expandable={true}>
-                                                        <CardHist history={historyData} />
                                                     </CardText>
                                                 </Card>
                                             </TableRowColumn>
@@ -220,7 +209,19 @@ export class PlayerDisplay extends Component {
                                 </Table>
                             </div>
 
-                          }
+                        }
+                        <div style={{ padding: 73, paddingTop: 2, paddingBottom: 2 }} >
+                            <Card>
+                                <CardHeader
+                                    title={`${pName}'s Played Cards`}
+                                    actAsExpander={true}
+                                    showExpandableButton={true}
+                                />
+                                <CardText id="played_cards" expandable={true}>
+                                    <CardHist history={historyData} />
+                                </CardText>
+                            </Card>
+                        </div>
                     </div>
                 }
             </div>
