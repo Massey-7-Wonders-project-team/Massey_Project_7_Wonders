@@ -24,6 +24,15 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(actions, dispatch);
 }
 
+const style = {
+    padding: '50px 0',
+    margin: '20px auto',
+    textAlign: 'center',
+    display: 'block',
+    overflow: 'hidden',
+};
+
+
 export class GameScreen extends Component {
 
     constructor() {
@@ -326,8 +335,8 @@ export class GameScreen extends Component {
                 <div>
                     <div style={{ float: 'left', padding: 20 }}>
                         {!error && !game && !started &&
-                          <div>
-                              <div id="GC" style={{ width: 500 }}>
+                          <div style={style}>
+                              <div id="GC">
                                   <h2> Game creation...</h2>
                               </div>
                               <div style={{ padding: 20 }} >
