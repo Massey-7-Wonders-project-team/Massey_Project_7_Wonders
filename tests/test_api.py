@@ -5,7 +5,6 @@ from application.utils import auth
 from application.controllers.database_functions import *
 from index import app
 
-
 class TestAPI(BaseTestConfig):
     some_user = {
         "email": "one@gmail.com",

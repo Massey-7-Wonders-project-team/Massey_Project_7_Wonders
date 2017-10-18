@@ -48,6 +48,7 @@ def create_user():
 
     return jsonify(
         id=user.id,
+        profile=user.name,
         token=generate_token(new_user)
     )
 
@@ -268,7 +269,7 @@ def play_card():
     from_discard_pile = false_true(request.args.get('from_discard_pile'))
     trade = false_true(request.args.get('trade'))
 
-    if process_card(card, player, discarded, for_wonder, from_discard_pile=from_discard_pile, trade=trade):
+    if process_card(card, player, discarded, for_wonder, from_discard_pile=from_discard_pile, tr=trade):
         return jsonify(status="Card played")
     else:
         return jsonify(
