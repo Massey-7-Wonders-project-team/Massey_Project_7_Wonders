@@ -4,7 +4,6 @@ import json
 from application.utils import auth
 from application.controllers.database_functions import *
 from index import app
-"""
 
 class TestAPI(BaseTestConfig):
     some_user = {
@@ -385,4 +384,3 @@ class TestAPIAlchemy(TestCase):
         self.assertTrue(get_cards(player=player, history=True))
 
     # TODO Test wonder card track
-"""

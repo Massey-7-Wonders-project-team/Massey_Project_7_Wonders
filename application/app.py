@@ -212,6 +212,7 @@ def begin_game():
         Game not started - status comment
         Game started - status comment, game (player, cards)"""
     player = get_player(request.args.get('player_id'))
+    print("hi")
 
     # Only continues if player was not already set as ready
     if player.ready is False:
@@ -269,7 +270,7 @@ def play_card():
     from_discard_pile = false_true(request.args.get('from_discard_pile'))
     trade = false_true(request.args.get('trade'))
 
-    if process_card(card, player, discarded, for_wonder, from_discard_pile=from_discard_pile, trade=trade):
+    if process_card(card, player, discarded, for_wonder, from_discard_pile=from_discard_pile, tr=trade):
         return jsonify(status="Card played")
     else:
         return jsonify(

@@ -5,7 +5,7 @@ from .game_state_functions import *
 from .ai import *
 
 
-def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None, trade=True):
+def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None, tr=True):
     """Called from play_card API endpoint, plays card, updates DB, and checks if able to go to next turn
     Returns false if card unable to be played, otherwise true"""
     game_info = get_game(player=player)
@@ -29,21 +29,22 @@ def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None,
 
         # Attempts to play the card
         if not play_card(card, player, is_discarded, for_wonder):
-            if trade:
-                success, info = calculate_trades(card, player)
-                if not success or info is None or info['total_cost'] > player.money:
+            if tr:
+                stats = trade(card, player)
+                if not stats['possible'] or stats['left']['cost'] + stats['right']['cost'] > player.money:
                     return False
 
                 play_card(card, player, False, for_wonder, no_prereq=True)
-                player.money -= info['total_cost']
+                player.money -= stats['left']['cost'] + stats['right']['cost']
                 player_left = get_player(player.left_id).money
-                player_left += info['left_cost']
+                player_left += stats['left']['cost']
                 player_right = get_player(player.right_id).money
-                player_right += info['right_cost']
+                player_right += stats['right']['cost']
+                print(player, player_left, player_right)
                 db_committing_function(player, player_left, player_right)
 
-                print("Trade used for card: ", card.name)
-                print("Costs", info)
+                print("Trade used for card:", card.name)
+                print("Trade info:", stats)
 
             else:
                 return False
@@ -70,13 +71,10 @@ def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None,
 
 
 def trade(card, player, trade=True):
-    # Get cards
-    cards = [c for c in get_cards(player=player, history=True) if not c.colour == 'yellow' and not c.colour == 'wonder' or c.colour == 'wonder' and c.name.endswith('_0')]
-    print(c.serialise() for c in cards)
+    # Get cards (yellow and non-base resource wonder cards are not used for trade)
+    cards = [c for c in get_cards(player=player, history=True)]
     left_cards = [c for c in get_cards(player=get_player(player.left_id), history=True) if not c.colour == 'yellow' and not c.colour == 'wonder' or c.colour == 'wonder' and c.name.endswith('_0')]
     right_cards = [c for c in get_cards(player=get_player(player.right_id), history=True) if not c.colour == 'yellow' and not c.colour == 'wonder' or c.colour == 'wonder' and c.name.endswith('_0')]
-    print(c.serialise() for c in left_cards)
-
 
     # Process cards into queue
     needed = get_card_requirements(card)
@@ -93,7 +91,7 @@ def trade(card, player, trade=True):
 
     # Allocate resources
     stats = []
-    assign_cards(card_options, needed, 0, stats, {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False}, [])
+    assign_cards(card_options, needed, 0, stats, {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False})
 
     # Keep possible combinations and return the lowest cost possibility
     stats = [i for i in stats if i['possible']]
@@ -104,41 +102,52 @@ def trade(card, player, trade=True):
         return {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False}
 
 
-def assign_cards(card_options, needed, current_price, stats, tempstats, RA_list):
+def assign_cards(card_options, needed, current_price, stats, tempstats):
     while card_options and any(needed):
-        c = card_options.pop()
+        print("Needed:", needed)
 
-        # Use RA cards before moving to more expensive choices
-        rubbish = list(c.values())
-        if type(rubbish[0]) is list:
-            new_price = rubbish[0][1]
-        else:
-            new_price = rubbish[1][1]
-        if new_price > current_price:
-            while RA_list:
-                temp = RA_list.pop()
-                # Double checks card still has more than one option (after pruning) before starting branching
-                if temp['Alternating']:
-                    for key in temp.keys():
-                        if key != 'Alternating':
-                            stripped = {key: temp[key]}
-                            new_needed = copy.deepcopy(needed)
-                            new_card_options = copy.deepcopy(card_options)
-                            new_tempstats = copy.deepcopy(tempstats)
-                            use_card(stripped, new_needed, new_card_options, new_tempstats)
-                            assign_cards(new_card_options, new_needed, current_price, stats, new_tempstats, RA_list)
-                else:
-                    use_card(temp, needed, card_options, tempstats)
-            current_price = new_price
+        # Choose next card to play. Favour non RA cards where price is equal
+        c = None
+        index = 0
+        while not c:
+            if len(card_options) > index:
+                temp = card_options[index]
+                for i in temp.keys():
+                    if i != 'Alternating' and temp[i][1] > current_price:
+                        c = card_options.pop(0)
+                        current_price = c[i][1]
+                        break
+                    elif i != 'Alternating' and temp[i][1] == current_price:
+                        c = card_options.pop(index)
+                        break
+                    else:
+                        break
+            else:
+                print("else branch of choosing card")
+                c = card_options.pop(0)
+                for i in temp.keys():
+                    if i != 'Alternating':
+                        current_price = c[i][1]
+                        break
+            index += 1
 
-        # Use non RA cards first for ease of computation
+        # Process card
         if c['Alternating']:
-            RA_list.append(c)
+            for key in temp.keys():
+                if key != 'Alternating':
+                    stripped = {key: temp[key]}
+                    new_needed = copy.deepcopy(needed)
+                    new_card_options = copy.deepcopy(card_options)
+                    new_tempstats = copy.deepcopy(tempstats)
+                    use_card(stripped, new_needed, new_card_options, new_tempstats)
+                    assign_cards(new_card_options, new_needed, current_price, stats, new_tempstats)
         else:
             use_card(c, needed, card_options, tempstats)
+
+    # Checks if this combination solves problem
     if not any(needed):
         tempstats['possible'] = True
-    stats.append(tempstats)
+        stats.append(tempstats)
 
 
 def use_card(card, needed, card_options, stats):
@@ -154,9 +163,9 @@ def use_card(card, needed, card_options, stats):
                 except Exception as e:
                     stats[card[t][2]][t] = used
                 try:
-                    stats[card[t][2]]['cost'] += used * needed[t][1]
+                    stats[card[t][2]]['cost'] += used * card[t][1]
                 except Exception as e:
-                    stats[card[t][2]]['cost'] = used * needed[t][1]
+                    stats[card[t][2]]['cost'] = used * card[t][1]
 
             # If resource requirement is satisfied, prune unneeded cards
             if not needed[t] > 0:
@@ -166,10 +175,13 @@ def use_card(card, needed, card_options, stats):
 
 def prune_cards(needed, card_options):
     needed_types = needed.keys()
+
     for card in card_options:
+        temp = []
         for key in card.keys():
             if key not in needed_types and not key == 'Alternating':
-                card.pop(key)
+                temp.append(key)
+        [card.pop(key) for key in temp]
         temp = card.keys()
         if len(temp) == 1:
             card_options.remove(card)
@@ -180,7 +192,7 @@ def prune_cards(needed, card_options):
 def create_list(cards, array, cost, player):
     for c in cards:
         temp = get_card_benefits(c, cost, player)
-        if any(temp):
+        if len(temp) > 1:
             array.append(temp)
 
 

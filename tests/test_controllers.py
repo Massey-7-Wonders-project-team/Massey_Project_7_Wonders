@@ -18,7 +18,6 @@ class TestControllersWithAlchemy(TestCase):
         db.session.remove()
         db.drop_all()
 
-    """
     #test process_card
     def test_process_card_not_in_hand(self):
         game = Game(age=1, round=1)
@@ -218,7 +217,7 @@ class TestControllersWithAlchemy(TestCase):
         
         #can play this card
         self.assertTrue(process_card(stables,player,False,False))'''
-"""
+
     def test_trade_not_enough_goods(self):
         user = User(email='test@test.com', name='test', password='tester')
         user1 = User(email='test1@test.com', name='test', password='tester')
