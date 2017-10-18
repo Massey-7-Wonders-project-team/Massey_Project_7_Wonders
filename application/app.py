@@ -212,7 +212,6 @@ def begin_game():
         Game not started - status comment
         Game started - status comment, game (player, cards)"""
     player = get_player(request.args.get('player_id'))
-    print("hi")
 
     # Only continues if player was not already set as ready
     if player.ready is False:

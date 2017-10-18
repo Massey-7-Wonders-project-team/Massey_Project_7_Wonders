@@ -277,10 +277,6 @@ class TestControllersWithAlchemy(TestCase):
         ch2 = Cardhist(playerId=player1.id, cardId=card3.id)
         db_committing_function(ch1, ch2)
 
-        #success, trade_info = calculate_trades(card1, player1)
-        #self.assertTrue(success)
-        #self.assertTrue(trade_info is None)
-
         stats = trade(card1, player1)
         self.assertTrue(stats['left']['cost'] == 0)
         self.assertTrue(stats['right']['cost'] == 0)
