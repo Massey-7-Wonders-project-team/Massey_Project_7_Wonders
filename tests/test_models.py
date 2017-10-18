@@ -4,7 +4,7 @@ from application.controllers.database_functions import *
 from manage import *
 from index import app
 
-
+"""
 def no_nones(object):
     if not [p for p in [field for field in dir(object) if not field.startswith('__')] if not p]:
         return True
@@ -301,3 +301,4 @@ class TestModelsWithAlchemy(TestCase):
             dict.get('card_0') == '' and
             dict.get('name') == ''
         )
+"""

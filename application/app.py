@@ -48,6 +48,7 @@ def create_user():
 
     return jsonify(
         id=user.id,
+        profile=user.name,
         token=generate_token(new_user)
     )
 

@@ -17,7 +17,8 @@ class TestControllersWithAlchemy(TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
-    
+
+    """
     #test process_card
     def test_process_card_not_in_hand(self):
         game = Game(age=1, round=1)
@@ -217,7 +218,7 @@ class TestControllersWithAlchemy(TestCase):
         
         #can play this card
         self.assertTrue(process_card(stables,player,False,False))'''
-
+"""
     def test_trade_not_enough_goods(self):
         user = User(email='test@test.com', name='test', password='tester')
         user1 = User(email='test1@test.com', name='test', password='tester')
@@ -244,10 +245,8 @@ class TestControllersWithAlchemy(TestCase):
 
         hist = Cardhist(playerId=player1.left_id, cardId=card_left.id, card_colour=card_left.colour)
         db_committing_function(hist)
-        success, trade_info = calculate_trades(card1, player1)
-
-        self.assertFalse(success)
-        self.assertTrue(trade_info is None)
+        combo = trade(card1, player1)
+        self.assertFalse(combo['possible'])
 
     def test_trade_no_trade_needed(self):
         user = User(email='test@test.com', name='test', password='tester')
@@ -269,12 +268,24 @@ class TestControllersWithAlchemy(TestCase):
         card1 = Card('test', 3, 1, 'brown')
         card1.costBrick = 1
         card1.costWood = 1
-        db_committing_function(card1)
+        card2 = Card('test1', 3, 1, 'brown')
+        card2.giveBrick = 1
+        card3 = Card('test1', 3, 1, 'brown')
+        card3.giveWood = 1
+        db_committing_function(card1, card2, card3)
 
-        success, trade_info = calculate_trades(card1, player1)
+        ch1 = Cardhist(playerId=player1.id, cardId=card2.id)
+        ch2 = Cardhist(playerId=player1.id, cardId=card3.id)
+        db_committing_function(ch1, ch2)
 
-        self.assertTrue(success)
-        self.assertTrue(trade_info is None)
+        #success, trade_info = calculate_trades(card1, player1)
+        #self.assertTrue(success)
+        #self.assertTrue(trade_info is None)
+
+        stats = trade(card1, player1)
+        self.assertTrue(stats['left']['cost'] == 0)
+        self.assertTrue(stats['right']['cost'] == 0)
+        self.assertTrue(stats['possible'])
 
     def test_trade_trade_needed(self):
         user = User(email='test@test.com', name='test', password='tester')
@@ -299,16 +310,17 @@ class TestControllersWithAlchemy(TestCase):
         card_left.resourceAlternating = True
         card_left.giveBrick = 1
         card_left.giveWood = 1
-        db_committing_function(card1, card_left)
+        card_hist = Card('test3', 3, 1, 'brown')
+        card_hist.giveWood = 1
+        db_committing_function(card1, card_left, card_hist)
 
         hist = Cardhist(playerId=player1.left_id, cardId=card_left.id, card_colour=card_left.colour)
-        db_committing_function(hist)
-        success, trade_info = calculate_trades(card1, player1)
+        hist1 = Cardhist(playerId=player1.id, cardId=card_hist.id, card_colour=card_hist.colour)
+        db_committing_function(hist, hist1)
+        stats = trade(card1, player1)
 
-        self.assertTrue(success)
+        self.assertTrue(stats['possible'])
         self.assertTrue(
-            sum(trade_info['left']) == 1 and
-            trade_info['left_cost'] == 2 and
-            trade_info['total_cost'] == 2 and
-            trade_info['possible'] is True
+            stats['left']['Brick'] == 1 and
+            stats['left']['cost'] == 2
         )
