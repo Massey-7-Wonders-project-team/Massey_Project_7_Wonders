@@ -31,16 +31,15 @@ def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None,
         if not play_card(card, player, is_discarded, for_wonder):
             if tr:
                 stats = trade(card, player)
-                if not stats['possible'] or stats['left']['cost'] + stats['right']['cost'] > player.money:
+                if not stats['possible'] or (stats['left']['cost'] + stats['right']['cost']) > player.money:
                     return False
 
                 play_card(card, player, False, for_wonder, no_prereq=True)
-                player.money -= stats['left']['cost'] + stats['right']['cost']
-                player_left = get_player(player.left_id).money
-                player_left += stats['left']['cost']
-                player_right = get_player(player.right_id).money
-                player_right += stats['right']['cost']
-                print(player, player_left, player_right)
+                player.money -= (stats['left']['cost'] + stats['right']['cost'])
+                player_left = get_player(player.left_id)
+                player_left.money += stats['left']['cost']
+                player_right = get_player(player.right_id)
+                player_right.money += stats['right']['cost']
                 db_committing_function(player, player_left, player_right)
 
                 print("Trade used for card:", card.name)
@@ -93,9 +92,7 @@ def trade(card, player, trade=True):
     stats = []
     assign_cards(card_options, needed, 0, stats, {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False})
 
-    # Keep possible combinations and return the lowest cost possibility
-    stats = [i for i in stats if i['possible']]
-    stats = sorted(stats, key=lambda k: k['left']['cost']+k['right']['cost'])
+    # Returns best option if successful or default if check fails
     if stats:
         return stats[0]
     else:
@@ -104,6 +101,9 @@ def trade(card, player, trade=True):
 
 def assign_cards(card_options, needed, current_price, stats, tempstats):
     while card_options and any(needed):
+        # If this branch has reached the price of the best option, prune
+        if stats and tempstats['left']['cost'] + tempstats['right']['cost'] >= stats[0]['left']['cost'] + stats[0]['right']['cost']:
+            return
         print("Needed:", needed)
 
         # Choose next card to play. Favour non RA cards where price is equal
@@ -144,10 +144,13 @@ def assign_cards(card_options, needed, current_price, stats, tempstats):
         else:
             use_card(c, needed, card_options, tempstats)
 
-    # Checks if this combination solves problem
+    # Checks if this combination solves problem. If it does, it places on priority queue
     if not any(needed):
         tempstats['possible'] = True
-        stats.append(tempstats)
+        if stats and tempstats['left']['cost'] + tempstats['right']['cost'] < stats[0]['left']['cost'] + stats[0]['right']['cost']:
+            stats.insert(0, tempstats)
+        else:
+            stats.append(tempstats)
 
 
 def use_card(card, needed, card_options, stats):

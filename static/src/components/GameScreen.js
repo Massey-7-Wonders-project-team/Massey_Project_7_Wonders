@@ -222,8 +222,10 @@ export class GameScreen extends Component {
         if (!started) {
             this.playersLogged();
         }
-        if (started && game.game.age) {
-            document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
+        if (started && game) {
+            if (game.game.age) {
+                document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
+            }
         }
 
         return (
