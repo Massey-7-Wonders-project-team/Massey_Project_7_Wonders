@@ -26,7 +26,7 @@ function MilitaryUpdate(props) {
     const levels = militaryData.militaryLevel;
     const names = militaryData.militaryUsers;
     let age = 3;
-    if (!props.data.game.clearInterval && props.data.game.age !== 3) {
+    if (!props.data.game.complete) {
       age = props.data.game.age - 1;
     }
     let lArmy = [];
