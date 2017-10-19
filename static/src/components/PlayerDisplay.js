@@ -171,7 +171,7 @@ export class PlayerDisplay extends Component {
                                                                                     />
                                                                                 }
                                                                                 overlayContainerStyle={{ paddingBottom: '10%' }}
-                                                                                overlayContentStyle={{ background: null }}
+                                                                                overlayContentStyle={{ background: 'none' }}
                                                                             >
                                                                                 <img alt="" src={`dist/images/cities/${imageName}B.png`} />
                                                                             </CardMedia>
