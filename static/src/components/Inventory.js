@@ -12,11 +12,22 @@ const styles = {
 };
 
 function Inventory(props) {
+    let showExtra = true;
+    if (props.extra < 1) showExtra = false
     return (
-        <Chip style={styles.chip}>
-            <Avatar src={`dist/images/icons/${props.item}.png`} />
-            {props.amount.toString()}
-        </Chip>
+        <div>
+            {!showExtra ?
+                <Chip style={styles.chip}>
+                    <Avatar src={`dist/images/icons/${props.item}.png`} />
+                    {props.amount.toString()}
+                </Chip>
+                :
+                <Chip style={styles.chip}>
+                    <Avatar src={`dist/images/icons/${props.item}.png`} />
+                    {props.amount.toString()} / {props.extra.toString()}
+                </Chip>
+            }
+        </div>
     );
 }
 
