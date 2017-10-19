@@ -311,7 +311,7 @@ class TestControllersWithAlchemy(TestCase):
 
         hist = Cardhist(playerId=player1.left_id, cardId=card_left.id, card_colour=card_left.colour)
         db_committing_function(hist)
-        combo = trade(card1, player1)
+        combo = check_move_and_trade(card1, player1)
         self.assertFalse(combo['possible'])
 
     def test_trade_no_trade_needed(self):
@@ -344,7 +344,7 @@ class TestControllersWithAlchemy(TestCase):
         ch2 = Cardhist(playerId=player1.id, cardId=card3.id)
         db_committing_function(ch1, ch2)
 
-        stats = trade(card1, player1)
+        stats = check_move_and_trade(card1, player1)
         self.assertTrue(stats['left']['cost'] == 0)
         self.assertTrue(stats['right']['cost'] == 0)
         self.assertTrue(stats['possible'])
@@ -379,7 +379,7 @@ class TestControllersWithAlchemy(TestCase):
         hist = Cardhist(playerId=player1.left_id, cardId=card_left.id, card_colour=card_left.colour)
         hist1 = Cardhist(playerId=player1.id, cardId=card_hist.id, card_colour=card_hist.colour)
         db_committing_function(hist, hist1)
-        stats = trade(card1, player1)
+        stats = check_move_and_trade(card1, player1)
 
         self.assertTrue(stats['possible'])
         self.assertTrue(
