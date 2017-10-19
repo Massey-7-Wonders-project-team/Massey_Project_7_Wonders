@@ -47,7 +47,7 @@ export class Play extends React.Component {
             single: false,
             militaryDialog: false,
             militaryOnce: false,
-            value: 6,
+            value: 2,
             aiPlayers: 0,
         };
         this.createGame = this.createGame.bind(this);
@@ -250,11 +250,11 @@ export class Play extends React.Component {
                                     style={{ marginTop: -15, marginLeft: -35, paddingLeft: 0, width: 150, float: 'left', lineHeight: 30 }}
                                     menuStyle={{ marginLeft: 0, padding: 0 }}
                                 >
-                                    <MenuItem value={6} primaryText={<b>6 players</b>} />
-                                    <MenuItem value={5} primaryText={<b>5 players</b>} />
-                                    <MenuItem value={4} primaryText={<b>4 players</b>} />
-                                    <MenuItem value={3} primaryText={<b>3 players</b>} />
                                     <MenuItem value={2} primaryText={<b>2 players</b>} />
+                                    <MenuItem value={3} primaryText={<b>3 players</b>} />
+                                    <MenuItem value={4} primaryText={<b>4 players</b>} />
+                                    <MenuItem value={5} primaryText={<b>5 players</b>} />
+                                    <MenuItem value={6} primaryText={<b>6 players</b>} />
                                 </DropDownMenu>
                             </div>
                         </div>
