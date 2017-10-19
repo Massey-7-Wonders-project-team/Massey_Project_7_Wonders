@@ -126,6 +126,8 @@ export class PlayerDisplay extends Component {
         if (boardData.id === this.state.userID) {
             homeWonder = true;
         }
+
+        //overlayContainerStyle={{ paddingBottom: '10%' }}
         return (
             <div style={{ paddingLeft: 100, paddingRight: 100 }}>
                 {game && !error && started && boardData &&
@@ -152,13 +154,13 @@ export class PlayerDisplay extends Component {
                                                                             style={inventorycustomColumnStyle}
                                                                         >
                                                                             <List style={ListStyle}>
-                                                                                <Inventory item="wood" amount={boardData.wood + boardData.extra_wood} />
-                                                                                <Inventory item="brick" amount={boardData.brick + boardData.extra_brick} />
-                                                                                <Inventory item="ore" amount={boardData.ore + boardData.extra_ore} />
-                                                                                <Inventory item="stone" amount={boardData.stone + boardData.extra_stone} />
-                                                                                <Inventory item="glass" amount={boardData.glass + boardData.extra_glass} />
-                                                                                <Inventory item="paper" amount={boardData.paper + boardData.extra_paper} />
-                                                                                <Inventory item="cloth" amount={boardData.cloth + boardData.extra_cloth} />
+                                                                                <Inventory item="wood" amount={boardData.wood} extra={boardData.extra_wood} />
+                                                                                <Inventory item="brick" amount={boardData.brick} extra={boardData.extra_brick} />
+                                                                                <Inventory item="ore" amount={boardData.ore} extra={boardData.extra_ore} />
+                                                                                <Inventory item="stone" amount={boardData.stone} extra={boardData.extra_stone} />
+                                                                                <Inventory item="glass" amount={boardData.glass} extra={boardData.extra_glass} />
+                                                                                <Inventory item="paper" amount={boardData.paper} extra={boardData.extra_paper} />
+                                                                                <Inventory item="cloth" amount={boardData.cloth} extra={boardData.extra_cloth} />
                                                                             </List>
                                                                         </TableRowColumn>
                                                                         <TableRowColumn>
@@ -168,14 +170,15 @@ export class PlayerDisplay extends Component {
                                                                                     <CardTitle
                                                                                         title={boardData.profile}
                                                                                         subtitle={boardData.wonder}
-                                                                                    />
+                                                                                        style={{ paddingBottom: 0 }}
+                                                                                    >
+                                                                                    <Wonder boardData={boardData} />
+                                                                                    </CardTitle>
                                                                                 }
-                                                                                overlayContainerStyle={{ paddingBottom: '10%' }}
                                                                                 overlayContentStyle={{ background: 'none' }}
                                                                             >
                                                                                 <img alt="" src={`dist/images/cities/${imageName}B.png`} />
                                                                             </CardMedia>
-                                                                            <Wonder boardData={boardData} />
                                                                         </TableRowColumn>
                                                                         <TableRowColumn
                                                                             style={inventorycustomColumnStyle}
@@ -187,11 +190,11 @@ export class PlayerDisplay extends Component {
                                                                             }
 
                                                                             <List style={ListStyle}>
-                                                                                <Inventory item="vp" amount={boardData.points} />
-                                                                                <Inventory item="coin" amount={boardData.money} />
-                                                                                <Inventory item={`pyramid-stage${boardData.wonder_level}`} amount={boardData.wonder_level} />
-                                                                                <Inventory item="military" amount={boardData.military} />
-                                                                                <Inventory item="victoryminus1" amount={boardData.military_loss} />
+                                                                                <Inventory item="vp" amount={boardData.points} extra={-1} />
+                                                                                <Inventory item="coin" amount={boardData.money} extra={-1} />
+                                                                                <Inventory item={`pyramid-stage${boardData.wonder_level}`} amount={boardData.wonder_level} extra={-1} />
+                                                                                <Inventory item="military" amount={boardData.military} extra={-1} />
+                                                                                <Inventory item="victoryminus1" amount={boardData.military_loss} extra={-1} />
                                                                             </List>
                                                                         </TableRowColumn>
                                                                     </TableRow>
