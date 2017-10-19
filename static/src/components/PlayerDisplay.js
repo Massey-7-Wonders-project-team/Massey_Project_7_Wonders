@@ -136,7 +136,7 @@ export class PlayerDisplay extends Component {
                                     <TableBody displayRowCheckbox={false} >
                                         <TableRow selectable={false}>
                                             <TableRowColumn width="50" id="leftNav" >
-                                                <input type="image" width="20" src='dist/images/icons/left_arrow.png' onTouchTap={this.lookLeft} />
+                                                <img alt="" width="20" src='dist/images/icons/left_arrow.png' onTouchTap={this.lookLeft} />
                                             </TableRowColumn>
                                             <TableRowColumn>
                                                 <Card
@@ -213,7 +213,7 @@ export class PlayerDisplay extends Component {
                                                 </Card>
                                             </TableRowColumn>
                                             <TableRowColumn width="50" id="rightNav" >
-                                              <input type="image" width="20" src='dist/images/icons/right_arrow.png' onTouchTap={this.lookRight} />
+                                              <img alt="" width="20" src='dist/images/icons/right_arrow.png' onTouchTap={this.lookRight} />
                                             </TableRowColumn>
                                         </TableRow>
                                     </TableBody>
