@@ -16,7 +16,8 @@ app | card_logic, state_printer
 state_printer | database_functions
 card_logic | ai, game_state_functions
 ai | database_functions
-game_state_functions | database_functions
+game_state_functions | trade
+trade | database_functions
 database_functions | All Models
 
 This is the importing hierarchy. Files import only the files directly underneath them. The models are imported by
@@ -37,11 +38,12 @@ functions. Understanding this function is enough to understand the entire card p
 ## ai.py
 This file contains AI logic to make their card choices smarter. Currently it is only a stub awaiting further development.
 
-TODO - create scoring for cards so the best card can be chosen for a given turn
-
 ## game_state_functions.py
 This file contains functions to set up the game and the functions that update the game object (round and age increments),
 player object, and the associated calculations needed for both (like research and military calculations).
+
+## trade.py
+This file contains all the trading and check move logic. It imports from database_functions.
 
 ## database_functions.py
 This file contains the db_committing_function that each of the other files use. It also imports all the models, which

@@ -5,8 +5,8 @@ import copy
 def check_move_and_trade(card, player):
     # Get cards (yellow and non-base resource wonder cards are not used for trade)
     cards = [c for c in get_cards(player=player, history=True)]
-    default_false = {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False, 'message': ''}
-    default_true = {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': True, 'message': ''}
+    default_false = {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False, 'message': None}
+    default_true = {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': True, 'message': None}
 
     # Checks there is not already one of this card played yet
     if [x for x in cards if x.name == card.name]:
@@ -47,13 +47,12 @@ def check_move_and_trade(card, player):
     assign_cards(card_options, needed, 0, stats, default_false)
 
     # Returns best option if successful or default if check fails
-    price = stats[0]['left']['cost'] + stats[0]['right']['cost']
-    if stats and price <= player.money:
+    if stats and stats[0]['left']['cost'] + stats[0]['right']['cost'] <= player.money:
         return stats[0]
     elif stats:
         info = stats[0]
         info['possible'] = False
-        info['message'] = 'You do not have enough money for this trade. {} gold is required'.format(price)
+        info['message'] = 'You do not have enough money for this trade. {} gold is required'.format(stats[0]['left']['cost'] + stats[0]['right']['cost'])
         return info
     else:
         default_false['message'] = "The necessary resources are not available in your or your neighbours' civilisations"

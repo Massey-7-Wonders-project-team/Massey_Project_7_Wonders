@@ -141,9 +141,11 @@ def create_game():
 
 
 def single_player(user):
-    no_players = request.args.get('ai_players') + 1
+    no_players = request.args.get('ai_players')
     if not no_players:
         no_players = 3
+    else:
+        no_players += 1
     game = Game()
     game.single_player = True
     db_committing_function(game)

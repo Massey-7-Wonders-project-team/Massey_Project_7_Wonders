@@ -223,8 +223,8 @@ def play_card_with_trade(card, player, is_discarded, for_wonder, process_with_tr
     :return: A variant of default_false or default_true
     """
 
-    default_false = {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False, 'message': ''}
-    default_true = {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': True, 'message': ''}
+    default_false = {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False, 'message': None}
+    default_true = {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': True, 'message': None}
 
     if is_discarded:
         player.money += 3
@@ -232,7 +232,7 @@ def play_card_with_trade(card, player, is_discarded, for_wonder, process_with_tr
         if for_wonder:
             card = get_wonder_card(player)
             if not card:
-                default_false['messsage'] = 'You have already finished building your wonder. It is already perfect!'
+                default_false['message'] = 'You have already finished building your wonder. It is already perfect!'
                 return default_false
 
         if no_prereq:
@@ -274,6 +274,8 @@ def play_card_with_trade(card, player, is_discarded, for_wonder, process_with_tr
             game = get_game(player=player)
             game.waiting_for_discard = True
             db_committing_function(game)
+
+        default_true = stats
 
     history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder,
                        card_name=card.name, card_colour=card.colour)
