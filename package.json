@@ -10,7 +10,8 @@
     "lint": "cd static && npm run lint",
     "start": "cd static && npm run start",
     "test": "cd static && npm run test",
-    "test:browser": "cd static && npm run test:browser"
+    "test:browser": "cd static && npm run test:browser",
+    "test:coveralls": "cd static && npm run test:coveralls"
   },
   "repository": {
     "type": "git",

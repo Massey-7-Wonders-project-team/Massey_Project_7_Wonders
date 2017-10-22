@@ -15,7 +15,7 @@ function Wonder(props) {
     return (
         <Table
             id="wonderTable"
-            style={{ marginLeft: 10, marginRight: 10 }} >
+            style={{ marginLeft: 10, marginRight: 10, background: 'none', height: 80 }} >
             <TableBody
                 displayRowCheckbox={false}
             >
@@ -24,9 +24,9 @@ function Wonder(props) {
                         rows.map((wCard, index) => {
                             if (wCard) {
                                 return (
-                                    <TableRowColumn style={{ padding: 0 }} >
+                                    <TableRowColumn key={wCard} style={{ padding: 0 }} >
                                         <center>
-                                            <img width="150" alt="Complete" src={'dist/images/icons/wonderCard.png'} />
+                                            <img height="70" alt="Complete" src={'dist/images/icons/completed.png'} />
                                         </center>
                                     </TableRowColumn>
                                 );
@@ -36,7 +36,6 @@ function Wonder(props) {
                                 );
                             }
                         })
-
               }
                 </TableRow>
             </TableBody>

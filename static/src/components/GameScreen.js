@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { RaisedButton, CardActions, FlatButton, Card,
+import { RaisedButton, IconButton, CardActions, FlatButton, Card,
     CardText, CardMedia, CardTitle, CircularProgress, Dialog } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -7,6 +7,7 @@ import * as actions from '../actions/game';
 import { poll } from '../utils/misc';
 import PlayerDisplay from './PlayerDisplay';
 import EndScreen from './EndScreen';
+import MilitaryUpdate from './MilitaryUpdate';
 
 function mapStateToProps(state) {
     return {
@@ -38,6 +39,8 @@ export class GameScreen extends Component {
             endOfRound: false,
             ageDialog: false,
             ageDialogDisplayOnce: false,
+            armyDialog: false,
+            armyDialogDisplayOnce: false,
             showScoreBoard: false,
             shownForRound: false,
             endGameScoreboard: false,
@@ -50,6 +53,7 @@ export class GameScreen extends Component {
         this.hideScoreboard = this.hideScoreboard.bind(this);
         this.hideInvalidMoveError = this.hideInvalidMoveError.bind(this);
         this.hideAgeDialog = this.hideAgeDialog.bind(this);
+        this.hideArmyDialog = this.hideArmyDialog.bind(this);
     }
 
     componentDidMount() {
@@ -64,22 +68,28 @@ export class GameScreen extends Component {
             });
         }
 
-        if (nextProps.game) {
+        if (nextProps.started) {
             if (!this.state.shownForRound &&
                 nextProps.game.game.round === 1 && nextProps.game.game.age !== 1) {
                 this.setState({
-                    showScoreBoard: true,
-                    shownForRound: true,
+                    armyDialog: true,
                 });
             }
             if (nextProps.game.game.round === 2) {
                 this.setState({
-                    shownForRound: false,
-                    ageDialogDisplayOnce: false,
-                    ageDialog: false,
+                  shownForRound: false,
+                  ageDialogDisplayOnce: false,
+                  ageDialog: false,
+                  armyDialog: false,
+                  armyDialogDisplayOnce: false
                 });
             }
             if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1) {
+                this.setState({
+                    ageDialog: true,
+                });
+            }
+            if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1 ) {
                 this.setState({
                     ageDialog: true,
                 });
@@ -92,6 +102,7 @@ export class GameScreen extends Component {
             });
             this.pollGameStatus();
         }
+
     }
 
     pollGameStatus() {
@@ -108,11 +119,19 @@ export class GameScreen extends Component {
         this.props.startGame(this.props.playerId);
     }
 
-    // playCard(playerId, cardId, discarded, wonder, trade)
-
     playCard(cardId) {
         if (!this.props.cardPlayed) {
             this.props.playCard(this.props.playerId, cardId, false, false, true);
+        } else {
+            this.setState({
+                showPlayCardError: true,
+            });
+        }
+    }
+
+    discard(cardId) {
+        if (!this.props.cardPlayed) {
+            this.props.playCard(this.props.playerId, cardId, true, false, false);
         } else {
             this.setState({
                 showPlayCardError: true,
@@ -135,16 +154,6 @@ export class GameScreen extends Component {
             });
         }
       }
-
-    discard(cardId) {
-        if (!this.props.cardPlayed) {
-            this.props.playCard(this.props.playerId, cardId, true, false, false);
-        } else {
-            this.setState({
-                showPlayCardError: true,
-            });
-        }
-    }
 
     hidePlayCardError() {
         this.setState({
@@ -173,11 +182,20 @@ export class GameScreen extends Component {
         });
     }
 
+    hideArmyDialog() {
+        this.setState({
+            armyDialog: false,
+            armyDialogDisplayOnce: true,
+            showScoreBoard: true,
+        });
+    }
+
     hideDiscarded() {
       this.setState({
         showDiscarded: false,
-      })
+      });
     }
+
 
     playersLogged() {
         const token = localStorage.getItem('token');
@@ -215,13 +233,19 @@ export class GameScreen extends Component {
                 onTouchTap={this.hideInvalidMoveError}
             />,
         ];
+        let nextWonderLevel = 1;
+        let canPlayWonder = true;
         if (!started) {
             this.playersLogged();
         }
-
         if (started && game.game.age) {
             document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
+            nextWonderLevel = game.player.wonder_level + 1;
+            if (nextWonderLevel > game.player.max_wonder) {
+                canPlayWonder = false;
+            }
         }
+
 
         return (
             <div>
@@ -259,9 +283,26 @@ export class GameScreen extends Component {
                                     contentStyle={{ width: '40%' }}
                                 >
                                   <center><div>
-
-                                      <img alt="" width={'100%'} src={`dist/images/icons/age${game.game.age}cards.png`} />
+                                      <img alt="Age_image" height='150' src={`dist/images/icons/age${game.game.age}cards.png`} />
                                   </div></center>
+                                </Dialog>
+                            }
+                            {this.state.armyDialog && !this.state.armyDialogDisplayOnce &&
+                                <Dialog
+                                    id="armyDialog"
+                                    title={`Military Updates at end of Age ${game.game.age - 1}`}
+                                    actions={
+                                        <FlatButton
+                                            label="Close"
+                                            primary={true}
+                                            onClick={this.hideArmyDialog}
+                                        />
+                                    }
+                                    open={this.state.armyDialog}
+                                    onRequestClose={this.hideArmyDialog}
+                                    contentStyle={{ width: '100%' }}
+                                >
+                                    <MilitaryUpdate data={this.props.game} />
                                 </Dialog>
                             }
                             <div>
@@ -272,96 +313,71 @@ export class GameScreen extends Component {
                                     />
                                 }
                             </div>
-                            <div>
-                                {showDiscarded &&
-                                    <Dialog
-                                        title={'Play a card from the discard pile...'}
-                                        actions={
-                                            <FlatButton
-                                                label="Close.."
-                                                primary={true}
-                                                onTouchTap={this.hideDiscarded}
-                                            />
-                                        }
-                                        open={this.state.showDiscarded}
-                                        onRequestClose={this.hideDiscarded}
-                                    >
-                                        {game.cards && game.cards[0].name && // need to change all card to discard when sent
-                                          game.cards.map((card, index) => {
-                                              const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
-                                              return (
-                                                  <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
-                                                      <CardTitle
-                                                          title={card.name}
-                                                          titleStyle={{ fontSize: 18 }}
-                                                          style={{ padding: 3, height: 75 }}
-                                                      />
-                                                      <CardMedia>
-                                                          <img
-                                                              alt={`${card.name} image`}
-                                                              src={`dist/images/cards/${imageName}.png`}
-                                                          />
-                                                      </CardMedia>
-                                                      <CardActions>
-                                                          <FlatButton
-                                                              label="Play Card"
-                                                              className="PlayCardButton"
-                                                              onTouchTap={() => this.playCard(card.id) && this.hideDiscarded()}
-                                                          />
-                                                          <FlatButton
-                                                              label="Wonder" // may need to delete as unsure if special card can play to wonder or discard
-                                                              onTouchTap={() => this.wonderCard(card.id) && this.hideDiscarded()}
-                                                          />
-                                                          <FlatButton
-                                                              label="Discard"
-                                                              className="DiscardCardButton"
-                                                              onTouchTap={() => this.discard(card.id) && this.hideDiscarded()}
-                                                          />
-                                                      </CardActions>
-                                                  </Card>
-                                              );
-                                          })
-                                        }
-                                    </Dialog>
-                                }
-                            </div>
                             <center>
                                 {game.cards && game.cards[0].name &&
                                     game.cards.map((card, index) => {
                                         const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                         return (
                                             <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
-                                                <CardTitle
-                                                    title={card.name}
-                                                    titleStyle={{ fontSize: 18 }}
-                                                    style={{ padding: 3, height: 75 }}
-                                                />
                                                 <CardMedia>
                                                     <img
                                                         alt={`${card.name} image`}
                                                         src={`dist/images/cards/${imageName}.png`}
-                                                    />
-                                                </CardMedia>
-                                                <CardActions>
-                                                    <FlatButton
-                                                        label="Play Card"
-                                                        className="PlayCardButton"
+                                                        width="120"
+                                                        title={`${card.name}`}
                                                         onTouchTap={() => this.playCard(card.id)}
                                                     />
-                                                    <FlatButton
-                                                        label="Wonder"
-                                                        onTouchTap={() => this.wonderCard(card.id)}
-                                                    />
-                                                    <FlatButton
-                                                        label="Discard"
-                                                        className="DiscardCardButton"
-                                                        onTouchTap={() => this.discard(card.id)}
-                                                    />
+                                                </CardMedia>
+                                                <CardActions style={{ padding: 0, backgroundColor: 'lightblue' }}>
+                                                    <IconButton style={{ width: 30 }} tooltip={`Play ${card.name}`} touch={true} tooltipPosition="bottom-center">
+                                                        <img width="18" src={`dist/images/icons/check.png`} onTouchTap={() => this.playCard(card.id)} />
+                                                    </IconButton>
+                                                    { canPlayWonder &&
+                                                        <IconButton style={{ width: 39 }} tooltip="Play for Wonder" touch={true} tooltipPosition="bottom-center">
+                                                            <center><img width="30" src={`dist/images/icons/pyramid-stage${nextWonderLevel}.png`} onTouchTap={() => this.wonderCard(card.id)} /></center>
+                                                        </IconButton>
+                                                    }
+                                                    <IconButton style={{ width: 30 }} tooltip={`Discard ${card.name}`} touch={true} tooltipPosition="bottom-center">
+                                                        <img width="20" src={`dist/images/icons/trash.png`} onTouchTap={() => this.discard(card.id)} />
+                                                    </IconButton>
                                                 </CardActions>
                                             </Card>
                                         );
                                     })
                                 }
+                            </center>
+                            <center>
+                                {showDiscarded && game.discarded && game.discarded[0].name &&
+                                game.discarded.map((card, index) => {
+                                    const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
+                                    return (
+                                        <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
+                                            <CardMedia>
+                                                <img
+                                                    alt={`${card.name} image`}
+                                                    src={`dist/images/cards/${imageName}.png`}
+                                                    width="120"
+                                                    title={`${card.name}`}
+                                                    onTouchTap={() => this.playCard(card.id)}
+                                                />
+                                            </CardMedia>
+                                            <CardActions style={{ padding: 0, backgroundColor: 'lightblue' }}>
+                                                <IconButton style={{ width: 30 }} tooltip={`Play ${card.name}`} touch={true} tooltipPosition="bottom-center">
+                                                    <img width="18" src={`dist/images/icons/check.png`} onTouchTap={() => this.playCard(card.id)} />
+                                                </IconButton>
+                                                { canPlayWonder &&
+                                                    <IconButton style={{ width: 39 }} tooltip="Play for Wonder" touch={true} tooltipPosition="bottom-center">
+                                                        <center><img width="30" src={`dist/images/icons/pyramid-stage${nextWonderLevel}.png`} onTouchTap={() => this.wonderCard(card.id)} /></center>
+                                                    </IconButton>
+                                                }
+                                                <IconButton style={{ width: 30 }} tooltip={`Discard ${card.name}`} touch={true} tooltipPosition="bottom-center">
+                                                    <img width="20" src={`dist/images/icons/trash.png`} onTouchTap={() => this.discard(card.id)} />
+                                                </IconButton>
+                                            </CardActions>
+                                        </Card>
+                                    );
+                                })
+                            }
                             </center>
                         </div>
                         <div>
