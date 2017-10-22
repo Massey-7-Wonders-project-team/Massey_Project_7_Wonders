@@ -77,11 +77,11 @@ export class GameScreen extends Component {
             }
             if (nextProps.game.game.round === 2) {
                 this.setState({
-                  shownForRound: false,
-                  ageDialogDisplayOnce: false,
-                  ageDialog: false,
-                  armyDialog: false,
-                  armyDialogDisplayOnce: false
+                    shownForRound: false,
+                    ageDialogDisplayOnce: false,
+                    ageDialog: false,
+                    armyDialog: false,
+                    armyDialogDisplayOnce: false
                 });
             }
             if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1) {
@@ -89,7 +89,7 @@ export class GameScreen extends Component {
                     ageDialog: true,
                 });
             }
-            if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1 ) {
+            if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1) {
                 this.setState({
                     ageDialog: true,
                 });
@@ -140,11 +140,18 @@ export class GameScreen extends Component {
     }
 
     wonderCard(cardId) {
-        if (cardId === 100) {
-            this.setState({
-              showDiscarded:true,
-            });
-        // not actually 100 need to find out what card id is for halacaneses couldnt find card data.
+        // Special case for wonder card The Mausoleum of Halicarnassu
+        if (this.game.game.play.wonder === 'The Mausoleum of Halicarnassu') {
+            if (!this.props.cardPlayed) {
+                this.props.playCard(this.props.playerId, cardId, false, true, true);
+                this.setState({
+                    showDiscarded: true,
+                });
+            } else {
+                this.setState({
+                    showPlayCardError: true,
+                });
+            }
         }
         if (!this.props.cardPlayed) {
             this.props.playCard(this.props.playerId, cardId, false, true, true);
@@ -153,7 +160,7 @@ export class GameScreen extends Component {
                 showPlayCardError: true,
             });
         }
-      }
+    }
 
     hidePlayCardError() {
         this.setState({
@@ -191,9 +198,9 @@ export class GameScreen extends Component {
     }
 
     hideDiscarded() {
-      this.setState({
-        showDiscarded: false,
-      });
+        this.setState({
+            showDiscarded: false,
+        });
     }
 
 
@@ -315,69 +322,75 @@ export class GameScreen extends Component {
                             </div>
                             <center>
                                 {game.cards && game.cards[0].name &&
-                                    game.cards.map((card, index) => {
-                                        const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
-                                        return (
-                                            <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
-                                                <CardMedia>
-                                                    <img
-                                                        alt={`${card.name} image`}
-                                                        src={`dist/images/cards/${imageName}.png`}
-                                                        width="120"
-                                                        title={`${card.name}`}
-                                                        onTouchTap={() => this.playCard(card.id)}
-                                                    />
-                                                </CardMedia>
-                                                <CardActions style={{ padding: 0, backgroundColor: 'lightblue' }}>
-                                                    <IconButton style={{ width: 30 }} tooltip={`Play ${card.name}`} touch={true} tooltipPosition="bottom-center">
-                                                        <img width="18" src={`dist/images/icons/check.png`} onTouchTap={() => this.playCard(card.id)} />
-                                                    </IconButton>
-                                                    { canPlayWonder &&
-                                                        <IconButton style={{ width: 39 }} tooltip="Play for Wonder" touch={true} tooltipPosition="bottom-center">
-                                                            <center><img width="30" src={`dist/images/icons/pyramid-stage${nextWonderLevel}.png`} onTouchTap={() => this.wonderCard(card.id)} /></center>
-                                                        </IconButton>
-                                                    }
-                                                    <IconButton style={{ width: 30 }} tooltip={`Discard ${card.name}`} touch={true} tooltipPosition="bottom-center">
-                                                        <img width="20" src={`dist/images/icons/trash.png`} onTouchTap={() => this.discard(card.id)} />
-                                                    </IconButton>
-                                                </CardActions>
-                                            </Card>
-                                        );
-                                    })
-                                }
+                                  game.cards.map((card, index) => {
+                                      const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
+                                      return (
+                                          <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
+                                              <CardMedia>
+                                                  <img
+                                                      alt={`${card.name} image`}
+                                                      src={`dist/images/cards/${imageName}.png`}
+                                                      width="120"
+                                                      title={`${card.name}`}
+                                                      onTouchTap={() => this.playCard(card.id)}
+                                                  />
+                                              </CardMedia>
+                                              <CardActions style={{ padding: 0, backgroundColor: 'lightblue' }}>
+                                                  <IconButton style={{ width: 30 }} tooltip={`Play ${card.name}`} touch={true} tooltipPosition="bottom-center">
+                                                      <img width="18" src={`dist/images/icons/check.png`} onTouchTap={() => this.playCard(card.id)} />
+                                                  </IconButton>
+                                                  { canPlayWonder &&
+                                                      <IconButton style={{ width: 39 }} tooltip="Play for Wonder" touch={true} tooltipPosition="bottom-center">
+                                                          <center><img width="30" src={`dist/images/icons/pyramid-stage${nextWonderLevel}.png`} onTouchTap={() => this.wonderCard(card.id)} /></center>
+                                                      </IconButton>
+                                                  }
+                                                  <IconButton style={{ width: 30 }} tooltip={`Discard ${card.name}`} touch={true} tooltipPosition="bottom-center">
+                                                      <img width="20" src={`dist/images/icons/trash.png`} onTouchTap={() => this.discard(card.id)} />
+                                                  </IconButton>
+                                              </CardActions>
+                                          </Card>
+                                      );
+                                  })
+                              }
                             </center>
                             <center>
-                                {showDiscarded && game.discarded && game.discarded[0].name &&
-                                game.discarded.map((card, index) => {
-                                    const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
-                                    return (
-                                        <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
-                                            <CardMedia>
-                                                <img
-                                                    alt={`${card.name} image`}
-                                                    src={`dist/images/cards/${imageName}.png`}
-                                                    width="120"
-                                                    title={`${card.name}`}
-                                                    onTouchTap={() => this.playCard(card.id)}
-                                                />
-                                            </CardMedia>
-                                            <CardActions style={{ padding: 0, backgroundColor: 'lightblue' }}>
-                                                <IconButton style={{ width: 30 }} tooltip={`Play ${card.name}`} touch={true} tooltipPosition="bottom-center">
-                                                    <img width="18" src={`dist/images/icons/check.png`} onTouchTap={() => this.playCard(card.id)} />
-                                                </IconButton>
-                                                { canPlayWonder &&
-                                                    <IconButton style={{ width: 39 }} tooltip="Play for Wonder" touch={true} tooltipPosition="bottom-center">
-                                                        <center><img width="30" src={`dist/images/icons/pyramid-stage${nextWonderLevel}.png`} onTouchTap={() => this.wonderCard(card.id)} /></center>
-                                                    </IconButton>
-                                                }
-                                                <IconButton style={{ width: 30 }} tooltip={`Discard ${card.name}`} touch={true} tooltipPosition="bottom-center">
-                                                    <img width="20" src={`dist/images/icons/trash.png`} onTouchTap={() => this.discard(card.id)} />
-                                                </IconButton>
-                                            </CardActions>
-                                        </Card>
-                                    );
-                                })
-                            }
+                                {game.discard && showDiscarded &&
+                                    game.discard.map((card, index) => {
+                                        const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
+                                        return (
+                                            <Dialog
+                                                id="discardDialog"
+                                                title="Play a card from the discard pile..."
+                                                open={this.state.showDiscarded}
+                                                onRequestClose={this.hideDiscarded}>
+                                                <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
+                                                    <CardMedia>
+                                                        <img
+                                                            alt={`${card.name} image`}
+                                                            src={`dist/images/cards/${imageName}.png`}
+                                                            width="120"
+                                                            title={`${card.name}`}
+                                                            onTouchTap={() => this.playCard(card.id)}
+                                                        />
+                                                    </CardMedia>
+                                                    <CardActions style={{ padding: 0, backgroundColor: 'lightblue' }}>
+                                                        <IconButton style={{ width: 30 }} tooltip={`Play ${card.name}`} touch={true} tooltipPosition="bottom-center">
+                                                            <img width="18" src={`dist/images/icons/check.png`} onTouchTap={() => this.playCard(card.id)} />
+                                                        </IconButton>
+                                                        { canPlayWonder &&
+                                                            <IconButton style={{ width: 39 }} tooltip="Play for Wonder" touch={true} tooltipPosition="bottom-center">
+                                                                <center><img width="30" src={`dist/images/icons/pyramid-stage${nextWonderLevel}.png`} onTouchTap={() => this.wonderCard(card.id)} /></center>
+                                                            </IconButton>
+                                                        }
+                                                        <IconButton style={{ width: 30 }} tooltip={`Discard ${card.name}`} touch={true} tooltipPosition="bottom-center">
+                                                            <img width="20" src={`dist/images/icons/trash.png`} onTouchTap={() => this.discard(card.id)} />
+                                                        </IconButton>
+                                                    </CardActions>
+                                                </Card>
+                                            </Dialog>
+                                        );
+                                    })
+                                  }
                             </center>
                         </div>
                         <div>

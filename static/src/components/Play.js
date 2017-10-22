@@ -182,20 +182,20 @@ export class Play extends React.Component {
 
     updateCheck() {
         this.setState((oldState) => {
-          return {
-            single: !oldState.single,
-          };
+            return {
+                single: !oldState.single,
+            };
         });
-     }
+    }
 
-     hideArmyDialog() {
-         this.setState({
-             militaryDialog: false,
-         });
-         this.endGame();
-     }
+    hideArmyDialog() {
+        this.setState({
+            militaryDialog: false,
+        });
+        this.endGame();
+    }
 
-     handleChange = (event, index, value) => this.setState({value});
+    handleChange = (event, index, value) => this.setState({ value });
 
     render() {
         const { game, error, playerId, endGame, playerCount } = this.state;
