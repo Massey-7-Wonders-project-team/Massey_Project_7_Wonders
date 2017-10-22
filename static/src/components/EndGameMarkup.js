@@ -3,46 +3,73 @@ import { Table, TableHeader, TableRow, TableBody, TableRowColumn, TableHeaderCol
 
 const tableFalse = false;
 const tableTrue = true;
+let allPlayers = [];
+let userName = "";
+let fetch = true;
 
-const EndGameMarkup = props =>
-    <Table>
-        <TableHeader
-            displaySelectALl={tableFalse}
-            endableSelectAll={tableFalse}
-            displayRowCheckbox={tableFalse}
-            adjustForCheckbox={tableFalse}
-        >
-            <TableRow>
-                <TableHeaderColumn>Name</TableHeaderColumn>
-                <TableHeaderColumn>Points</TableHeaderColumn>
-                <TableHeaderColumn>Coin</TableHeaderColumn>
-                <TableHeaderColumn>Military</TableHeaderColumn>
-            </TableRow>
-        </TableHeader>
-        <TableBody
-            displayRowCheckbox={tableFalse}
-            showRowHover={tableFalse}
-            stripedRows={tableTrue}
-        >
-            {props.players.map(player =>
-                <TableRow key={player.profile}>
-                    <TableRowColumn> {player.profile} </TableRowColumn>
-                    <TableRowColumn> {player.points} </TableRowColumn>
-                    <TableRowColumn> {player.money} </TableRowColumn>
-                    <TableRowColumn> {player.military} </TableRowColumn>
-                </TableRow>,
-            )}
-            <TableRow key={props.player.name} style={{ background: 'red' }}>
-                <TableRowColumn> You </TableRowColumn>
-                <TableRowColumn> {props.player.points} </TableRowColumn>
-                <TableRowColumn> {props.player.money} </TableRowColumn>
-                <TableRowColumn> {props.player.military} </TableRowColumn>
-            </TableRow>,
-        </TableBody>
-    </Table>;
+function sortByPoints(a,b) {
+    if (a.points > b.points) { return -1; }
+    if (a.points < b.points) { return 1; }
+    return 0;
+}
+
+function EndGameMarkup (props) {
+    if(fetch) {
+      allPlayers = props.players;
+      allPlayers.push(props.player);
+      allPlayers.sort(sortByPoints);
+      userName = props.player.profile;
+      fetch = false;
+    }
+
+    return (
+      <Table>
+          <TableHeader
+              displaySelectALl={tableFalse}
+              endableSelectAll={tableFalse}
+              displayRowCheckbox={tableFalse}
+          >
+              <TableRow>
+                  <TableHeaderColumn>Name</TableHeaderColumn>
+                  <TableHeaderColumn>Points</TableHeaderColumn>
+                  <TableHeaderColumn>Coin</TableHeaderColumn>
+                  <TableHeaderColumn>Military</TableHeaderColumn>
+              </TableRow>
+          </TableHeader>
+          <TableBody
+              displayRowCheckbox={tableFalse}
+              showRowHover={tableFalse}
+              stripedRows={tableTrue}
+          >
+              {allPlayers.map(player => {
+                  if (player.profile === userName) {
+                      return (
+                      <TableRow key={player.profile} style={{ background: 'red' }}>
+                          <TableRowColumn> {player.profile} </TableRowColumn>
+                          <TableRowColumn> {player.points} </TableRowColumn>
+                          <TableRowColumn> {player.money} </TableRowColumn>
+                          <TableRowColumn> {player.military} </TableRowColumn>
+                      </TableRow>
+                    );
+                  } else {
+                    return(
+                      <TableRow key={player.profile}>
+                          <TableRowColumn> {player.profile} </TableRowColumn>
+                          <TableRowColumn> {player.points} </TableRowColumn>
+                          <TableRowColumn> {player.money} </TableRowColumn>
+                          <TableRowColumn> {player.military} </TableRowColumn>
+                      </TableRow>
+                    )
+                  }
+              }
+              )}
+          </TableBody>
+      </Table>
+    )
+}
 
 EndGameMarkup.propTypes = {
-    players: PropTypes.object.isRequired,
+    players: PropTypes.array.isRequired,
     player: PropTypes.object.isRequired,
 };
 

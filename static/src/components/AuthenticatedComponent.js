@@ -52,6 +52,7 @@ export function requireAuthentication(Component) {
                                     loaded_if_needed: true,
                                 });
                             } else {
+                                localStorage.removeItem('token');
                                 browserHistory.push('/home');
                             }
                         });
