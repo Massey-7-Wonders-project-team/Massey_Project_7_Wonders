@@ -13,13 +13,6 @@ module.exports = {
         publicPath: '/dist/',
     },
 
-    module: {
-        loaders: [{
-            test: /\.scss$/,
-            loader: 'style!css?localIdentName=[path][name]--[local]!postcss-loader!sass',
-        }],
-    },
-
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {
