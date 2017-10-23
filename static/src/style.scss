@@ -1,5 +1,16 @@
-:global(body) {
-  position: relative;
 
-
+// As we use inline styles most of these will need the important standard. In a production
+// application we should use a better system
+#leftNav , #rightNav {
+    width: 10px;
+    padding: 0 !important;
+    & img {
+        width: 100%;
+    }
+    @media (min-width: 1024px) {
+        width: 25px;
+        & img {
+            width: 100%;
+        }
+    }
 }

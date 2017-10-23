@@ -14,6 +14,7 @@ const TARGET = process.env.npm_lifecycle_event;
 
 const PATHS = {
     app: path.join(__dirname, '../src'),
+    styles: path.join(__dirname, '../src/style.scss'),
     build: path.join(__dirname, '../dist'),
 };
 
@@ -22,6 +23,7 @@ process.env.BABEL_ENV = TARGET;
 const common = {
     entry: [
         PATHS.app,
+        PATHS.styles,
     ],
 
     output: {
@@ -67,6 +69,10 @@ const common = {
         {
             test: /\.(jpe?g|png|gif)$/i,
             loader: 'file?name=[name].[ext]',
+        },
+        {
+          test: /\.scss$/,
+          loaders: ["style", "css", "sass"],
         }],
     },
 

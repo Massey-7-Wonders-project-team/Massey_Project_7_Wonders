@@ -23,9 +23,9 @@ export class Home extends React.Component {
     render() {
         return (
             <section >
-                <div id="imgContainer" height="5%">
+                <div id="imgContainer">
                     <center>
-                        <img alt="7 wonders logo" src={`dist/images/background/7w_logo.png`} />
+                        <img alt="7 wonders logo" src={'dist/images/background/7w_logo.png'} width="80%" style={{ display: 'block' }} />
                         <h5 style={{ float: 'right' }}>Capstone Edition 2017</h5>
                     </center>
                 </div>
