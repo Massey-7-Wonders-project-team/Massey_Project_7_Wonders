@@ -9,12 +9,11 @@ dependencies:
         - pip install -r requirements.txt
 
 test:
-    override:
+    post:
         - mkdir -p $CIRCLE_TEST_REPORTS/reports:
             parallel: true
         - python test.py --junit-xml=coverage.xml --cov=application/ tests/:
             parallel: true
-    post:
         - mv coverage.xml $CIRCLE_TEST_REPORTS/reports/coverage.xml
         - npm run test:coveralls
         - cat static/coverage/lcov.info | static/node_modules/coveralls/bin/coveralls.js
