@@ -4,6 +4,7 @@ import { Table, TableBody, TableRow, TableRowColumn } from 'material-ui';
 function Wonder(props) {
     const { boardData } = props;
     var rows = [];
+    if (boardData.max_wonder === 2) { rows.push(null); }
     for (var each = 0; each < boardData.max_wonder; each ++) {
         if (each < boardData.wonder_level) {
             rows.push('Complete');
