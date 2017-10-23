@@ -141,7 +141,7 @@ def create_game():
 
 
 def single_player(user):
-    no_players = request.args.get('ai_players')
+    no_players = int(request.args.get('ai_players'))
     if not no_players:
         no_players = 3
     else:
@@ -262,8 +262,8 @@ def begin_game():
 @requires_auth
 def play_card():
     """Endpoint for all card playing actions
-    Inputs - player_id, card_id, discarded (bool), for_wonder(bool), 
-        from_discard_pile (halicarnasus special), 
+    Inputs - player_id, card_id, discarded (bool), for_wonder(bool),
+        from_discard_pile (halicarnasus special),
         trade (false first time to check if trade needed, true if trade confirmed by user)
     Outputs - status comment"""
     player = get_player(request.args.get('player_id'))
@@ -290,7 +290,7 @@ def end_game():
         print('Ending game')
         db.session.commit()
         return jsonify(message="Success")
-    
+
     except Exception as e:
         print(e)
         return jsonify(message="There was an error"), 500
