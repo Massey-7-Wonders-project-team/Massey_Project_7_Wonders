@@ -111,7 +111,7 @@ export class PlayerDisplay extends Component {
             paddingTop: 0,
         };
         const inventorycustomColumnStyle = {
-            paddingTop: 0, width: 100 };
+            paddingTop: 0, width: 140 };
         let imageName = '';
         if (true) {
             const longCityNameArray = (boardData.wonder).split(' ');
@@ -126,8 +126,10 @@ export class PlayerDisplay extends Component {
         if (boardData.id === this.state.userID) {
             homeWonder = true;
         }
+
+        //overlayContainerStyle={{ paddingBottom: '10%' }}
         return (
-            <div>
+            <div style={{ paddingLeft: 100, paddingRight: 100 }}>
                 {game && !error && started && boardData &&
                     <div>
                         {
@@ -136,21 +138,13 @@ export class PlayerDisplay extends Component {
                                     <TableBody displayRowCheckbox={false} >
                                         <TableRow selectable={false}>
                                             <TableRowColumn width="50" id="leftNav" >
-                                                <input type="image" width="20" src='dist/images/icons/left_arrow.png' onTouchTap={this.lookLeft} />
+                                                <img alt="" width="20" src='dist/images/icons/left_arrow.png' onTouchTap={this.lookLeft} />
                                             </TableRowColumn>
                                             <TableRowColumn>
                                                 <Card
                                                     expanded={this.state.expanded}
                                                     onExpandChange={this.handleExpandChange}
                                                 >
-                                                    <CardHeader
-                                                        id="CardHeader"
-                                                        title={pName}
-                                                        subtitle={boardData.wonder}
-                                                        avatar={<Avatar src={`dist/images/cards/age${game.game.age}.png`} size={55} />}
-                                                        actAsExpander={true}
-                                                        showExpandableButton={true}
-                                                    />
                                                     <CardText id="CardText" style={{ paddingBottom: 0, paddingTop: 0 }}>
                                                         <div>
                                                             <Table>
@@ -160,46 +154,47 @@ export class PlayerDisplay extends Component {
                                                                             style={inventorycustomColumnStyle}
                                                                         >
                                                                             <List style={ListStyle}>
-                                                                                <Inventory item="wood" amount={boardData.wood + boardData.extra_wood} />
-                                                                                <Inventory item="brick" amount={boardData.brick + boardData.extra_brick} />
-                                                                                <Inventory item="ore" amount={boardData.ore + boardData.extra_ore} />
-                                                                                <Inventory item="stone" amount={boardData.stone + boardData.extra_stone} />
-                                                                                <Inventory item="glass" amount={boardData.glass + boardData.extra_glass} />
-                                                                                <Inventory item="paper" amount={boardData.paper + boardData.extra_paper} />
-                                                                                <Inventory item="cloth" amount={boardData.cloth + boardData.extra_cloth} />
+                                                                                <Inventory item="wood" amount={boardData.wood} extra={boardData.extra_wood} />
+                                                                                <Inventory item="brick" amount={boardData.brick} extra={boardData.extra_brick} />
+                                                                                <Inventory item="ore" amount={boardData.ore} extra={boardData.extra_ore} />
+                                                                                <Inventory item="stone" amount={boardData.stone} extra={boardData.extra_stone} />
+                                                                                <Inventory item="glass" amount={boardData.glass} extra={boardData.extra_glass} />
+                                                                                <Inventory item="paper" amount={boardData.paper} extra={boardData.extra_paper} />
+                                                                                <Inventory item="cloth" amount={boardData.cloth} extra={boardData.extra_cloth} />
                                                                             </List>
                                                                         </TableRowColumn>
                                                                         <TableRowColumn>
-                                                                            <CardActions>
-                                                                                { !homeWonder ?
-                                                                                    <FlatButton label="Back to your Wonder" onTouchTap={this.lookUser} />
-                                                                                    :
-                                                                                    <FlatButton label=" " disabled={true} />
+                                                                            <CardMedia
+                                                                                style={{ clear: 'left', paddingTop: 10 }}
+                                                                                overlay={
+                                                                                    <CardTitle
+                                                                                        title={boardData.profile}
+                                                                                        subtitle={boardData.wonder}
+                                                                                        style={{ paddingBottom: 0 }}
+                                                                                    >
+                                                                                    <Wonder boardData={boardData} />
+                                                                                    </CardTitle>
                                                                                 }
-                                                                            </CardActions>
-                                                                            <CardMedia>
+                                                                                overlayContentStyle={{ background: 'none' }}
+                                                                            >
                                                                                 <img alt="" src={`dist/images/cities/${imageName}B.png`} />
                                                                             </CardMedia>
-                                                                            <Wonder boardData={boardData} />
                                                                         </TableRowColumn>
                                                                         <TableRowColumn
                                                                             style={inventorycustomColumnStyle}
                                                                         >
+                                                                            { !homeWonder ?
+                                                                                <FlatButton style={{ align: 'left' }} label="Your Wonder" onTouchTap={this.lookUser} />
+                                                                                :
+                                                                                <FlatButton label=" " disabled={true} />
+                                                                            }
+
                                                                             <List style={ListStyle}>
-                                                                                <Inventory item="vp" amount={boardData.points} />
-                                                                                <Inventory item="coin" amount={boardData.money} />
-                                                                                <Inventory item={`pyramid-stage${boardData.wonder_level}`} amount={boardData.wonder_level} />
-                                                                            </List>
-                                                                        </TableRowColumn>
-                                                                        <TableRowColumn
-                                                                            style={inventorycustomColumnStyle}
-                                                                        >
-                                                                            <List id="buildings" style={ListStyle}>
-                                                                                <Inventory item="military" amount={boardData.military} />
-                                                                                <Inventory item="victoryminus1" amount={boardData.military_loss} />
-                                                                                <Inventory item="cog" amount={boardData.cog} />
-                                                                                <Inventory item="tablet" amount={boardData.tablet} />
-                                                                                <Inventory item="compass" amount={boardData.compass} />
+                                                                                <Inventory item="vp" amount={boardData.points} extra={-1} />
+                                                                                <Inventory item="coin" amount={boardData.money} extra={-1} />
+                                                                                <Inventory item={`pyramid-stage${boardData.wonder_level}`} amount={boardData.wonder_level} extra={-1} />
+                                                                                <Inventory item="military" amount={boardData.military} extra={-1} />
+                                                                                <Inventory item="victoryminus1" amount={boardData.military_loss} extra={-1} />
                                                                             </List>
                                                                         </TableRowColumn>
                                                                     </TableRow>
@@ -207,20 +202,29 @@ export class PlayerDisplay extends Component {
                                                             </Table>
                                                         </div>
                                                     </CardText>
-                                                    <CardText id="played_cards" expandable={true}>
-                                                        <CardHist history={historyData} />
-                                                    </CardText>
                                                 </Card>
                                             </TableRowColumn>
                                             <TableRowColumn width="50" id="rightNav" >
-                                              <input type="image" width="20" src='dist/images/icons/right_arrow.png' onTouchTap={this.lookRight} />
+                                              <img alt="" width="20" src='dist/images/icons/right_arrow.png' onTouchTap={this.lookRight} />
                                             </TableRowColumn>
                                         </TableRow>
                                     </TableBody>
                                 </Table>
                             </div>
 
-                          }
+                        }
+                        <div style={{ padding: 73, paddingTop: 2, paddingBottom: 2 }} >
+                            <Card>
+                                <CardHeader
+                                    title={`${pName}'s Played Cards`}
+                                    actAsExpander={true}
+                                    showExpandableButton={true}
+                                />
+                                <CardText id="played_cards" expandable={true}>
+                                    <CardHist history={historyData} />
+                                </CardText>
+                            </Card>
+                        </div>
                     </div>
                 }
             </div>

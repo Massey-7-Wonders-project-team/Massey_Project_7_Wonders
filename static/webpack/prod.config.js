@@ -11,13 +11,6 @@ module.exports = {
         publicPath: 'dist/',
     },
 
-    module: {
-        loaders: [{
-            test: /\.scss$/,
-            loader: 'style!css!postcss-loader!sass',
-        }],
-    },
-
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {

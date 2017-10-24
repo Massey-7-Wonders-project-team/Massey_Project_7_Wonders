@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Paper, FlatButton } from 'material-ui';
+import { Paper, RaisedButton } from 'material-ui';
 import { browserHistory } from 'react-router';
 import * as actionCreators from '../actions/data';
 
@@ -20,13 +20,12 @@ function mapDispatchToProps(dispatch) {
 }
 
 const style = {
-    marginTop: 50,
-    paddingBottom: 50,
-    paddingTop: 25,
-    marginLeft: 100,
-    width: 300,
+    padding: 50,
+    margin: '20px auto',
+    maxWidth: 600,
     textAlign: 'center',
-    display: 'inline-block',
+    display: 'block',
+    overflow: 'hidden',
 };
 
 export class ProtectedView extends React.Component {
@@ -49,27 +48,34 @@ export class ProtectedView extends React.Component {
 
     render() {
         const Name = (this.props.userName).split('@')[0];
+        const primary = true;
         return (
             <div>
                 {!this.props.loaded
                     ? <h1>Loading data...</h1>
                     :
-                    <div>
-                        <div style={{ float: "left" }}>
+                    <div className="row">
+                        <div className="col-sm-12 col-md-8">
                             <h1>Welcome</h1>
-                            <Paper style={style} >
-                                <h1>&nbsp;&nbsp;{ Name }!</h1>
-                                <h3><i>&nbsp;&nbsp;({this.props.data.data.email})</i></h3>
+                            <Paper style={style}>
+                                <h1>{ Name }!</h1>
+                                <h3><i>({this.props.data.data.email})</i></h3>
                             </Paper>
                             <br />
-                            <FlatButton
-                                style={{ marginLeft: 55, marginTop: 25 }}
-                                label="Select Play in the Menu to find a Game to join"
+                            <RaisedButton
+                                style={{
+                                    width: '100%',
+                                    maxWidth: 400,
+                                    margin: '0 auto 20px auto',
+                                    display: 'block',
+                                }}
+                                primary={primary}
+                                label="Play New Game"
                                 onTouchTap={() => this.dispatchNewRoute('/play')}
                             />
                         </div>
-                        <div style={{ float: 'right', paddingRight: 50 }}>
-                            <img alt="statue" src={'dist/images/background/statue.jpg'} />
+                        <div className="col-sm-12 col-md-4 text-center">
+                            <img width="100%" style={{ maxWidth: '300px' }} alt="statue" src={'dist/images/background/statue.jpg'} />
                         </div>
                     </div>
                 }

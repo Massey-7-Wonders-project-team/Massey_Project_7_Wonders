@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
-import { RaisedButton, Dialog, FlatButton, Paper, Checkbox } from 'material-ui';
+import { RaisedButton, Dialog, FlatButton, Paper,
+  DropDownMenu, MenuItem, Checkbox } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { browserHistory } from 'react-router';
@@ -22,13 +23,14 @@ function mapDispatchToProps(dispatch) {
 }
 
 const style = {
-    marginTop: 50,
     padding: 50,
-    marginLeft: 100,
-    width: 'auto',
+    margin: '20px auto',
+    maxWidth: 600,
     textAlign: 'center',
-    display: 'inline-block',
+    display: 'block',
+    overflow: 'hidden',
 };
+
 
 // we must export the class for testing. Then also default export the class
 // at the end of the file which is used for the actual production render
@@ -46,6 +48,8 @@ export class Play extends React.Component {
             single: false,
             militaryDialog: false,
             militaryOnce: false,
+            value: 2,
+            aiPlayers: 0,
         };
         this.createGame = this.createGame.bind(this);
         this.gameStatusCheck = this.gameStatusCheck.bind(this);
@@ -55,6 +59,7 @@ export class Play extends React.Component {
         this.setPollId = this.setPollId.bind(this);
         this.updateCheck = this.updateCheck.bind(this);
         this.hideArmyDialog = this.hideArmyDialog.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
     componentDidMount() {
@@ -113,7 +118,7 @@ export class Play extends React.Component {
     createGame() {
         // send request to create game
         const token = localStorage.getItem('token');
-        fetch(`/api/game/create?single_player=${this.state.single}`, {
+        fetch(`/api/game/create?single_player=${this.state.single}&ai_players=${this.state.value}`, {
             method: 'get',
             credentials: 'include',
             headers: {
@@ -191,6 +196,8 @@ export class Play extends React.Component {
          this.endGame();
      }
 
+     handleChange = (event, index, value) => this.setState({value});
+
     render() {
         const { game, error, playerId, endGame, playerCount } = this.state;
         const primary = true;
@@ -213,7 +220,6 @@ export class Play extends React.Component {
                 {!game &&
                     <div>
                         <h1>Lets find a game...</h1>
-                        <hr />
                         <div>
                             <Paper style={style}>
                                 <h3>There are no active games for you</h3>
@@ -235,34 +241,50 @@ export class Play extends React.Component {
                                 <Checkbox
                                     id="single"
                                     onCheck={this.updateCheck}
-                                    label="Check for single player mode"
+                                    label=" Single player mode against"
+                                    style={{ clear: 'left', float: 'left', width: 240 }}
                                 />
+                                <DropDownMenu
+                                    id="PlayerSelection"
+                                    value={this.state.value}
+                                    onChange={this.handleChange}
+                                    style={{ marginTop: -15, marginLeft: -35, paddingLeft: 0, width: 150, float: 'left', lineHeight: 30 }}
+                                    menuStyle={{ marginLeft: 0, padding: 0 }}
+                                >
+                                    <MenuItem value={2} primaryText={<b>2 players</b>} />
+                                    <MenuItem value={3} primaryText={<b>3 players</b>} />
+                                    <MenuItem value={4} primaryText={<b>4 players</b>} />
+                                    <MenuItem value={5} primaryText={<b>5 players</b>} />
+                                    <MenuItem value={6} primaryText={<b>6 players</b>} />
+                                </DropDownMenu>
                             </div>
                         </div>
                     </div>
                 }
                 {game && this.props.game &&
-                <div>
-                    <div style={{ float: 'left', marginRight: 0, paddingTop: 0, paddingLeft: 50, width: '20%' }}>
+                <div className="row">
+                    <div className="col-sm-12 col-md-4">
                         <h3 style={{ marginTop: 0}}>
                             <b>Age: {this.props.game.game.age} -
                             Round: {this.props.game.game.round}
                             </b>
                         </h3>
                     </div>
-                    <div style={{ float: 'left', marginRight: 0, paddingTop: 0, width: '60%' }}>
+                    <div className="col-sm-9 col-md-5">
                         <center><h3 style={{ marginTop: 0 }}> Cards in Hand </h3></center>
                     </div>
-                    <RaisedButton
-                        label="End Game"
-                        primary={primary}
-                        style={{
-                            float: 'right',
-                            display: 'block',
-                            margin: '0 0 20px 0',
-                        }}
-                        onTouchTap={() => this.endGameDialog()}
-                    />
+                    <div className="col-sm-3">
+                        <RaisedButton
+                            label="End Game"
+                            primary={primary}
+                            style={{
+                                float: 'right',
+                                display: 'block',
+                                margin: '0 0 20px 0',
+                            }}
+                            onTouchTap={() => this.endGameDialog()}
+                        />
+                    </div>
                 </div>
                 }
                 {game &&

@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { RaisedButton, CardActions, FlatButton, Card,
+import { RaisedButton, IconButton, CardActions, FlatButton, Card,
     CardText, CardMedia, CardTitle, CircularProgress, Dialog } from 'material-ui';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -24,6 +24,15 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return bindActionCreators(actions, dispatch);
 }
+
+const style = {
+    padding: '50px 0',
+    margin: '20px auto',
+    textAlign: 'center',
+    display: 'block',
+    overflow: 'hidden',
+};
+
 
 export class GameScreen extends Component {
 
@@ -219,14 +228,21 @@ export class GameScreen extends Component {
                 onTouchTap={this.hideInvalidMoveError}
             />,
         ];
+        let nextWonderLevel = 1;
+        let canPlayWonder = true;
         if (!started) {
             this.playersLogged();
         }
         if (started && game) {
             if (game.game.age) {
                 document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
+                nextWonderLevel = game.player.wonder_level + 1;
+                if (nextWonderLevel > game.player.max_wonder) {
+                    canPlayWonder = false;
+                }
             }
         }
+
 
         return (
             <div>
@@ -264,7 +280,7 @@ export class GameScreen extends Component {
                                     contentStyle={{ width: '40%' }}
                                 >
                                   <center><div>
-                                      <img alt="Age_image" height={'100%'} src={`dist/images/icons/age${game.game.age}cards.png`} />
+                                      <img alt="Age_image" height='150' src={`dist/images/icons/age${game.game.age}cards.png`} />
                                   </div></center>
                                 </Dialog>
                             }
@@ -300,32 +316,27 @@ export class GameScreen extends Component {
                                     const imageName = (card.name).replace(/\s+/g, '').toLowerCase();
                                     return (
                                         <Card className="Card" data-card-number={index} key={card.id} style={{ marginRight: 5, width: 130, display: 'inline-block', paddingBottom: 0 }}>
-                                            <CardTitle
-                                                title={card.name}
-                                                titleStyle={{ fontSize: 18 }}
-                                                style={{ padding: 3, height: 75 }}
-                                            />
                                             <CardMedia>
                                                 <img
                                                     alt={`${card.name} image`}
                                                     src={`dist/images/cards/${imageName}.png`}
-                                                />
-                                            </CardMedia>
-                                            <CardActions>
-                                                <FlatButton
-                                                    label="Play Card"
-                                                    className="PlayCardButton"
+                                                    width="120"
+                                                    title={`${card.name}`}
                                                     onTouchTap={() => this.playCard(card.id)}
                                                 />
-                                                <FlatButton
-                                                    label="Wonder"
-                                                    onTouchTap={() => this.wonderCard(card.id)}
-                                                />
-                                                <FlatButton
-                                                    label="Discard"
-                                                    className="DiscardCardButton"
-                                                    onTouchTap={() => this.discard(card.id)}
-                                                />
+                                            </CardMedia>
+                                            <CardActions style={{ padding: 0, backgroundColor: 'lightblue' }}>
+                                                <IconButton style={{ width: 30 }} tooltip={`Play ${card.name}`} touch={true} tooltipPosition="bottom-center">
+                                                    <img width="18" src={`dist/images/icons/check.png`} onTouchTap={() => this.playCard(card.id)} />
+                                                </IconButton>
+                                                { canPlayWonder &&
+                                                    <IconButton style={{ width: 39 }} tooltip="Play for Wonder" touch={true} tooltipPosition="bottom-center">
+                                                        <center><img width="30" src={`dist/images/icons/pyramid-stage${nextWonderLevel}.png`} onTouchTap={() => this.wonderCard(card.id)} /></center>
+                                                    </IconButton>
+                                                }
+                                                <IconButton style={{ width: 30 }} tooltip={`Discard ${card.name}`} touch={true} tooltipPosition="bottom-center">
+                                                    <img width="20" src={`dist/images/icons/trash.png`} onTouchTap={() => this.discard(card.id)} />
+                                                </IconButton>
                                             </CardActions>
                                         </Card>
                                     );
@@ -361,8 +372,8 @@ export class GameScreen extends Component {
                 <div>
                     <div style={{ float: 'left', padding: 20 }}>
                         {!error && !game && !started &&
-                          <div>
-                              <div id="GC" style={{ width: 500 }}>
+                          <div style={style}>
+                              <div id="GC">
                                   <h2> Game creation...</h2>
                               </div>
                               <div style={{ padding: 20 }} >

@@ -63,7 +63,16 @@ export class Header extends React.Component {
     render() {
         return (
             <header>
-                <LeftNav className="Nav-Drawer" containerClassName={this.state.open ? 'open' : ''} open={this.state.open}>
+                <LeftNav
+                    docked={false}
+                    className="Nav-Drawer"
+                    containerClassName={this.state.open ? 'open' : ''}
+                    open={this.state.open}
+                    onRequestChange={open => this.setState({ open })}
+                    containerStyle={{
+                        overflow: 'hidden',
+                    }}
+                >
                     {
                         !this.props.isAuthenticated ?
                             <div>
@@ -128,7 +137,7 @@ export class Header extends React.Component {
                           <FlatButton label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
                         :
                           <div>
-                              <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onTouchTap={() => this.dispatchNewRoute('/home')} />
+                              <FlatButton className="hidden-sm-down" style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onTouchTap={() => this.dispatchNewRoute('/home')} />
                               <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
                           </div>
 
