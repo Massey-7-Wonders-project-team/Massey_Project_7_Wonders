@@ -18,6 +18,10 @@ function mapStateToProps(state) {
         playerCount: state.game.playerCount,
         cardPlayed: state.game.cardPlayed,
         cardValid: state.game.cardValid,
+        message: state.game.message,
+        leftCost: state.game.leftCost,
+        rightCost: state.game.rightCost,
+        trade: state.game.trade,
     };
 }
 
@@ -44,6 +48,14 @@ export class GameScreen extends Component {
             shownForRound: false,
             endGameScoreboard: false,
             showInvalidMoveError: false,
+            showTradeDialog: false,
+            tradeDialogOnce: false,
+            currentPlayingCard: 'Default',
+            currentCardID: 0,
+            leftCost: 0,
+            rightCost: 10,
+            trade: false,
+            wonderTrade: false,
         };
         this.startGame = this.startGame.bind(this);
         this.pollGameStatus = this.pollGameStatus.bind(this);
@@ -53,6 +65,10 @@ export class GameScreen extends Component {
         this.hideInvalidMoveError = this.hideInvalidMoveError.bind(this);
         this.hideAgeDialog = this.hideAgeDialog.bind(this);
         this.hideArmyDialog = this.hideArmyDialog.bind(this);
+        this.hideTradeDialogPurchase = this.hideTradeDialogPurchase.bind(this);
+        this.hideTradeDialogCancel = this.hideTradeDialogCancel.bind(this);
+        this.hideTradeDialogPurchaseWonder = this.hideTradeDialogPurchaseWonder.bind(this);
+        this.hideTradeDialogCancelWonder = this.hideTradeDialogCancelWonder.bind(this);
     }
 
     componentDidMount() {
@@ -60,27 +76,52 @@ export class GameScreen extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.cardValid === false) {
+        if (nextProps.cardValid === false ) {
             console.log('INVALID')
             this.setState({
                 showInvalidMoveError: true,
             });
         }
-
         if (nextProps.started) {
+            this.setState({
+                leftCost: nextProps.leftCost,
+                rightCost: nextProps.rightCost,
+                message: nextProps.message,
+            });
+            if (nextProps.message !== null) {
+                if (nextProps.message.includes("played")) {
+                    this.setState({
+                        showTradeDialog: false,
+                        currentPlayingCard: null,
+                        wonderTrade: false,
+                    });
+                }
+            }
+            if (nextProps.trade === true && !this.state.tradeDialogOnce &&
+              this.state.currentPlayingCard !== null ) {
+                this.setState({
+                    showTradeDialog: true,
+                });
+            }
+            if (nextProps.cardPlayed) {
+                this.setState({
+                    showTradeDialog: false,
+                    tradeDialogOnce: false,
+                });
+            }
             if (!this.state.shownForRound &&
-                nextProps.game.game.round === 1 && nextProps.game.game.age !== 1) {
+                nextProps.game.game.round === 1 && nextProps.game.game.age > 1) {
                 this.setState({
                     armyDialog: true,
                 });
             }
             if (nextProps.game.game.round === 2) {
                 this.setState({
-                  shownForRound: false,
-                  ageDialogDisplayOnce: false,
-                  ageDialog: false,
-                  armyDialog: false,
-                  armyDialogDisplayOnce: false
+                    shownForRound: false,
+                    ageDialogDisplayOnce: false,
+                    ageDialog: false,
+                    armyDialog: false,
+                    armyDialogDisplayOnce: false
                 });
             }
             if (nextProps.game.game.round === 1 && nextProps.game.game.age === 1) {
@@ -118,9 +159,14 @@ export class GameScreen extends Component {
         this.props.startGame(this.props.playerId);
     }
 
-    playCard(cardId) {
+    playCard(cardId, cardName) {
         if (!this.props.cardPlayed) {
-            this.props.playCard(this.props.playerId, cardId, false, false, true);
+            this.setState({
+                currentPlayingCard: cardName,
+                currentCardID: cardId,
+                tradeDialogOnce: false,
+            });
+            this.props.playCard(this.props.playerId, cardId, false, false, false);
         } else {
             this.setState({
                 showPlayCardError: true,
@@ -128,9 +174,40 @@ export class GameScreen extends Component {
         }
     }
 
-    wonderCard(cardId) {
+    playCardTrade() {
         if (!this.props.cardPlayed) {
-            this.props.playCard(this.props.playerId, cardId, false, true, true);
+            this.setState({
+                tradeDialog: false,
+            });
+            this.props.playCard(this.props.playerId, this.state.currentCardID, false, false, true);
+        } else {
+            this.setState({
+                showPlayCardError: true,
+            });
+        }
+    }
+
+    wonderCard(cardId, cardName) {
+        if (!this.props.cardPlayed) {
+            this.setState({
+                currentPlayingCard: cardName,
+                currentCardID: cardId,
+                tradeDialogOnce: false,
+                wonderTrade: true,
+            });
+            this.props.playCard(this.props.playerId, cardId, false, true, false);
+        } else {
+            this.setState({
+                showPlayCardError: true,
+            });
+        }
+    }
+    wonderCardTrade() {
+        if (!this.props.cardPlayed) {
+            this.setState({
+                tradeDialog: false,
+            });
+            this.props.playCard(this.props.playerId, this.state.currentCardID, false, true, true);
         } else {
             this.setState({
                 showPlayCardError: true,
@@ -183,6 +260,37 @@ export class GameScreen extends Component {
         });
     }
 
+    hideTradeDialogPurchase() {
+        this.setState({
+            trade: false,
+            tradeDialogOnce: true,
+        });
+        this.playCardTrade();
+    }
+    hideTradeDialogCancel() {
+        this.setState({
+            showTradeDialog: false,
+            trade: false,
+            tradeDialogOnce: true,
+        });
+    }
+
+    hideTradeDialogPurchaseWonder() {
+        this.setState({
+            trade: false,
+            tradeDialogOnce: true,
+        });
+        this.wonderCardTrade();
+    }
+    hideTradeDialogCancelWonder() {
+        this.setState({
+            showTradeDialog: false,
+            trade: false,
+            tradeDialogOnce: true,
+            wonderTrade: false,
+        });
+    }
+
     playersLogged() {
         const token = localStorage.getItem('token');
         fetch(`/api/game/status?player_id=${this.props.playerId}`, {
@@ -205,7 +313,7 @@ export class GameScreen extends Component {
     }
 
     render() {
-        const { error, game, started, loading } = this.props;
+        const { error, game, started, loading, message } = this.props;
         const { showPlayCardError, showScoreBoard, showInvalidMoveError } = this.state;
         const showPlayCardActions = [
             <FlatButton
@@ -224,17 +332,22 @@ export class GameScreen extends Component {
         if (!started) {
             this.playersLogged();
         }
-
-        if (started && game) {
-            if (game.game.age) {
-                document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
-                nextWonderLevel = game.player.wonder_level + 1;
-                if (nextWonderLevel > game.player.max_wonder) {
-                  canPlayWonder = false;
-                }
+        if (started && game.game.age) {
+            document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
+            nextWonderLevel = game.player.wonder_level + 1;
+            if (nextWonderLevel > game.player.max_wonder) {
+                canPlayWonder = false;
             }
         }
-
+        const tradeCost = this.state.leftCost + this.state.rightCost;
+        let coinArray = [];
+        for (var i = 0; i < tradeCost; ++i ) {
+            coinArray.push("coin" + i)
+        }
+        let currentCardImage = '';
+        if (this.state.currentPlayingCard !== null ) {
+            currentCardImage = (this.state.currentPlayingCard).replace(/\s+/g, '').toLowerCase();
+        }
 
         return (
             <div>
@@ -294,11 +407,91 @@ export class GameScreen extends Component {
                                     <MilitaryUpdate data={this.props.game} />
                                 </Dialog>
                             }
+                            {this.state.showTradeDialog && !this.state.wonderTrade &&
+                                <Dialog
+                                    id="tradeDialog"
+                                    title={`Confirm Trade`}
+                                    actions={[
+                                        <FlatButton
+                                            label="Cancel trade"
+                                            primary={true}
+                                            onClick={this.hideTradeDialogCancel}
+                                        />,
+                                        <FlatButton
+                                            label="Purchase Goods"
+                                            primary={true}
+                                            onClick={this.hideTradeDialogPurchase}
+                                        /> ]
+                                    }
+                                    open={this.state.showTradeDialog}
+                                    onRequestClose={this.hideTradeDialog}
+                                    contentStyle={{ width: '100%' }}
+                                >
+                                    <div>
+                                        <p style={{ clear: 'left' }}>
+                                        To build your <b>{this.state.currentPlayingCard} </b>
+                                        you need to pay <b>{tradeCost}</b> Coin for the correct resources</p>
+                                    </div>
+                                    <div style={{ clear: 'left', float: 'left', align: 'middle', padding: 50 }}>
+                                    {
+                                          coinArray.map((coin) => {
+                                              return (<img key={coin} alt="" src={`dist/images/icons/coin.png`} />);
+                                          })
+                                    }
+                                    </div>
+                                    <h1 style={{ float: 'left', width: 120, paddingRight: 30, paddingTop: 32 }}><b>=</b></h1>
+                                    <img alt={this.state.currentPlayingCard}
+                                        height='150'
+                                        src={`dist/images/cards/${currentCardImage}.png`}
+                                    />
+                                </Dialog>
+                            }
+                            {this.state.showTradeDialog && this.state.wonderTrade &&
+                                <Dialog
+                                    id="tradeDialog"
+                                    title={`Confirm Trade`}
+                                    actions={[
+                                        <FlatButton
+                                            label="Cancel trade"
+                                            primary={true}
+                                            onClick={this.hideTradeDialogCancelWonder}
+                                        />,
+                                        <FlatButton
+                                            label="Purchase Goods"
+                                            primary={true}
+                                            onClick={this.hideTradeDialogPurchaseWonder}
+                                        /> ]
+                                    }
+                                    open={this.state.showTradeDialog}
+                                    onRequestClose={this.hideTradeDialog}
+                                    contentStyle={{ width: '100%' }}
+                                >
+                                    <div>
+                                        <p style={{ clear: 'left' }}>
+                                        To build your <b>Stage {`${this.props.game.player.wonder_level + 1}`} Wonder </b>
+                                        you need to pay <b>{tradeCost}</b> Coin for the correct resources</p>
+                                    </div>
+                                    <div style={{ clear: 'left', float: 'left', align: 'middle', padding: 50 }}>
+                                    {
+                                          coinArray.map((coin) => {
+                                              return (<img key={coin} alt="" src={`dist/images/icons/coin.png`} />);
+                                          })
+                                    }
+                                    </div>
+                                    <h1 style={{ float: 'left', width: 120, paddingRight: 30, paddingTop: 32 }}><b>=</b></h1>
+                                    <img alt={this.props.game.player.wonder_level + 1}
+                                        height='100'
+                                        src={`dist/images/icons/pyramid-stage${this.props.game.player.wonder_level + 1}.png`}
+                                        style={{ paddingTop: 20, paddingLeft: 0 }}
+                                    />
+                                </Dialog>
+                            }
                             <div>
                                 {showScoreBoard &&
                                     <EndScreen
                                         hideScoreboard={this.hideScoreboard}
                                         endGameScoreboard={this.state.endGameScoreboard}
+                                        currentScore={this.props.game}
                                     />
                                 }
                             </div>
@@ -314,20 +507,20 @@ export class GameScreen extends Component {
                                                     src={`dist/images/cards/${imageName}.png`}
                                                     width="120"
                                                     title={`${card.name}`}
-                                                    onTouchTap={() => this.playCard(card.id)}
+                                                    onTouchTap={() => this.playCard(card.id, card.name)}
                                                 />
                                             </CardMedia>
                                             <CardActions style={{ padding: 0, backgroundColor: 'lightblue' }}>
                                                 <IconButton style={{ width: 30 }} tooltip={`Play ${card.name}`} touch={true} tooltipPosition="bottom-center">
-                                                    <img width="18" src={`dist/images/icons/check.png`} onTouchTap={() => this.playCard(card.id)} />
+                                                    <img width="18" src={`dist/images/icons/check.png`} onTouchTap={() => this.playCard(card.id, card.name)} />
                                                 </IconButton>
                                                 { canPlayWonder &&
                                                     <IconButton style={{ width: 39 }} tooltip="Play for Wonder" touch={true} tooltipPosition="bottom-center">
-                                                        <center><img width="30" src={`dist/images/icons/pyramid-stage${nextWonderLevel}.png`} onTouchTap={() => this.wonderCard(card.id)} /></center>
+                                                        <center><img width="30" src={`dist/images/icons/pyramid-stage${nextWonderLevel}.png`} onTouchTap={() => this.wonderCard(card.id, card.name)} /></center>
                                                     </IconButton>
                                                 }
                                                 <IconButton style={{ width: 30 }} tooltip={`Discard ${card.name}`} touch={true} tooltipPosition="bottom-center">
-                                                    <img width="20" src={`dist/images/icons/trash.png`} onTouchTap={() => this.discard(card.id)} />
+                                                    <img width="20" src={`dist/images/icons/trash.png`} onTouchTap={() => this.discard(card.id, card.name)} />
                                                 </IconButton>
                                             </CardActions>
                                         </Card>
@@ -356,7 +549,7 @@ export class GameScreen extends Component {
                                 open={showInvalidMoveError}
                                 onRequestClose={this.hideInvalidMoveError}
                             >
-                              Please play the card differrently or choose another card
+                                {this.props.message}
                             </Dialog>
                         }
                     </div>
@@ -435,6 +628,10 @@ GameScreen.propTypes = {
     setPollId: PropTypes.func.isRequired,
     cardValid: PropTypes.bool,
     clearInvalidCardError: PropTypes.func.isRequired,
+    rightCost: PropTypes.number,
+    leftCost: PropTypes.number,
+    message: PropTypes.string,
+    trade: PropTypes.bool,
 };
 
 GameScreen.defaultProps = {
@@ -444,6 +641,10 @@ GameScreen.defaultProps = {
     playCard: null,
     cardPlayed: null,
     cardValid: null,
+    rightCost: null,
+    leftCost: null,
+    message: null,
+    trade: null,
 };
 
 export default connect(
