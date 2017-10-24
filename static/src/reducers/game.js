@@ -26,6 +26,7 @@ const initialState = {
     message: null,
     leftCost: 0,
     rightCost: 0,
+    trade: false,
 };
 
 export default createReducer(initialState, {
@@ -80,18 +81,17 @@ export default createReducer(initialState, {
         Object.assign({}, state, {
             error: true,
         }),
-    [RECEIVE_PLAY_CARD]: (state, payload) => {
-        return {
-            ...state,
+    [RECEIVE_PLAY_CARD]: (state, payload) =>
+        Object.assign({}, state, {
             error: false,
             loading: false,
+            trade: payload.trade,
             cardValid: payload.cardValid,
             cardPlayed: payload.cardPlayed,
-            message: payload.message,
+            message: payload.message ? payload.message : null,
             leftCost: payload.leftCost,
             rightCost: payload.rightCost,
-        };
-    },
+        }),
     [REQUEST_PLAY_CARD]: state =>
         Object.assign({}, state, {
             loading: true,
