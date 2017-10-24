@@ -110,9 +110,6 @@ export function playCard(playerId, cardId, discarded, wonder, trade) {
             } else if (!body.possible) {
                 dispatch(receivePlayCard({
                     cardPlayed: false, cardValid: false, message: body.message }))
-            // } else if (body.message.includes('played') || body.message.includes('free')) {
-            //     dispatch(receivePlayCard({
-            //         trade: false, cardValid: false, message: body.message, cardPlayed: true }))
             } else {
                 dispatch(receivePlayCard({
                     cardPlayed: false,
