@@ -23,6 +23,9 @@ const initialState = {
     players: null,
     cardPlayed: null,
     cardValid: null,
+    message: null,
+    leftCost: 0,
+    rightCost: 0,
 };
 
 export default createReducer(initialState, {
@@ -83,6 +86,10 @@ export default createReducer(initialState, {
             error: false,
             loading: false,
             cardValid: payload.cardValid,
+            cardPlayed: payload.cardPlayed,
+            message: payload.message,
+            leftCost: payload.leftCost,
+            rightCost: payload.rightCost,
         };
     },
     [REQUEST_PLAY_CARD]: state =>
