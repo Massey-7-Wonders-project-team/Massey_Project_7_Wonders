@@ -15,6 +15,7 @@ function mapStateToProps(state) {
         token: state.auth.token,
         userName: state.auth.userName,
         isAuthenticated: state.auth.isAuthenticated,
+        userData: state.data,
     };
 }
 
@@ -61,18 +62,10 @@ export class Header extends React.Component {
     }
 
     render() {
+        const profileName = this.props.userData.data.profile;
         return (
             <header>
-                <LeftNav
-                    docked={false}
-                    className="Nav-Drawer"
-                    containerClassName={this.state.open ? 'open' : ''}
-                    open={this.state.open}
-                    onRequestChange={open => this.setState({ open })}
-                    containerStyle={{
-                        overflow: 'hidden',
-                    }}
-                >
+                <LeftNav className="Nav-Drawer" containerClassName={this.state.open ? 'open' : ''} open={this.state.open}>
                     {
                         !this.props.isAuthenticated ?
                             <div>
@@ -101,7 +94,7 @@ export class Header extends React.Component {
                                     />
                                 </MenuItem>
                                 <MenuItem onTouchTap={() => this.dispatchNewRoute('/home')}>
-                                    <i>Signed in ({this.props.userName})</i>
+                                    <i>Signed in ({ profileName })</i>
                                 </MenuItem>
                                 <Divider />
                                 <MenuItem
@@ -137,7 +130,7 @@ export class Header extends React.Component {
                           <FlatButton label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
                         :
                           <div>
-                              <FlatButton className="hidden-sm-down" style={{ color: 'white', margin: 9 }} label={`Signed in (${this.props.userName})`} onTouchTap={() => this.dispatchNewRoute('/home')} />
+                              <FlatButton style={{ color: 'white', margin: 9 }} label={`Signed in (${profileName})`} onTouchTap={() => this.dispatchNewRoute('/home')} />
                               <FlatButton style={{ color: 'white', margin: 9 }} label="Home" onTouchTap={() => this.dispatchNewRoute('/')} />
                           </div>
 
