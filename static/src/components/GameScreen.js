@@ -332,7 +332,7 @@ export class GameScreen extends Component {
         if (!started) {
             this.playersLogged();
         }
-        if (started && game.game.age) {
+        if (started && game) {
             document.title = `Age: ${game.game.age} Round: ${game.game.round}`;
             nextWonderLevel = game.player.wonder_level + 1;
             if (nextWonderLevel > game.player.max_wonder) {
