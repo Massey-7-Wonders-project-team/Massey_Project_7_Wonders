@@ -11,6 +11,7 @@ function mapStateToProps(state) {
         token: state.auth.token,
         loaded: state.data.loaded,
         isFetching: state.data.isFetching,
+        userName: state.auth.userName,
     };
 }
 
@@ -56,9 +57,9 @@ export class ProtectedView extends React.Component {
                     :
                     <div className="row">
                         <div className="col-sm-12 col-md-8">
-                            <h1>Welcome</h1>
+                            <h1 style={{ textAlign: 'center' }}>Welcome</h1>
                             <Paper style={style}>
-                                <h1>{ Name }!</h1>
+                                <h1>{ this.props.data.data.profile }</h1>
                                 <h3><i>({this.props.data.data.email})</i></h3>
                             </Paper>
                             <br />
