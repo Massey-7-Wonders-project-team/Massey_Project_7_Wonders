@@ -11,6 +11,7 @@ def generate_token(user, expiration=TWO_WEEKS):
     s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
     token = s.dumps({
         'id': user.id,
+        'profile': user.name,
         'email': user.email,
     }).decode('utf-8')
     return token
