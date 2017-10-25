@@ -16,7 +16,7 @@ def check_move_and_trade(card, player):
     # Checks if card can be played using prerequisites
     prereq = [x.name for x in cards if card.prerequisite1 == x.name or card.prerequisite2 == x.name]
     if prereq:
-        default_true['message'] = 'You use the {} prereq card to buy this card for free'.format(prereq[0])
+        default_true['message'] = 'You use the {} prereq card to buy {} for free'.format(prereq[0], card.name)
         return default_true
 
     # Check money
