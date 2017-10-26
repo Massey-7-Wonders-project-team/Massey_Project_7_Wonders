@@ -230,14 +230,18 @@ def play_card_with_trade(card, player, is_discarded, for_wonder, process_with_tr
         player.money += 3
     else:
         if for_wonder:
+            if player.wonder == "The Mausoleum of Halicarnassus" and not get_all_discarded_cards(player):
+                default_false['message'] = 'Sorry, there were no cards in the discard pile - wonder was not played'
+                return default_false
             card = get_wonder_card(player)
             if not card:
                 default_false['message'] = 'You have already finished building your wonder. It is already perfect!'
                 return default_false
 
         if no_prereq:
-            default_true['message'] = 'You have had a free card and it can always be played!'
+            default_true['message'] = 'You have had a free card ability - used for the {} card!'.format(card.name)
             update_player_object(card, player, for_wonder=for_wonder)
+            stats = default_true
         else:
             stats = check_move_and_trade(card, player)
             price = stats['left']['cost'] + stats['right']['cost']
