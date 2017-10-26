@@ -19,12 +19,12 @@ def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None,
     else:
         # Guards against more than one card being played in a round
         if Round.query.filter_by(age=game_info.age, round=game_info.round+1, playerId=get_next_player_id(player, game_info.age)).all():
-            print("Card already played this round")
+            #print("Card already played this round")
             return {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False, 'message': 'Card already played this round'}
 
         # Guards against playing cards that are not in the current hand
         if not [c for c in get_cards(player=player) if c == card]:
-            print(str(card.name) + " is not part of this hand")
+            #print(str(card.name) + " is not part of this hand")
             return {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False, 'message': '{} is not part of this hand'.format(card.name)}
 
         # Attempts to play the card. Returns info to player if trade is needed (and not confirmed) or move is invalid
@@ -44,11 +44,11 @@ def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None,
     for p in players:
         query = Round.query.filter_by(age=game_info.age, round=game_info.round+1, playerId=p.id).all()
         if not query:
-            print("Does not increment round - Player", str(p.id), "still needs to play")
+            #print("Does not increment round - Player", str(p.id), "still needs to play")
             return stats
 
     # Only triggers if all players have finished their turn
-    print("Increments round")
+    #print("Increments round")
     increment_game_round(game_info, players)
     return stats
 

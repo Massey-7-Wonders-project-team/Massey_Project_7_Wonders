@@ -68,8 +68,9 @@ def get_token():
 @app.route("/api/is_token_valid", methods=["POST"])
 @requires_auth
 def is_token_valid():
-    print('Checking Authentication')
-    
+    #print('Checking Authentication')
+    pass
+
 @app.route("/api/game/check", methods=["GET"])
 @requires_auth
 def check_game():
@@ -90,7 +91,7 @@ def check_game():
 def create_game():
     """ Check if game exists and add user to it else create new game """
     user = User.query.filter_by(email=g.current_user["email"]).first()
-    print("user: ", user.id)
+    #print("user: ", user.id)
 
     single_pl = false_true(request.args.get('single_player'))
     if single_pl:
@@ -115,7 +116,7 @@ def create_game():
         player = Player(gameId=game.id, userId=user.id, name=user.name)
         db.session.add(player)
     else:
-        print("Player already exists in this game")
+        #print("Player already exists in this game")
         player_count = len(Player.query.filter_by(gameId=game.id).all())
         return jsonify(
             player_id=players[0].id,
@@ -214,7 +215,7 @@ def begin_game():
     if player.ready is False:
         player.ready = True
     else:
-        print(player.id, "was already set as ready")
+        #print(player.id, "was already set as ready")
         return game_status()
 
     db_committing_function(player)
@@ -229,7 +230,7 @@ def begin_game():
         if player_count < 7:
             for p in players:
                 if p.ready is False:
-                    print("Player "+ str(p.id) +" not ready")
+                    #print("Player "+ str(p.id) +" not ready")
                     return jsonify(status="Waiting")
 
         # Game can begin
@@ -282,7 +283,7 @@ def end_game():
     db.session.add(game)
 
     try:
-        print('Ending game')
+        #print('Ending game')
         db.session.commit()
         return jsonify(message="Success")
 
