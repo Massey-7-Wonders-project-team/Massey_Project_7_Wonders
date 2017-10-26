@@ -297,16 +297,16 @@ def play_card(card, player, is_discarded, for_wonder, no_prereq=False):
     elif for_wonder:
         wondercard = get_wonder_card(player)
         if not wondercard:
-            print("No wonder cards remaining")
+            #print("No wonder cards remaining")
             return False
         if no_prereq:
-            print("Playing: ", wondercard.name)
+            #print("Playing: ", wondercard.name)
             update_player_object(wondercard, player, for_wonder=True)
         elif check_valid_move(wondercard, player):
-            print("Playing: ", wondercard.name)
+            #print("Playing: ", wondercard.name)
             update_player_object(wondercard, player, for_wonder=True)
         else:
-            print(wondercard.name + " is an invalid move")
+            #print(wondercard.name + " is an invalid move")
             return False
 
         card = wondercard
@@ -321,7 +321,7 @@ def play_card(card, player, is_discarded, for_wonder, no_prereq=False):
         elif check_valid_move(card, player):
             update_player_object(card, player)
         else:
-            print(card.name + " is an invalid move")
+            #print(card.name + " is an invalid move")
             return False
 
     history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder,
@@ -334,7 +334,7 @@ def play_card(card, player, is_discarded, for_wonder, no_prereq=False):
 def swap_hands(card, player, game):
     # UPDATE DB
     old_round_cardId = [c.id for c in get_cards(player)]
-    print("Cards in hand", old_round_cardId, "    Card trying to remove:", card.id, card.name)
+    #print("Cards in hand", old_round_cardId, "    Card trying to remove:", card.id, card.name)
     old_round_cardId.remove(card.id)
 
     rounds = []
@@ -495,7 +495,7 @@ def end_game_cards(player, cards):
 def increment_game_round(game_info, players):
     """Helper function to process_card, changes round"""
     if game_info.waiting_for_discard:
-        print("Waiting for Halicarnassus to play discard")
+        #print("Waiting for Halicarnassus to play discard")
         return
 
     game_info.round += 1

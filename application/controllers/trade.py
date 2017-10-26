@@ -64,7 +64,7 @@ def assign_cards(card_options, needed, current_price, stats, tempstats):
         # If this branch has reached the price of the best option, prune
         if stats and tempstats['left']['cost'] + tempstats['right']['cost'] >= stats[0]['left']['cost'] + stats[0]['right']['cost']:
             return
-        print("Needed:", needed)
+        #print("Needed:", needed)
 
         # Choose next card to play. Favour non RA cards where price is equal
         c = None
@@ -83,7 +83,7 @@ def assign_cards(card_options, needed, current_price, stats, tempstats):
                     else:
                         break
             else:
-                print("else branch of choosing card")
+                #print("else branch of choosing card")
                 c = card_options.pop(0)
                 for i in temp.keys():
                     if i != 'Alternating':
