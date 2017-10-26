@@ -274,10 +274,12 @@ def play_card_with_trade(card, player, is_discarded, for_wonder, process_with_tr
             # Play card
             update_player_object(card, player, for_wonder=for_wonder)
 
+        """
         if for_wonder and player.wonder == "The Mausoleum of Halicarnassus":
             game = get_game(player=player)
             game.waiting_for_discard = True
             db_committing_function(game)
+        """
 
         default_true = stats
 
