@@ -8,6 +8,6 @@ import { Play } from '../../src/components/Play';
 describe('<Play />', () => {
     test('renders <Play />', () => {
         const wrapper = shallow(<Play />);
-        expect(typeof wrapper.find('.Game').text()).toEqual('string');
+        expect(wrapper.find('.Game').exists()).toEqual(true);
     });
 });

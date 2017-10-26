@@ -177,7 +177,9 @@ export class GameScreen extends Component {
             this.setState({
                 showDiscarded: false,
             });
-          
+        }
+    }
+
     playCard(cardId, cardName) {
         if (!this.props.cardPlayed) {
             this.setState({
@@ -199,7 +201,6 @@ export class GameScreen extends Component {
                 tradeDialog: false,
             });
             this.props.playCard(this.props.playerId, this.state.currentCardID, false, false, true);
-
         } else {
             this.setState({
                 showPlayCardError: true,
@@ -228,7 +229,7 @@ export class GameScreen extends Component {
             });
         }
     }
-  
+
     wonderCardTrade() {
         if (!this.props.cardPlayed) {
             this.setState({
@@ -325,7 +326,7 @@ export class GameScreen extends Component {
             wonderTrade: false,
         });
     }
-    
+
     playersLogged() {
         const token = localStorage.getItem('token');
         fetch(`/api/game/status?player_id=${this.props.playerId}`, {
