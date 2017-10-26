@@ -48,6 +48,7 @@ def create_user():
 
     return jsonify(
         id=user.id,
+        profile=user.name,
         token=generate_token(new_user)
     )
 
@@ -61,7 +62,7 @@ def get_token():
     if user:
         return jsonify(token=generate_token(user))
 
-    return jsonify(error=True), 403
+    return jsonify(error=True), 401
 
 
 @app.route("/api/is_token_valid", methods=["POST"])
@@ -135,9 +136,11 @@ def create_game():
 
 
 def single_player(user):
-    no_players = request.args.get('number_of_players')
+    no_players = int(request.args.get('ai_players'))
     if not no_players:
-        no_players = 7
+        no_players = 3
+    else:
+        no_players += 1
     game = Game()
     game.single_player = True
     db_committing_function(game)
@@ -254,7 +257,9 @@ def begin_game():
 @requires_auth
 def play_card():
     """Endpoint for all card playing actions
-    Inputs - player_id, card_id, discarded (bool), and for_wonder(bool)
+    Inputs - player_id, card_id, discarded (bool), for_wonder(bool),
+        from_discard_pile (halicarnasus special),
+        trade (false first time to check if trade needed, true if trade confirmed by user)
     Outputs - status comment"""
     player = get_player(request.args.get('player_id'))
     card = get_card(request.args.get('card_id'))
@@ -263,13 +268,7 @@ def play_card():
     from_discard_pile = false_true(request.args.get('from_discard_pile'))
     trade = false_true(request.args.get('trade'))
 
-    if process_card(card, player, discarded, for_wonder, from_discard_pile=from_discard_pile, trade=trade):
-        return jsonify(status="Card played")
-    else:
-        return jsonify(
-            status="Invalid move",
-            game=print_json(player)
-        )
+    return jsonify(process_card(card, player, discarded, for_wonder, from_discard_pile=from_discard_pile, process_with_trade=trade))
 
 @app.route("/api/game/end", methods=["GET"])
 @requires_auth
@@ -286,7 +285,7 @@ def end_game():
         print('Ending game')
         db.session.commit()
         return jsonify(message="Success")
-    
+
     except Exception as e:
         print(e)
         return jsonify(message="There was an error"), 500

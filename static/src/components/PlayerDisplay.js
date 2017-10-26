@@ -16,6 +16,7 @@ function mapStateToProps(state) {
         error: state.game.error,
         loading: state.game.loading,
         playerCount: state.game.playerCount,
+        message: state.game.message,
     };
 }
 
@@ -31,12 +32,14 @@ export class PlayerDisplay extends Component {
             userID: null,
             displayID: null,
             userData: null,
+            message: null,
         };
         if (this.props.game) {
             // load passed data
             this.state.userID = this.props.game.player.id;
             this.state.displayID = this.props.game.player.id;
             this.state.userData = this.props.game.player;
+            this.state.message = this.props.message;
             // binding
             this.lookLeft = this.lookLeft.bind(this);
             this.lookRight = this.lookRight.bind(this);
@@ -50,7 +53,15 @@ export class PlayerDisplay extends Component {
         if (nextProps.game.player !== this.state.userData) {
             this.setState({
                 userData: nextProps.game.player
-            })
+            });
+        }
+        if (nextProps.message !== null) {
+            if (nextProps.message.includes('played') ||
+              nextProps.message.includes('free')) {
+                this.setState({
+                    message: nextProps.message,
+                });
+            }
         }
     }
 
@@ -126,8 +137,22 @@ export class PlayerDisplay extends Component {
         if (boardData.id === this.state.userID) {
             homeWonder = true;
         }
+        let playedMessage = '';
+        if (this.state.message !== null) {
+            const split1 = this.state.message.split(' ');
+            try {
+                const level = parseInt(split1[0].match(/\d+$/)[0], 10);
+                if (level === 2 || level === 1 || level === 1 || level === 4) {
+                    split1[0] = `Wonder Stage ${level}`;
+                    if (split1[2] === 'played') { split1[2] = 'built';
+                    } else { split1[1] = 'built'; }
+                    playedMessage = split1.join(' ');
+                }
+            } catch (err) {
+                playedMessage = this.state.message;
+            }
+        }
 
-        //overlayContainerStyle={{ paddingBottom: '10%' }}
         return (
             <div style={{ paddingLeft: 100, paddingRight: 100 }}>
                 {game && !error && started && boardData &&
@@ -138,7 +163,7 @@ export class PlayerDisplay extends Component {
                                     <TableBody displayRowCheckbox={false} >
                                         <TableRow selectable={false}>
                                             <TableRowColumn width="50" id="leftNav" >
-                                                <input type="image" width="20" src='dist/images/icons/left_arrow.png' onTouchTap={this.lookLeft} />
+                                                <img alt="" width="20" src='dist/images/icons/left_arrow.png' onTouchTap={this.lookLeft} />
                                             </TableRowColumn>
                                             <TableRowColumn>
                                                 <Card
@@ -164,6 +189,9 @@ export class PlayerDisplay extends Component {
                                                                             </List>
                                                                         </TableRowColumn>
                                                                         <TableRowColumn>
+                                                                            <p style={{ margin: 0, paddingLeft: 100 }}><b>Your Last Structure:</b>
+                                                                            <i style={{ paddingLeft: 30 }}>{playedMessage}</i></p>
+
                                                                             <CardMedia
                                                                                 style={{ clear: 'left', paddingTop: 10 }}
                                                                                 overlay={
@@ -205,7 +233,7 @@ export class PlayerDisplay extends Component {
                                                 </Card>
                                             </TableRowColumn>
                                             <TableRowColumn width="50" id="rightNav" >
-                                              <input type="image" width="20" src='dist/images/icons/right_arrow.png' onTouchTap={this.lookRight} />
+                                              <img alt="" width="20" src='dist/images/icons/right_arrow.png' onTouchTap={this.lookRight} />
                                             </TableRowColumn>
                                         </TableRow>
                                     </TableBody>
@@ -235,11 +263,13 @@ export class PlayerDisplay extends Component {
 PlayerDisplay.propTypes = {
     game: PropTypes.object,
     started: PropTypes.bool.isRequired,
+    message: PropTypes.string,
 };
 
 PlayerDisplay.defaultProps = {
     game: null,
     playerCount: null,
+    message: null,
 };
 
 export default connect(

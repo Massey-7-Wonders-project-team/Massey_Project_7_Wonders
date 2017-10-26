@@ -23,13 +23,14 @@ function mapDispatchToProps(dispatch) {
 }
 
 const style = {
-    marginTop: 50,
     padding: 50,
-    marginLeft: 100,
-    width: 'auto',
+    margin: '20px auto',
+    maxWidth: 600,
     textAlign: 'center',
-    display: 'inline-block',
+    display: 'block',
+    overflow: 'hidden',
 };
+
 
 // we must export the class for testing. Then also default export the class
 // at the end of the file which is used for the actual production render
@@ -261,27 +262,29 @@ export class Play extends React.Component {
                     </div>
                 }
                 {game && this.props.game &&
-                <div>
-                    <div style={{ float: 'left', marginRight: 0, paddingTop: 0, paddingLeft: 50, width: '20%' }}>
+                <div className="row">
+                    <div className="col-sm-12 col-md-4">
                         <h3 style={{ marginTop: 0}}>
                             <b>Age: {this.props.game.game.age} -
                             Round: {this.props.game.game.round}
                             </b>
                         </h3>
                     </div>
-                    <div style={{ float: 'left', marginRight: 0, paddingTop: 0, width: '60%' }}>
+                    <div className="col-sm-9 col-md-5">
                         <center><h3 style={{ marginTop: 0 }}> Cards in Hand </h3></center>
                     </div>
-                    <RaisedButton
-                        label="End Game"
-                        primary={primary}
-                        style={{
-                            float: 'right',
-                            display: 'block',
-                            margin: '0 0 20px 0',
-                        }}
-                        onTouchTap={() => this.endGameDialog()}
-                    />
+                    <div className="col-sm-3">
+                        <RaisedButton
+                            label="End Game"
+                            primary={primary}
+                            style={{
+                                float: 'right',
+                                display: 'block',
+                                margin: '0 0 20px 0',
+                            }}
+                            onTouchTap={() => this.endGameDialog()}
+                        />
+                    </div>
                 </div>
                 }
                 {game &&

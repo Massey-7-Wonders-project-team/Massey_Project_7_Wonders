@@ -2,9 +2,7 @@ from testing_config import BaseTestConfig
 from flask_testing import TestCase
 import json
 from application.utils import auth
-from application.controllers.database_functions import *
-from index import app
-
+from application.app import *
 
 class TestAPI(BaseTestConfig):
     some_user = {
@@ -63,7 +61,7 @@ class TestAPI(BaseTestConfig):
                 content_type='application/json'
         )
 
-        self.assertEqual(res3.status_code, 403)
+        self.assertEqual(res3.status_code, 401)
 
         res4 = self.app.post(
                 "/api/get_token",
@@ -71,7 +69,7 @@ class TestAPI(BaseTestConfig):
                 content_type='application/json'
         )
 
-        self.assertEqual(res4.status_code, 403)
+        self.assertEqual(res4.status_code, 401)
 
     def test_protected_route(self):
         headers = {
@@ -159,7 +157,7 @@ class TestAPIAlchemy(TestCase):
 
         token = auth.generate_token(user)
         res = self.client.get(
-            "/api/game/create?single_player=true",
+            "/api/game/create?single_player=true&ai_players=2",
             headers={
                 'Authorization': token,
             }
@@ -170,7 +168,7 @@ class TestAPIAlchemy(TestCase):
 
         self.assertEqual(res.status_code, 200)
         assert b'"player_id": 1' in res.data
-        assert b'"playerCount": 7' in res.data
+        assert b'"playerCount": 3' in res.data
         self.assertTrue(game.single_player)
 
     def test_game_status_not_started(self):
@@ -339,11 +337,20 @@ class TestAPIAlchemy(TestCase):
 
     def test_play_card_discarded(self):
         user = User(email='test@test.com', name='test', password='tester')
-        game = Game(started=True, age=1)
-        card = Card("Lumber Yard", 3, 1, "brown")
-        db_committing_function(user, game, card)
+        user1 = User(email='test1@test.com', name='test', password='tester')
+        user2 = User(email='test2@test.com', name='test', password='tester')
+        game = Game(age=1)
+        card = Card('test', 3, 1, 'brown')
+        db_committing_function(user, user1, user2, game, card)
+
+        players = []
         player = Player(gameId=game.id, userId=user.id, name=user.name)
-        db_committing_function(player)
+        players.append(player)
+        players.append(Player(gameId=game.id, userId=user1.id, name=user1.name))
+        players.append(Player(gameId=game.id, userId=user2.id, name=user2.name))
+        db_committing_function(players)
+        set_player_neighbours(players)
+
         round = Round(playerId=player.id, cardId=card.id)
         db_committing_function(round)
 
@@ -357,17 +364,26 @@ class TestAPIAlchemy(TestCase):
         )
 
         self.assertEqual(res.status_code, 200)
-        assert b'Card played' in res.data
+        assert b'"possible": true' in res.data
         self.assertFalse(get_cards(player=player, history=True))
         self.assertTrue(player.money == 6)
 
     def test_play_card_played(self):
         user = User(email='test@test.com', name='test', password='tester')
+        user1 = User(email='test1@test.com', name='test', password='tester')
+        user2 = User(email='test2@test.com', name='test', password='tester')
         game = Game(started=True, age=1, round=1)
         card = Card("Clay Pool", 3, 1, "brown")
-        db_committing_function(user, game, card)
+        db_committing_function(user, user1, user2, game, card)
+
+        players = []
         player = Player(gameId=game.id, userId=user.id, name=user.name)
-        db_committing_function(player)
+        players.append(player)
+        players.append(Player(gameId=game.id, userId=user1.id, name=user1.name))
+        players.append(Player(gameId=game.id, userId=user2.id, name=user2.name))
+        db_committing_function(players)
+        set_player_neighbours(players)
+
         round = Round(playerId=player.id, cardId=card.id)
         db_committing_function(round)
 
@@ -381,7 +397,7 @@ class TestAPIAlchemy(TestCase):
         )
 
         self.assertEqual(res.status_code, 200)
-        assert b'Card played' in res.data
+        assert b'"possible": true' in res.data
         self.assertTrue(get_cards(player=player, history=True))
 
     # TODO Test wonder card track
