@@ -4,8 +4,8 @@ import { Table, TableHeader, TableRow, TableBody, TableRowColumn, TableHeaderCol
 const tableFalse = false;
 const tableTrue = true;
 let allPlayers = [];
+let originalPlayerData = null;
 let userName = "";
-let fetch = true;
 
 function sortByPoints(a,b) {
     if (a.points > b.points) { return -1; }
@@ -14,12 +14,12 @@ function sortByPoints(a,b) {
 }
 
 function EndGameMarkup (props) {
-    if(fetch) {
+    if(originalPlayerData !== props.players) {
+      originalPlayerData = props.players;
       allPlayers = props.players;
       allPlayers.push(props.player);
       allPlayers.sort(sortByPoints);
       userName = props.player.profile;
-      fetch = false;
     }
 
     return (
@@ -65,7 +65,7 @@ function EndGameMarkup (props) {
               )}
           </TableBody>
       </Table>
-    )
+    );
 }
 
 EndGameMarkup.propTypes = {
