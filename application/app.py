@@ -62,7 +62,7 @@ def get_token():
     if user:
         return jsonify(token=generate_token(user))
 
-    return jsonify(error=True), 403
+    return jsonify(error=True), 401
 
 
 @app.route("/api/is_token_valid", methods=["POST"])
