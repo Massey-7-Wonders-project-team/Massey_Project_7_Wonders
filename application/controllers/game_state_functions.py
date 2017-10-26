@@ -1,6 +1,5 @@
-from .database_functions import *
+from .trade import *
 import random
-import copy
 
 
 def deal_wonders(players):
@@ -102,7 +101,6 @@ def set_player_neighbours(players):
 
     db_committing_function(p=players)
 
-
 def how_much_deficit(card, player):
     """
     Replaces the main logic section of check_valid_move and its helper with a bit cleaner code.
@@ -146,7 +144,8 @@ def how_much_deficit(card, player):
 
 
 def resource_alternating_rec_search(balance, cards):
-    """Helper function for check_move. Checks resource permutations for alternating resource cards
+    """
+    Helper function for check_move. Checks resource permutations for alternating resource cards
      Returns False if not possible, True if possible"""
     if not list(filter(lambda x: x > 0, balance)):
         return True
@@ -211,6 +210,77 @@ def check_valid_move(card, player):
     # Triggers if there are enough materials without considering resource alternation
     else:
         return True
+
+
+def play_card_with_trade(card, player, is_discarded, for_wonder, process_with_trade, no_prereq=False):
+    """
+    :param card: Card to be played
+    :param player: Player object
+    :param is_discarded: True if discarding
+    :param for_wonder: True if using card to build wonder
+    :param process_with_trade: True if user has confirmed to use trade for this card
+    :param no_prereq: True if it is a free card (wonder special ability)
+    :return: A variant of default_false or default_true
+    """
+
+    default_false = {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': False, 'message': None}
+    default_true = {'left': {'cost': 0}, 'right': {'cost': 0}, 'possible': True, 'message': None}
+
+    if is_discarded:
+        player.money += 3
+    else:
+        if for_wonder:
+            card = get_wonder_card(player)
+            if not card:
+                default_false['message'] = 'You have already finished building your wonder. It is already perfect!'
+                return default_false
+
+        if no_prereq:
+            default_true['message'] = 'You have had a free card and it can always be played!'
+            update_player_object(card, player, for_wonder=for_wonder)
+        else:
+            stats = check_move_and_trade(card, player)
+            price = stats['left']['cost'] + stats['right']['cost']
+
+            # Play card with no cost
+            if stats['possible'] and price == 0:
+                if not stats['message']:
+                    stats['message'] = '{} successfully played'.format(card.name)
+
+            # Play card with trade confirmed
+            elif stats['possible'] and process_with_trade:
+                stats['message'] = '{} played by buying {} coin worth of goods'.format(card.name, price)
+
+                # Pay for trade
+                player.money -= (stats['left']['cost'] + stats['right']['cost'])
+                player_left = get_player(player.left_id)
+                player_left.money += stats['left']['cost']
+                player_right = get_player(player.right_id)
+                player_right.money += stats['right']['cost']
+                db_committing_function(player_left, player_right)
+
+            # Card needs trade to play, send to user for confirmation (this is the only one without messages)
+            elif stats['possible']:
+                return stats
+
+            # Card cannot be played
+            else:
+                return stats
+
+            # Play card
+            update_player_object(card, player, for_wonder=for_wonder)
+
+        if for_wonder and player.wonder == "The Mausoleum of Halicarnassus":
+            game = get_game(player=player)
+            game.waiting_for_discard = True
+            db_committing_function(game)
+
+        default_true = stats
+
+    history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder,
+                       card_name=card.name, card_colour=card.colour)
+    db_committing_function(player, history)
+    return default_true
 
 
 def play_card(card, player, is_discarded, for_wonder, no_prereq=False):

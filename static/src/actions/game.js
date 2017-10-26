@@ -104,10 +104,21 @@ export function playCard(playerId, cardId, discarded, wonder, trade) {
         })
         .then(response => response.json())
         .then((body) => {
-            if (body.status === 'Card played') {
-                dispatch(receivePlayCard({ cardValid: true }));
+            if (body.possible === true && body.left.cost + body.right.cost === 0) {
+                dispatch(receivePlayCard({
+                    cardPlayed: false, cardValid: true, message: body.message }));
+            } else if (!body.possible) {
+                dispatch(receivePlayCard({
+                    cardPlayed: false, cardValid: false, message: body.message }))
             } else {
-                dispatch(receivePlayCard({ cardValid: false }));
+                dispatch(receivePlayCard({
+                    cardPlayed: false,
+                    cardValid: true,
+                    trade: true,
+                    message: body.message,
+                    leftCost: body.left.cost,
+                    rightCost: body.right.cost
+                }));
             }
         })
         .catch((err) => {
