@@ -3,6 +3,7 @@ from flask_testing import TestCase
 from application.controllers.database_functions import *
 from application.controllers.card_logic import *
 from application.controllers.game_state_functions import *
+from application.controllers.ai import *
 from manage import *
 from index import app
 
@@ -490,7 +491,7 @@ class TestControllersWithAlchemy(TestCase):
             stats['left']['cost'] == 2
         )
         
-    def test_ai_makes_correct_move(self):
+    def test_ai_makes_move(self):
         user = User(email='test@test.com', name='test', password='tester')
         user1 = User(email='test1@test.com', name='test', password='tester')
         user2 = User(email='test2@test.com', name='test', password='tester')
@@ -523,8 +524,112 @@ class TestControllersWithAlchemy(TestCase):
         ch1 = Cardhist(playerId=player1.id, cardId=card2.id)
         ch2 = Cardhist(playerId=player1.id, cardId=card3.id)
         db_committing_function(ch1, ch2, round)
-        
-        print( [c.name for c in get_cards(player=player1, game=game)] )
 
         ai_move(player1, game)
-        self.assertTrue(player1.money, 10000)
+        self.assertEqual(player1.money, 10000)
+        
+    def test_ai_makes_correct_move(self):
+        user = User(email='test@test.com', name='test', password='tester')
+        user1 = User(email='test1@test.com', name='test', password='tester')
+        user2 = User(email='test2@test.com', name='test', password='tester')
+        game = Game()
+        game.age = 1
+        db_committing_function(user, user1, user2, game)
+
+        players = []
+        player1 = Player(gameId=game.id, userId=user.id, name=user.name)
+        players.append(player1)
+        player1.wood = 1
+        player1.brick = 1
+        player1.money = 0
+        players.append(Player(gameId=game.id, userId=user1.id, name=user1.name))
+        players.append(Player(gameId=game.id, userId=user2.id, name=user2.name))
+        db_committing_function(players)
+        set_player_neighbours(players)
+
+        card1 = Card('test', 3, 1, 'brown')
+        card1.costBrick = 1
+        card1.costWood = 1
+        card1.giveMoney = 10000
+        card1a = Card('test2', 3, 1, 'brown')
+        card1a.costBrick = 1
+        card1a.costWood = 1
+        card1a.giveBrick = 3
+        card2 = Card('test1', 3, 1, 'brown')
+        card2.giveBrick = 1
+        card3 = Card('test1', 3, 1, 'brown')
+        card3.giveWood = 1
+        db_committing_function(card1, card1a, card2, card3)
+        
+        round = Round(cardId=card1.id, playerId=player1.id)
+        round1a = Round(cardId=card1a.id, playerId=player1.id)
+        ch1 = Cardhist(playerId=player1.id, cardId=card2.id)
+        ch2 = Cardhist(playerId=player1.id, cardId=card3.id)
+        db_committing_function(ch1, ch2, round, round1a)
+
+        ai_move(player1, game)
+        self.assertEqual(player1.money, 10000)
+    
+    def test_ai_makes_correct_move_with_trade(self):
+        user = User(email='test@test.com', name='test', password='tester')
+        user1 = User(email='test1@test.com', name='test', password='tester')
+        user2 = User(email='test2@test.com', name='test', password='tester')
+        game = Game()
+        game.age = 1
+        db_committing_function(user, user1, user2, game)
+
+        players = []
+        player1 = Player(gameId=game.id, userId=user.id, name=user.name)
+        players.append(player1)
+        player1.wood = 1
+        player1.brick = 1
+        player1.money = 1000
+        player2 = Player(gameId=game.id, userId=user1.id, name=user1.name)
+        player2.stone = 1
+        player2.money = 0
+        players.append(player2)
+        players.append(Player(gameId=game.id, userId=user2.id, name=user2.name))
+        db_committing_function(players)
+        set_player_neighbours(players)
+
+        card1 = Card('test', 3, 1, 'brown')
+        card1.costBrick = 1
+        card1.costWood = 1
+        card1.costStone = 1
+        card1.givePoints = 1
+        card1.giveMoney = 10
+        card1a = Card('test2', 3, 1, 'blue')
+        card1a.costBrick = 1
+        card1a.costWood = 1
+        card1a.givePoints = 2
+        card2 = Card('test1', 3, 1, 'brown')
+        card2.giveBrick = 1
+        card2.giveStone = 1
+        card3 = Card('test1', 3, 1, 'brown')
+        card3.giveWood = 1
+        db_committing_function(card1, card1a, card2, card3)
+        
+        round = Round(cardId=card1.id, playerId=player1.id)
+        round1a = Round(cardId=card1a.id, playerId=player1.id)
+        ch1 = Cardhist(playerId=player2.id, cardId=card2.id)
+        ch2 = Cardhist(playerId=player2.id, cardId=card3.id)
+        db_committing_function(ch1, ch2, round, round1a)
+        
+        ai_move(player1, game)
+        self.assertEqual(player1.points, 1)
+        self.assertEqual(player1.money, 1004)
+        self.assertEqual(player2.money, 6)
+    
+    def test_rank_move(self):
+        game = Game()
+        user = User(email='test@test.com', name='test', password='tester')
+        db_committing_function(user, game)
+        
+        player = Player(gameId=game.id, userId=user.id, name=user.name)
+        db_committing_function(player)
+        
+        card = Card('test', 3, 1, 'brown')
+        card.giveMoney = 1000
+        db_committing_function(card)
+        
+        self.assertTrue( rank_move(player, card, 1, {'left':{'cost':0}, 'right':{'cost':0}}) > 900 )
