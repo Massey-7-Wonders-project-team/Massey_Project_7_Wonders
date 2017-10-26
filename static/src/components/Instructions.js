@@ -96,6 +96,83 @@ const Rules = (
     </div>
 );
 
+const sShots = (
+  <section>
+      <h1>Game Screen Layout</h1>
+      <img width="100%" border="5" src={`dist/images/screenshots/Full.png`} />
+      <hr />
+      <h1>Components</h1>
+      <br />
+      <div style={{ width: '50%', float: 'left', paddingRight: 15 }}>
+          <div>
+              <h4 style={{ marginTop: 15 }}>Cards In Hand</h4>
+              <p>These are located at the top of your screen. On the top left of each card show inventory needed
+              to build each structure. The three icons below each card represents the play actions.</p>
+              <p><img width="30" style={{ marginRight: 20, marginLeft: 20 }} src={`dist/images/icons/check.png`} /><b>Play</b> the current card</p>
+              <p><img width="30" style={{ marginRight: 20, marginLeft: 20 }} src={`dist/images/icons/pyramid-stage1.png`} /><b> Play for Wonder</b>,</p>
+              <p><img width="30" style={{ marginRight: 20, marginLeft: 20 }} src={`dist/images/icons/trash.png`} /><b>Discard</b> current card</p>
+              <img width="250" border="5" src={`dist/images/screenshots/CardInHand.png`} />
+          </div>
+          <div>
+              <h4 style={{ marginTop: 15 }}>Trading</h4>
+              <p>In order to trade your left or right player, choose the card you wish to play by clicking the <b>Play</b>
+              (<img width="20" style={{ marginRight: 10, marginLeft: 10 }} src={`dist/images/icons/check.png`} />) or the <b>Wonder</b>
+              (<img width="20" style={{ marginRight: 10, marginLeft: 10 }} src={`dist/images/icons/pyramid-stage1.png`} />) buttons.
+              The Game will assess if you can play the card with or without the help of trading. If trading can be done, the cheapest option
+              will be displayed and a <b>Confirmation</b> is required before completing the trade. You can proceed with a trade, or cancel, and your card
+              will be actioned accordingly.</p>
+              <img width="95%" border="5" src={`dist/images/screenshots/TradeDialog.png`} />
+          </div>
+          <div>
+              <h4 style={{ marginTop: 15 }}>Navigating the Player Circle</h4>
+              <p>This is important to see what your neighbour has build, or inventory he/she is producing.
+              On either end of the player Wonder board display, click on the
+              <img width="9" style={{ marginRight: 10, marginLeft: 10 }} src={`dist/images/icons/left_arrow.png`} />
+              to navigate to the left of the current player, and similarly
+              <img width="9" style={{ marginRight: 10, marginLeft: 10 }} src={`dist/images/icons/right_arrow.png`} /> to navigate to the right.
+              A quick navigation button back to <b>YOUR WONDER</b> is displayed above the Points counter on the right
+              , if you are not currently viewing your wonder </p>
+          </div>
+      </div>
+      <div style={{ width: '50%', float: 'left'}}>
+          <div>
+              <h4 style={{ marginTop: 15 }}>Inventory</h4>
+              <img height="300" style={{ float: 'right'}} border="5" src={`dist/images/screenshots/Inventory.png`} />
+              <p style={{ float: 'left', width: '65%' }}>This summary Table will display the inventory for the currently displayed player.
+              The first number for each inventory represents inventory produced for a single turns
+              The second number relates to the split inventory card. For instance, the diagram shows
+              that a split card has been played for this player, where the card yields one Wood or one Brick per turn.
+              Best to double check your card history to check which split cards are played  </p>
+          </div>
+          <div>
+              <h4 style={{ marginTop: 15 }}>Completing Wonder Stages</h4>
+              <p>To build a wonder stage, you need to select a card from your hand by clicking on the <b>Wonder</b>
+              (<img width="20" style={{ marginRight: 10, marginLeft: 10 }} src={`dist/images/icons/pyramid-stage1.png`} />) button.
+              If trade is needed, confirm payment, and card will be played for the Wonder, showing <b>Complete</b> on the next
+              stage. These are completed in order.</p>
+              <img width="300" border="5" src={`dist/images/screenshots/Completed.png`} />
+          </div>
+          <div>
+              <h4 style={{ marginTop: 15 }}>Card History</h4>
+              <p>This can be found below the current players wonder board by a drop down button. This is useful to see
+              what cards the current player has played and what structures are built. Also helpful to gain a better insight
+              on the split inventory cards for your next turn. (note: Discarded cards and cards played for Wonders will not show here)</p>
+              <img width="95%" border="5" src={`dist/images/screenshots/History.png`} />
+          </div>
+          <div>
+              <h4 style={{ marginTop: 15 }}>Age progress counter</h4>
+              <p>This is helpful to know how far through each Age you are</p>
+              <center><img width="150" border="5" src={`dist/images/screenshots/AgeProgress.png`} /></center>
+          </div>
+          <div>
+          <h4 style={{ marginTop: 15 }}>End Game</h4>
+          <p>If you want to finish the game early, button is located in the top right of the screen</p>
+          <img width="300" border="5" src={`dist/images/screenshots/EndGame.png`} />
+          </div>
+      </div>
+  </section>
+);
+
 
 
 const Instructions = () => (
@@ -106,7 +183,7 @@ const Instructions = () => (
         <br />
         <Card style={{ width: '100%' }}>
             <CardHeader
-                title="Quick Rules and Gameplay"
+                title="Original Quick Rules and Gameplay"
                 actAsExpander={true}
                 showExpandableButton={true}
             />
@@ -119,18 +196,13 @@ const Instructions = () => (
         <br />
         <Card style={{ width: '100%' }}>
             <CardHeader
-                title="ScreenShots"
+                title="Navigating 7 Wonders Online Capstone Edition 2017"
                 actAsExpander={true}
                 showExpandableButton={true}
             />
-            <CardText expandable={true} style={{ height: 450 }}>
-                <p> Please Note: Proper Screen shots to come. Below is an example </p>
+            <CardText expandable={true} style={{ height: 'auto' }}>
                 <CardMedia>
-                    <embed
-                        alt='Screen Capture - Game Screen'
-                        src='dist/images/background/capture.jpg'
-                        style={{ height: 400 }}
-                    />
+                    {sShots}
                 </CardMedia>
             </CardText>
         </Card>
