@@ -61,7 +61,7 @@ class TestAPI(BaseTestConfig):
                 content_type='application/json'
         )
 
-        self.assertEqual(res3.status_code, 403)
+        self.assertEqual(res3.status_code, 401)
 
         res4 = self.app.post(
                 "/api/get_token",
@@ -69,7 +69,7 @@ class TestAPI(BaseTestConfig):
                 content_type='application/json'
         )
 
-        self.assertEqual(res4.status_code, 403)
+        self.assertEqual(res4.status_code, 401)
 
     def test_protected_route(self):
         headers = {
@@ -157,7 +157,7 @@ class TestAPIAlchemy(TestCase):
 
         token = auth.generate_token(user)
         res = self.client.get(
-            "/api/game/create?single_player=true",
+            "/api/game/create?single_player=true&ai_players=2",
             headers={
                 'Authorization': token,
             }
