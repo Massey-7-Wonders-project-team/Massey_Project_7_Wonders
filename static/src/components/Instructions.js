@@ -97,7 +97,7 @@ const Rules = (
 );
 
 const sShots = (
-  <section>
+  <section className="clearfix">
       <h1>Game Screen Layout</h1>
       <img width="100%" border="5" src={`dist/images/screenshots/Full.png`} />
       <hr />
@@ -135,7 +135,7 @@ const sShots = (
           </div>
       </div>
       <div style={{ width: '50%', float: 'left'}}>
-          <div>
+          <div className="clearfix">
               <h4 style={{ marginTop: 15 }}>Inventory</h4>
               <img height="300" style={{ float: 'right'}} border="5" src={`dist/images/screenshots/Inventory.png`} />
               <p style={{ float: 'left', width: '65%' }}>This summary Table will display the inventory for the currently displayed player.
