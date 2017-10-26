@@ -55,19 +55,32 @@ def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None,
 
 def ai_move(player, game):
     """
-    All AI play round. Currently they just play the first card they can. Difficulty -100 ;)
+    All AI play round. Uses rank_move to decide what the best card to play is.
     :param player: Non-human player
     :param game: Game object
     :return: No return
     """
     cards = get_cards(player=player, game=game)
-
-    # Tries to play the first available card
+    
+    playable_cards = []
     for card in cards:
-        if play_card(card, player, False, False):
-            swap_hands(card, player, game)
-            return
+        trade_dict = check_move_and_trade(card, player)
+        if trade_dict['possible']:
+            playable_cards.append((card, trade_dict))
 
-    # No cards can be played, so discards one
-    play_card(cards[0], player, True, False)
-    swap_hands(card, player, game)
+    best_card = None
+
+    best_value = 3 #3 coins from discarding
+    for card_pair in playable_cards:
+        value = rank_move(player, card_pair[0], game.round, card_pair[1])
+        if value > best_value:
+            best_card = card_pair[0]
+            best_value = value
+
+    if best_card is None:
+        #discard at random
+        play_card_with_trade(cards[0], player, True, False, True)
+        swap_hands(cards[0], player, game)
+    else:
+        play_card_with_trade(best_card, player, False, False, True)
+        swap_hands(best_card, player, game)
