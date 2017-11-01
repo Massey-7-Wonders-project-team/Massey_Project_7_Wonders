@@ -109,7 +109,7 @@ export function playCard(playerId, cardId, discarded, wonder, trade, playDiscard
                     cardPlayed: false, cardValid: true, message: body.message }));
             } else if (!body.possible) {
                 dispatch(receivePlayCard({
-                    cardPlayed: false, cardValid: false, message: body.message }))
+                    cardPlayed: false, cardValid: false, message: body.message }));
             } else {
                 dispatch(receivePlayCard({
                     cardPlayed: false,
