@@ -65,10 +65,10 @@ def get_token():
     return jsonify(error=True), 401
 
 
-@app.route("/api/is_token_valid", methods=["POST"])
+@app.route("/api/is_token_valid", methods=["GET"])
 @requires_auth
 def is_token_valid():
-    return jsonify(message="Success"), 100
+    return jsonify(message="Success"), 200
 
 @app.route("/api/game/check", methods=["GET"])
 @requires_auth

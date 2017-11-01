@@ -37,21 +37,21 @@ export function requireAuthentication(Component) {
                     browserHistory.push('/home');
                 } else {
                     fetch('api/is_token_valid', {
-                        method: 'post',
+                        method: 'get',
                         credentials: 'include',
                         headers: {
                             'Accept': 'application/json', // eslint-disable-line quote-props
                             'Content-Type': 'application/json',
-                            'Authorization': token,
+                            Authorization: token,
                         },
-                        body: JSON.stringify({ token }),
                     })
-                        .then(res => {
+                        .then((res) => {
                             if (res.status === 200) {
                                 this.props.loginUserSuccess(token);
                                 this.setState({
                                     loaded_if_needed: true,
                                 });
+                                browserHistory.push(props.location.pathname);
                             } else {
                                 localStorage.removeItem('token');
                                 browserHistory.push('/home');
