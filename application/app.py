@@ -65,17 +65,16 @@ def get_token():
     return jsonify(error=True), 401
 
 
-@app.route("/api/is_token_valid", methods=["POST"])
+@app.route("/api/is_token_valid", methods=["GET"])
 @requires_auth
 def is_token_valid():
-    #print('Checking Authentication')
-    pass
+    return jsonify(message="Success"), 200
 
 @app.route("/api/game/check", methods=["GET"])
 @requires_auth
 def check_game():
     """ Check if a user has already joined a game """
-    player = Player.query.join(User).filter_by(email=g.current_user["email"]).join(Game).filter_by(complete=False).first()
+    player = Player.query.join(User).filter_by(email=g.current_user["email"]).join(Game).filter_by(complete=False).order_by(Player.id.desc()).first()
 
     if player is None:
         return jsonify(
