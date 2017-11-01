@@ -12,7 +12,7 @@ def process_card(card, player, is_discarded, for_wonder, from_discard_pile=None,
     players = (Player.query.filter_by(gameId=player.gameId)).all()
 
     if from_discard_pile:
-        stats = play_card_with_trade(card, player, False, False, no_prereq=True)
+        stats = play_card_with_trade(card, player, False, False, True, no_prereq=True)
         game_info.waiting_for_discard = False
         db_committing_function(game_info)
 
