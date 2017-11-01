@@ -42,6 +42,7 @@ export function requireAuthentication(Component) {
                         headers: {
                             'Accept': 'application/json', // eslint-disable-line quote-props
                             'Content-Type': 'application/json',
+                            'Authorization': token,
                         },
                         body: JSON.stringify({ token }),
                     })

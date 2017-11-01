@@ -68,8 +68,7 @@ def get_token():
 @app.route("/api/is_token_valid", methods=["POST"])
 @requires_auth
 def is_token_valid():
-    #print('Checking Authentication')
-    pass
+    return jsonify(message="Success"), 100
 
 @app.route("/api/game/check", methods=["GET"])
 @requires_auth
