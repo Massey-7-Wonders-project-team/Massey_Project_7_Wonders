@@ -206,6 +206,25 @@ const Instructions = () => (
                 </CardMedia>
             </CardText>
         </Card>
+        <br />
+        <Card style={{ width: '100%' }}>
+            <CardHeader
+                title="Tutorial Video"
+                actAsExpander={true}
+                showExpandableButton={true}
+            />
+            <CardText expandable={true} style={{ height: 'auto' }}>
+                <CardMedia>
+                    <iframe
+                        width="560"
+                        height="315"
+                        src="https://www.youtube.com/embed/OAQKdgfZvXI"
+                        frameborder="0"
+                        gesture="media" allowfullscreen>
+                    </iframe>
+                </CardMedia>
+            </CardText>
+        </Card>
     </div>
 );
 
