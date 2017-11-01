@@ -145,7 +145,6 @@ def single_player(user):
     game = Game()
     game.single_player = True
     db_committing_function(game)
-    print(game.serialise())
 
     player_human = Player(gameId=game.id, userId=user.id, name=user.name)
 
