@@ -1,7 +1,8 @@
-jobs:
-    build:
-        docker:
-            -image:
+machine:
+    python:
+        version: 3.5.1
+    node:
+        version: v6.1.0
 
 dependencies:
     post:
