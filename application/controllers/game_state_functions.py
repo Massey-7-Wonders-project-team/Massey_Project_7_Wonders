@@ -32,7 +32,7 @@ def age_calcs_and_dealing(players, game):
             if p.play_twice:
                 # Gets the final card in the player's hand and plays it
                 card = get_cards(get_player(get_next_player_id(p, game.age)))[0]
-                play_card(card, p, False, False, no_prereq=True)
+                play_card_with_trade(card, p, False, False, False, no_prereq=True)
                 print(p.name + " played both cards")
                 p.play_twice = False
 
@@ -100,116 +100,6 @@ def set_player_neighbours(players):
         i += 1
 
     db_committing_function(p=players)
-
-def how_much_deficit(card, player):
-    """
-    Replaces the main logic section of check_valid_move and its helper with a bit cleaner code.
-    Only used by trade functions awaiting refactor. Only considers resources (not money or other concerns)
-    :param card: Card object to be played
-    :param player: Player object playing the card
-    :return: Tuple of boolean (whether the card is playable using the player's resources)
-                and a None type if true, or a list of lists specifying what resources the player is short on
-    """
-    # Account for normal player resources
-    balance = [card.costStone - player.stone, card.costBrick - player.brick, card.costOre - player.ore,
-               card.costWood - player.wood, card.costGlass - player.glass, card.costPaper - player.paper,
-               card.costCloth - player.cloth]
-
-    if not any([x for x in balance if x > 0]):  # All resources are available with normal cards
-        return True, None
-
-    # Consider resource alternating cards
-    RA_cards = [[x.giveStone, x.giveBrick, x.giveOre, x.giveWood, x.giveGlass, x.givePaper, x.giveCloth]
-                for x in get_cards(player=player, history=True) if x.resourceAlternating is True]
-    if RA_cards:
-        combinations = []
-        for RA_card in RA_cards:
-            group = []
-            for i in range(len(RA_card)):
-                if RA_card[i] != 0:
-                    temp = [0] * 7
-                    temp[i] = RA_card[i]
-                    group.append(temp)
-            if combinations:
-                combinations = [[a + b for (a, b) in zip(x, y)] for x in combinations for y in group]
-            else:
-                combinations = group
-
-        # Compare RA combinations with what's needed and return results
-        final_balances = [[a-b for (a,b) in zip(balance, permutation)] for permutation in combinations]
-        no_deficit = any([all([False if resource > 0 else True for resource in resources]) for resources in final_balances])
-        return no_deficit, final_balances
-    else:
-        return False, [balance]
-
-
-def resource_alternating_rec_search(balance, cards):
-    """
-    Helper function for check_move. Checks resource permutations for alternating resource cards
-     Returns False if not possible, True if possible"""
-    if not list(filter(lambda x: x > 0, balance)):
-        return True
-    if not cards:
-        return False
-
-    new_cards = copy.deepcopy(cards)
-    new_bal = copy.deepcopy(balance)
-
-    for card in new_cards:
-        new_cards = new_cards[1:]
-
-        for i in range(len(balance)):
-            if balance[i] > 0 and card[i] > 0:
-                new_bal[i] -= card[i]
-                if resource_alternating_rec_search(new_bal, new_cards):
-                    return True
-                else:
-                    # Roll back changes from iteration
-                    new_bal[i] += card[i]
-
-    # Search sub-space exhausted without success
-    return False
-
-
-def check_valid_move(card, player):
-    """Call before processing card to check that it is a valid move, returns boolean"""
-
-    history = get_cards(player=player, history=True)
-
-    # Checks there is not already one of this card played yet
-    if [x for x in history if x.name == card.name]:
-        return False
-
-    # Checks if card can be played using prerequisites
-    if [x for x in history if card.prerequisite1 == x.name or card.prerequisite2 == x.name]:
-        return True
-
-    # Check money
-    if card.costMoney > player.money:
-        print("not enough money")
-        return False
-
-    balance = [card.costStone - player.stone, card.costBrick - player.brick, card.costOre - player.ore,
-               card.costWood - player.wood, card.costGlass - player.glass, card.costPaper - player.paper,
-               card.costCloth - player.cloth]
-
-    # If true, there are materials missing, and checks for resource alternating materials ensues
-    if list(filter(lambda x: x > 0, balance)):
-        extra = [player.extra_stone, player.extra_brick, player.extra_ore, player.extra_wood, player.extra_glass,
-                 player.extra_paper, player.extra_cloth]
-        maximum = [x-y for (x,y) in zip(balance, extra)]
-
-        # Investigates if there is a permutation that will work after checking that there could be a chance of success
-        if list(filter(lambda x: x > 0, maximum)):
-            return False
-        else:
-            ra_cards = [[x.giveStone, x.giveBrick, x.giveOre, x.giveWood, x.giveGlass, x.givePaper, x.giveCloth]
-                        for x in history if x.resourceAlternating]
-            return resource_alternating_rec_search(balance, ra_cards)
-
-    # Triggers if there are enough materials without considering resource alternation
-    else:
-        return True
 
 
 def play_card_with_trade(card, player, is_discarded, for_wonder, process_with_trade, no_prereq=False):
@@ -287,50 +177,6 @@ def play_card_with_trade(card, player, is_discarded, for_wonder, process_with_tr
                        card_name=card.name, card_colour=card.colour)
     db_committing_function(player, history)
     return default_true
-
-
-def play_card(card, player, is_discarded, for_wonder, no_prereq=False):
-
-    wondercard = None
-
-    if is_discarded:
-        player.money += 3
-
-    elif for_wonder:
-        wondercard = get_wonder_card(player)
-        if not wondercard:
-            #print("No wonder cards remaining")
-            return False
-        if no_prereq:
-            #print("Playing: ", wondercard.name)
-            update_player_object(wondercard, player, for_wonder=True)
-        elif check_valid_move(wondercard, player):
-            #print("Playing: ", wondercard.name)
-            update_player_object(wondercard, player, for_wonder=True)
-        else:
-            #print(wondercard.name + " is an invalid move")
-            return False
-
-        card = wondercard
-        if player.wonder == "The Mausoleum of Halicarnassus":
-            game = get_game(player=player)
-            game.waiting_for_discard = True
-            db_committing_function(game)
-
-    elif not is_discarded and not for_wonder:
-        if no_prereq: # Branch used for certain wonder bonuses
-            update_player_object(card, player)
-        elif check_valid_move(card, player):
-            update_player_object(card, player)
-        else:
-            #print(card.name + " is an invalid move")
-            return False
-
-    history = Cardhist(playerId=player.id, cardId=card.id, discarded=is_discarded, for_wonder=for_wonder,
-                       card_name=card.name, card_colour=card.colour)
-    db_committing_function(player, history)
-
-    return True
 
 
 def swap_hands(card, player, game):
