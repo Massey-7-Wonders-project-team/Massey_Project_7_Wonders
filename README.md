@@ -8,9 +8,9 @@
 #### Installs
 * Ensure you have python 3 running `python --version` to check
 * Ensure you have pip installed `pip --version` to check
-* Install the following python modules
+* Install our python dependencies
 ```
-pip install flask flask_script flask_migrate flask_bcrypt pytest flask_testing psycopg2
+pip install -r requirements.txt
 ```
 * Ensure you have node installed at least version 7 `node -v` to check
 * Ensure you have npm installed at least version 4 `npm -v` to check
