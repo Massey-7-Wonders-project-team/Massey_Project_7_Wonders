@@ -97,7 +97,7 @@ def create_game():
     if single_pl:
         return single_player(user)
 
-    game = Game.query.filter_by(started=False).first()
+    game = Game.query.filter_by(started=False, single_player=False).order_by(Game.id.desc()).first()
 
     # Creates game if there is no active one waiting to begin
     if game is None:
