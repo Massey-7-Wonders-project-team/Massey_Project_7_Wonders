@@ -1,22 +1,23 @@
-machine:
-    python:
-        version: 3.5.1
-    node:
-        version: v6.1.0
+jobs:
+    build:
+        docker:
+            -image:
 
 dependencies:
     post:
         - pip install -r requirements.txt
 
 test:
-    override:
-        - mkdir -p $CIRCLE_TEST_REPORTS/reports:
-            parallel: true
-        - python test.py --junit-xml=coverage.xml --cov=application/ tests/:
-            parallel: true
+    steps:
+        - run:
+            name: BackendTests
+            command: python test.py --junit-xml=coverage.xml --cov=application/ tests/
+        - run:
+            name: FrontendTests
+            command: run test:coveralls
+
     post:
         - mv coverage.xml $CIRCLE_TEST_REPORTS/reports/coverage.xml
-        - npm run test:coveralls
         - cat static/coverage/lcov.info | static/node_modules/coveralls/bin/coveralls.js
         - mv static/junit.xml $CIRCLE_TEST_REPORTS/reports/junit.xml
         - coveralls
