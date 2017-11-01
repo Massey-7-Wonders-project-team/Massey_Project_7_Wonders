@@ -176,55 +176,59 @@ const sShots = (
 
 
 const Instructions = () => (
-    <div className="col-md-8" style={{ marginLeft: 100 }}>
-      <h1>How to play...</h1>
-        <p> Below are some instructions on how to play 7 Wonders</p>
-        <p> From original game manual to navigating around our <i>Online Capstone Edition 2017</i> </p>
-        <br />
-        <Card style={{ width: '100%' }}>
-            <CardHeader
-                title="Original Quick Rules and Gameplay"
-                actAsExpander={true}
-                showExpandableButton={true}
-            />
-            <CardText expandable={true} style={{ height: 'auto' }}>
-                <CardMedia>
-                    {Rules}
-                </CardMedia>
-            </CardText>
-        </Card>
-        <br />
-        <Card style={{ width: '100%' }}>
-            <CardHeader
-                title="Navigating 7 Wonders Online Capstone Edition 2017"
-                actAsExpander={true}
-                showExpandableButton={true}
-            />
-            <CardText expandable={true} style={{ height: 'auto' }}>
-                <CardMedia>
-                    {sShots}
-                </CardMedia>
-            </CardText>
-        </Card>
-        <br />
-        <Card style={{ width: '100%' }}>
-            <CardHeader
-                title="Tutorial Video"
-                actAsExpander={true}
-                showExpandableButton={true}
-            />
-            <CardText expandable={true} style={{ height: 'auto' }}>
-                <CardMedia>
-                    <iframe
-                        width="560"
-                        height="315"
-                        src="https://www.youtube.com/embed/OAQKdgfZvXI"
-                        frameborder="0"
-                        gesture="media" allowfullscreen>
-                    </iframe>
-                </CardMedia>
-            </CardText>
-        </Card>
+    <div className="row">
+        <div className="col-md-8 offset-md-2 col-sm-12 col-sm-offset-0">
+          <h1>How to play...</h1>
+            <p> Below are some instructions on how to play 7 Wonders</p>
+            <p> From original game manual to navigating around our <i>Online Capstone Edition 2017</i> </p>
+            <br />
+            <Card style={{ width: '100%' }}>
+                <CardHeader
+                    title="Original Quick Rules and Gameplay"
+                    actAsExpander={true}
+                    showExpandableButton={true}
+                />
+                <CardText expandable={true} style={{ height: 'auto' }}>
+                    <CardMedia>
+                        {Rules}
+                    </CardMedia>
+                </CardText>
+            </Card>
+            <br />
+            <Card style={{ width: '100%' }}>
+                <CardHeader
+                    title="Navigating 7 Wonders Online Capstone Edition 2017"
+                    actAsExpander={true}
+                    showExpandableButton={true}
+                />
+                <CardText expandable={true} style={{ height: 'auto' }}>
+                    <CardMedia>
+                        {sShots}
+                    </CardMedia>
+                </CardText>
+            </Card>
+            <br />
+            <Card style={{ width: '100%' }}>
+                <CardHeader
+                    title="Tutorial Video"
+                    actAsExpander={true}
+                    showExpandableButton={true}
+                />
+                <CardText expandable={true} style={{ height: 'auto' }}>
+                    <CardMedia>
+                        <div class="videoWrapper">
+                            <iframe
+                                width="560"
+                                height="315"
+                                src="https://www.youtube.com/embed/OAQKdgfZvXI"
+                                frameborder="0"
+                                gesture="media" allowfullscreen>
+                            </iframe>
+                        </div>
+                    </CardMedia>
+                </CardText>
+            </Card>
+        </div>
     </div>
 );
 
