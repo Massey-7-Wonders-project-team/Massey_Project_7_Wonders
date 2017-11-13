@@ -47,7 +47,7 @@ class TestAPI(BaseTestConfig):
         self.assertTrue(auth.verify_token(token))
         self.assertEqual(res.status_code, 200)
 
-        res2 = self.app.post(
+        res2 = self.app.get(
                 "/api/is_token_valid",
                 data=json.dumps({"token": token}),
                 content_type='application/json'
@@ -55,7 +55,7 @@ class TestAPI(BaseTestConfig):
 
         self.assertTrue(json.loads(res2.data.decode("utf-8")), ["token_is_valid"])
 
-        res3 = self.app.post(
+        res3 = self.app.get(
                 "/api/is_token_valid",
                 data=json.dumps({"token": token + "something-else"}),
                 content_type='application/json'
