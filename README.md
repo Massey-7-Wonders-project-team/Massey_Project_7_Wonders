@@ -6,7 +6,7 @@
 ## Getting Started
 
 #### Installs
-* Ensure you have python 3 running `python --version` to check
+* Ensure you have python 3.6 running `python --version` to check
 * Ensure you have pip installed `pip --version` to check
 * Install our python dependencies
 ```
